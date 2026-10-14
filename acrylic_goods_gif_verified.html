@@ -1,0 +1,161 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>아크릴 굿즈 공방</title>
+<style>
+:root{--bg:#f6f3ee;--panel:#fffdf9;--line:#e6ddd0;--ink:#4a4038;--accent:#c98f86}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif}
+button,input,select{font:inherit}
+header{padding:18px 26px;font-size:22px;font-weight:700}header small{font-weight:400;font-size:13px;color:#9a8d80;margin-left:8px}
+main{display:grid;grid-template-columns:320px 1fr;gap:18px;padding:0 26px 26px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px 16px;max-height:calc(100vh - 90px);overflow:auto}
+.sec{padding:12px 0;border-bottom:1px dashed var(--line)}.sec:last-child{border:0}
+.lab{font-size:12px;letter-spacing:.08em;color:#a08f80;margin-bottom:8px;font-weight:700}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{flex:1;padding:8px 6px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;font-size:13px;color:var(--ink)}
+.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+label.row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin:8px 0 2px}
+input[type=range]{width:100%;accent-color:var(--accent)}input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}
+.upload{display:block;text-align:center;padding:14px;border:2px dashed var(--line);border-radius:12px;cursor:pointer;font-size:14px}.upload input{display:none}
+.check{font-size:13px;display:flex;gap:6px;align-items:center;margin-top:8px}
+.hidden{display:none}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;align-items:center;padding:16px}
+canvas{width:100%;max-width:600px;height:auto;border-radius:12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}.bar button{padding:10px 20px;border-radius:12px;border:0;background:var(--ink);color:#fff;cursor:pointer}
+@media(max-width:820px){main{grid-template-columns:1fr}aside{max-height:none}}
+</style></head><body>
+<header>✳ 아크릴 굿즈 공방</header>
+<main><aside>
+<div class="sec"><div class="lab">이미지</div>
+<label class="upload">＋ 이미지 올리기 (투명 PNG 추천)<input type="file" id="upload" accept="image/*"></label>
+<label class="check"><input type="checkbox" id="rmbg">단색 배경 지우기</label>
+<label class="row">배경 허용치<output id="tolO"></output></label><input type="range" id="tol" min="5" max="120" value="40"></div>
+<div class="sec"><div class="lab">종류</div><div class="seg"><button data-k="type" data-v="key" class="on">키링</button><button data-k="type" data-v="stand">스탠드</button></div></div>
+<div class="sec"><div class="lab">모양</div><div class="seg"><button data-k="shape" data-v="cut" class="on">칼선</button><button data-k="shape" data-v="circle">원형</button><button data-k="shape" data-v="round">사각</button><button data-k="shape" data-v="heart">하트</button></div>
+<div data-show="shape:!cut"><label class="row">판 배경색<input type="color" id="bg" value="#fbe3df"></label></div></div>
+<div class="sec"><div class="lab">배치</div>
+<label class="row">크기<output id="sizeO"></output></label><input type="range" id="size" min="40" max="160" value="100">
+<label class="row">좌우</label><input type="range" id="ox" min="-200" max="200" value="0">
+<label class="row">상하</label><input type="range" id="oy" min="-200" max="200" value="0">
+<label class="row">아크릴 여백<output id="borderO"></output></label><input type="range" id="border" min="6" max="40" value="18"></div>
+<div class="sec"><div class="lab">문구</div><input type="text" id="txt" maxlength="20" placeholder="예) MOCHI 2026">
+<label class="row">글자색<input type="color" id="tc" value="#c98f86"></label></div>
+<div class="sec"><div class="lab">효과</div>
+<label class="check"><input type="checkbox" id="holo">홀로그램</label>
+<label class="check" data-show="type:key"><input type="checkbox" id="swing" checked>흔들림</label>
+<div data-show="type:key"><div class="lab" style="margin-top:10px">고리 색</div><div class="seg"><button data-k="ring" data-v="silver" class="on">실버</button><button data-k="ring" data-v="gold">골드</button><button data-k="ring" data-v="rose">로즈골드</button></div></div>
+<div data-show="type:stand"><label class="row">받침 색<input type="color" id="base" value="#dfe8ee"></label></div>
+<label class="row">바탕색<input type="color" id="scene" value="#f3ede4"></label></div>
+</aside>
+<div class="stage"><canvas id="cv" width="1000" height="1200" aria-label="아크릴 굿즈 미리보기"></canvas>
+<div class="bar"><button id="save">PNG 저장</button><button id="saveGif">GIF 저장</button><span id="gifStatus" style="font-size:12px"></span><label class="check" style="margin:0"><input type="checkbox" id="transparent">투명 배경</label></div></div>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),cv=$('cv'),ctx=cv.getContext('2d'),W=1000,H=1200,N=800,C=400;
+const S={type:'key',shape:'cut',ring:'silver'};let src=null,cut=null,piece=null,t=0,dirty=true;
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+
+// 기본 캐릭터
+const ph=(()=>{const c=mk(400,420),g=c.getContext('2d'),e=(x,y,rx,ry,col,r=0)=>{g.beginPath();g.ellipse(x,y,rx,ry,r,0,7);g.fillStyle=col;g.fill()};
+e(120,110,38,80,'#f3cfcd',-.25);e(280,110,38,80,'#f3cfcd',.25);e(120,115,18,55,'#fff3e3',-.25);e(280,115,18,55,'#fff3e3',.25);
+e(200,260,165,145,'#f3cfcd');e(200,270,125,105,'#fff5df');e(155,265,11,15,'#4a4038');e(245,265,11,15,'#4a4038');
+e(125,300,20,11,'#f6b9b3');e(275,300,20,11,'#f6b9b3');g.strokeStyle='#4a4038';g.lineWidth=5;g.lineCap='round';
+g.beginPath();g.arc(188,292,12,.2,Math.PI-.2);g.stroke();g.beginPath();g.arc(212,292,12,.2,Math.PI-.2);g.stroke();return c})();
+
+function processImg(){if(!src){cut=null;return}const f=Math.min(1,800/Math.max(src.width,src.height)),c=mk(Math.round(src.width*f),Math.round(src.height*f)),g=c.getContext('2d');
+g.drawImage(src,0,0,c.width,c.height);
+if($('rmbg').checked){const w=c.width,h=c.height,d=g.getImageData(0,0,w,h),p=d.data,tol=+$('tol').value*3,r0=p[0],g0=p[1],b0=p[2],seen=new Uint8Array(w*h),st=[];
+for(let x=0;x<w;x++)st.push(x,(h-1)*w+x);for(let y=0;y<h;y++)st.push(y*w,y*w+w-1);
+while(st.length){const i=st.pop();if(seen[i])continue;seen[i]=1;const k=i*4;
+if(p[k+3]>10&&Math.abs(p[k]-r0)+Math.abs(p[k+1]-g0)+Math.abs(p[k+2]-b0)>tol)continue;p[k+3]=0;const x=i%w;
+if(x>0)st.push(i-1);if(x<w-1)st.push(i+1);if(i>=w)st.push(i-w);if(i<w*(h-1))st.push(i+w)}g.putImageData(d,0,0)}cut=c}
+
+function shapePath(g){g.beginPath();if(S.shape==='circle')g.arc(C,C,280,0,7);else if(S.shape==='round')g.roundRect(C-270,C-270,540,540,70);
+else{g.moveTo(C,C+270);g.bezierCurveTo(C-290,C+80,C-290,C-230,C-120,C-240);g.bezierCurveTo(C-50,C-245,C-10,C-200,C,C-160);g.bezierCurveTo(C+10,C-200,C+50,C-245,C+120,C-240);g.bezierCurveTo(C+290,C-230,C+290,C+80,C,C+270);g.closePath()}}
+
+function art(){const A=mk(N,N),g=A.getContext('2d'),img=cut||ph,sc=+$('size').value/100,s=Math.min(500/img.width,500/img.height)*sc,
+w=img.width*s,h=img.height*s,x=C-w/2+ +$('ox').value,y=C-h/2+ +$('oy').value;
+if(S.shape!=='cut'){g.save();shapePath(g);g.fillStyle=$('bg').value;g.fill();g.clip();g.drawImage(img,x,y,w,h);g.restore()}else g.drawImage(img,x,y,w,h);
+const tx=$('txt').value.trim();if(tx){g.font='800 54px system-ui,"Malgun Gothic",sans-serif';g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';
+const ty=S.shape==='cut'?Math.min(N-60,y+h+30):C+190;g.lineWidth=14;g.strokeStyle='#fff';g.strokeText(tx,C,ty);g.fillStyle=$('tc').value;g.fillText(tx,C,ty)}return A}
+
+function outline(A,r){const O=mk(N,N),g=O.getContext('2d');for(const rr of [r,r*.5]){const n=Math.max(24,Math.round(rr*2));for(let i=0;i<n;i++){const a=i/n*Math.PI*2;g.drawImage(A,Math.cos(a)*rr,Math.sin(a)*rr)}}
+g.drawImage(A,0,0);g.globalCompositeOperation='source-in';g.fillStyle='#fff';g.fillRect(0,0,N,N);g.globalCompositeOperation='source-over';return O}
+function bbox(c){const d=c.getContext('2d').getImageData(0,0,N,N).data;let x0=N,y0=N,x1=0,y1=0;for(let y=0;y<N;y+=2)for(let x=0;x<N;x+=2)if(d[(y*N+x)*4+3]>40){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}return{x0,y0,x1,y1}}
+function tint(c,col){const T=mk(N,N),g=T.getContext('2d');g.drawImage(c,0,0);g.globalCompositeOperation='source-in';g.fillStyle=col;g.fillRect(0,0,N,N);return T}
+
+function build(){const A=art(),O=outline(A,+$('border').value),og=O.getContext('2d'),b=bbox(O),cx=Math.round((b.x0+b.x1)/2);let anchor;
+if(S.type==='key'){const d=og.getImageData(cx,0,1,N).data;let top=b.y0;for(let y=0;y<N;y++)if(d[y*4+3]>40){top=y;break}
+og.fillStyle='#fff';og.beginPath();og.arc(cx,top-8,30,0,7);og.fill();og.globalCompositeOperation='destination-out';og.beginPath();og.arc(cx,top-14,11,0,7);og.fill();og.globalCompositeOperation='source-over';anchor={x:cx,y:top-14}}
+else{og.fillStyle='#fff';og.fillRect(cx-70,b.y1-20,140,46);anchor={x:cx,y:b.y1+26}}
+const P=mk(N+20,N+20),g=P.getContext('2d');g.drawImage(tint(O,'rgba(160,182,198,.85)'),6,8);g.globalAlpha=.93;g.drawImage(O,0,0);g.globalAlpha=1;g.drawImage(A,0,0);
+const G=mk(N,N),gg=G.getContext('2d'),lg=gg.createLinearGradient(0,0,N,N);lg.addColorStop(0,'rgba(255,255,255,.55)');lg.addColorStop(.18,'rgba(255,255,255,0)');lg.addColorStop(.5,'rgba(255,255,255,0)');lg.addColorStop(.56,'rgba(255,255,255,.35)');lg.addColorStop(.62,'rgba(255,255,255,0)');
+gg.fillStyle=lg;gg.fillRect(0,0,N,N);gg.globalCompositeOperation='destination-in';gg.drawImage(O,0,0);g.drawImage(G,0,0);
+piece={P,mask:O,anchor,b}}
+
+const holoC=mk(N,N),hg=holoC.getContext('2d');
+function holo(){hg.globalCompositeOperation='source-over';hg.clearRect(0,0,N,N);const o=(t*120)%N,lg=hg.createLinearGradient(-N+o,0,N+o,N);
+['#ff9ad5','#ffe28a','#9dffd0','#8ad8ff','#c9a2ff','#ff9ad5','#ffe28a','#9dffd0'].forEach((c,i,a)=>lg.addColorStop(i/(a.length-1),c));
+hg.fillStyle=lg;hg.fillRect(0,0,N,N);hg.globalCompositeOperation='destination-in';hg.drawImage(piece.mask,0,0);return holoC}
+
+const metal=()=>S.ring==='gold'?['#a87a25','#f6dc8f']:S.ring==='rose'?['#b47468','#f7d2c8']:['#868d95','#f2f4f6'];
+function ring(x,y,rx,ry,w){const [a,b]=metal(),g=ctx.createLinearGradient(x-rx,y-ry,x+rx,y+ry);g.addColorStop(0,b);g.addColorStop(.5,a);g.addColorStop(1,b);
+ctx.lineWidth=w;ctx.strokeStyle=g;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,7);ctx.stroke()}
+function drawPiece(x,y){const {P,anchor}=piece;ctx.drawImage(P,x-anchor.x,y-anchor.y);if($('holo').checked){ctx.save();ctx.globalAlpha=.3;ctx.drawImage(holo(),x-anchor.x,y-anchor.y);ctx.restore()}}
+
+function render(transparent=false){if(dirty){build();dirty=false}ctx.clearRect(0,0,W,H);
+if(!transparent){ctx.fillStyle=$('scene').value;ctx.fillRect(0,0,W,H);ctx.fillStyle='rgba(0,0,0,.035)';for(let y=20;y<H;y+=40)for(let x=20;x<W;x+=40){ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
+if(S.type==='key'){const a=$('swing').checked?Math.sin(t*2.2)*.07:0;
+ctx.save();ctx.translate(500,215);ctx.rotate(a);ctx.translate(-500,-215);
+ring(500,232,9,18,6);ring(500,262,4,18,6);ring(500,292,9,18,6);drawPiece(500,345);ring(500,322,24,24,7);ctx.restore();ring(500,140,75,75,12)}
+else{const by=1000;ctx.fillStyle='rgba(0,0,0,.08)';ctx.beginPath();ctx.ellipse(500,by+40,250,40,0,0,7);ctx.fill();
+const bc=$('base').value;ctx.fillStyle=bc;ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(500,by+18,230,52,0,0,7);ctx.fill();ctx.globalAlpha=.9;ctx.beginPath();ctx.ellipse(500,by,230,52,0,0,7);ctx.fill();
+ctx.globalAlpha=1;ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.ellipse(470,by-14,150,18,0,0,7);ctx.fill();
+ctx.fillStyle='rgba(0,0,0,.15)';ctx.fillRect(425,by-6,150,12);drawPiece(500,by)}}
+
+function loop(now){t=now/1000;render(false);requestAnimationFrame(loop)}
+
+function outputs(){$('tolO').textContent=$('tol').value;$('sizeO').textContent=$('size').value+'%';$('borderO').textContent=$('border').value+'px';
+document.querySelectorAll('[data-show]').forEach(el=>{const [k,v]=el.dataset.show.split(':'),ok=v[0]==='!'?S[k]!==v.slice(1):S[k]===v;el.classList.toggle('hidden',!ok)})}
+
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{S[b.dataset.k]=b.dataset.v;document.querySelectorAll(`[data-k="${b.dataset.k}"]`).forEach(x=>x.classList.toggle('on',x===b));outputs();dirty=true});
+document.querySelectorAll('input:not([type=file])').forEach(el=>el.addEventListener('input',()=>{if(el.id==='rmbg'||el.id==='tol')processImg();outputs();dirty=true}));
+$('upload').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{src=im;processImg();dirty=true};im.src=URL.createObjectURL(f)};
+$('save').onclick=()=>{render($('transparent').checked);cv.toBlob(b=>{const a=document.createElement('a'),u=URL.createObjectURL(b);a.href=u;a.download=(S.type==='key'?'acrylic_keyring':'acrylic_stand')+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),5000)})};
+// GIF 저장: 외부 라이브러리 없이 프레임별 256색 팔레트와 LZW 압축 사용
+function gifBytes(frames,w,h,delay){
+ const out=[];const u16=n=>out.push(n&255,(n>>8)&255);const str=s=>{for(const c of s)out.push(c.charCodeAt(0))};
+ str('GIF89a');u16(w);u16(h);out.push(0xf7,0,0);
+ // Global 256-color RGB332 palette, with index 0 reserved for transparency.
+ out.push(0,0,0);
+ for(let i=1;i<256;i++)out.push(Math.round(((i>>5)&7)*255/7),Math.round(((i>>2)&7)*255/7),Math.round((i&3)*255/3));
+ out.push(0x21,0xff,11);str('NETSCAPE2.0');out.push(3,1,0,0,0);
+ for(const rgba of frames){
+  const pix=new Uint8Array(w*h);let hasAlpha=false;
+  for(let i=0;i<pix.length;i++){
+   const k=i*4;if(rgba[k+3]<128){pix[i]=0;hasAlpha=true;continue}
+   const r=rgba[k],g=rgba[k+1],b=rgba[k+2];let v=((r>>5)<<5)|((g>>5)<<2)|(b>>6);pix[i]=v||1;
+  }
+  out.push(0x21,0xf9,4,hasAlpha?9:8);u16(delay);out.push(0,0);
+  out.push(0x2c);u16(0);u16(0);u16(w);u16(h);out.push(0);
+  // Valid 9-bit GIF LZW stream: reset before dictionary reaches 512 entries.
+  // Each clear starts a new dictionary, avoiding variable-width code boundaries.
+  const data=[];let bitBuffer=0,bitCount=0;
+  const write=code=>{bitBuffer|=code<<bitCount;bitCount+=9;while(bitCount>=8){data.push(bitBuffer&255);bitBuffer>>>=8;bitCount-=8}};
+  for(let i=0;i<pix.length;){write(256);const end=Math.min(i+200,pix.length);while(i<end)write(pix[i++])}
+  write(257);if(bitCount)data.push(bitBuffer&255);
+  out.push(8);for(let i=0;i<data.length;i+=255){const n=Math.min(255,data.length-i);out.push(n);for(let j=0;j<n;j++)out.push(data[i+j])}out.push(0);
+ }
+ out.push(0x3b);return new Blob([new Uint8Array(out)],{type:'image/gif'});
+}
+$('saveGif').onclick=async()=>{
+ const btn=$('saveGif'),status=$('gifStatus');btn.disabled=true;status.textContent='GIF 제작 중…';
+ const oldT=t,off=mk(400,480),og=off.getContext('2d',{willReadFrequently:true}),frames=[];
+ try{
+  for(let i=0;i<24;i++){
+   t=i/12;render($('transparent').checked);og.clearRect(0,0,400,480);og.drawImage(cv,0,0,400,480);
+   frames.push(og.getImageData(0,0,400,480).data);
+   if(i%4===3)await new Promise(r=>setTimeout(r,0));
+  }
+  const blob=gifBytes(frames,400,480,8),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(S.type==='key'?'acrylic_keyring':'acrylic_stand')+'.gif';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);status.textContent='저장 완료';
+ }catch(e){console.error(e);status.textContent='GIF 생성 실패'}finally{t=oldT;btn.disabled=false;setTimeout(()=>status.textContent='',3500)}
+};
+outputs();requestAnimationFrame(loop);
+</script></body></html>
