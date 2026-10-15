@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#faf6ee">
+<title>포켓 모찌</title>
+<style>
+:root {
+  --paper: #faf6ee;
+  --ink: #413e50;
+  --muted: #77717e;
+  --line: #e7dece;
+  --purple: #7865ad;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Malgun Gothic", sans-serif;
+}
+button, input, select { font: inherit; }
+button, select, input[type="range"], input[type="color"] { cursor: pointer; }
+button {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 11px 14px;
+  transition: transform .15s, background .15s;
+}
+button:hover:not(:disabled) { background: #f3eefb; transform: translateY(-1px); }
+button:disabled { cursor: wait; opacity: .55; }
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid #9f88d8;
+  outline-offset: 3px;
+}
+header {
+  max-width: 1100px;
+  margin: auto;
+  padding: 32px 24px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand { font-size: 23px; font-weight: 850; letter-spacing: -1px; }
+.brand span { color: var(--purple); }
+.badge {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 24px 40px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 30px;
+}
+.intro { margin-bottom: 22px; }
+.eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--purple); font-weight: 800; }
+h1 { font-size: clamp(28px, 4vw, 39px); line-height: 1.25; letter-spacing: -2px; margin: 10px 0; }
+.intro p, .help { color: var(--muted); font-size: 13px; line-height: 1.7; }
+.device {
+  position: relative;
+  max-width: 470px;
+  margin: auto;
+  padding: 35px 30px 24px;
+  background: #d9cdeb;
+  border: 3px solid #b6a3cf;
+  border-radius: 46% 46% 36% 36% / 30% 30% 28% 28%;
+  box-shadow: inset 0 6px 0 #eee6fa, inset 0 -8px 0 #bba8d4,
+              0 18px 35px #67527e18;
+}
+.device-label {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  margin: 2px 0 16px;
+}
+.screen {
+  position: relative;
+  background: #fcf9f1;
+  padding: 7px;
+  border: 5px solid #a296b4;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px #65557722;
+}
+.screen.dragover { outline: 4px dashed var(--purple); outline-offset: -8px; }
+canvas { display: block; width: 100%; height: auto; border-radius: 15px; touch-action: pan-y; }
+.screen-label {
+  position: absolute;
+  top: 17px;
+  left: 18px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #70697a;
+  pointer-events: none;
+}
+.device-buttons { display: flex; justify-content: center; gap: 24px; margin-top: 21px; }
+.device-buttons button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background: #f8eab0;
+  border: 2px solid #bfa36b;
+  box-shadow: 0 4px 0 #ab925d;
+}
+.preview-caption { text-align: center; color: var(--muted); font-size: 12px; margin: 22px 0 0; }
+.panel {
+  background: #fffdf9;
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  padding: 23px;
+  margin-bottom: 16px;
+}
+.panel h2 { font-size: 16px; margin: 0 0 16px; letter-spacing: -.5px; }
+.panel h2 span { color: #a292bf; margin-right: 8px; font-size: 12px; }
+.upload {
+  width: 100%;
+  padding: 20px;
+  border: 2px dashed #d6c8e8;
+  background: #f8f4ff;
+  text-align: center;
+}
+.upload strong { display: block; margin-bottom: 5px; }
+.upload small { color: var(--muted); font-size: 11px; }
+.control { display: grid; grid-template-columns: 72px 1fr 42px; align-items: center; gap: 9px; margin-top: 13px; font-size: 12px; }
+.control input[type="range"] { width: 100%; accent-color: var(--purple); }
+.control output { text-align: right; color: var(--muted); font-size: 11px; }
+.reactions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.reaction { padding: 12px 3px; font-size: 11px; }
+.reaction .emoji { display: block; font-size: 22px; margin-bottom: 5px; }
+.reaction[aria-pressed="true"] {
+  background: #eee7fc;
+  border-color: #9e86ca;
+  color: #5e458e;
+  box-shadow: inset 0 0 0 1px #9e86ca;
+}
+.row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; }
+.color-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.swatch { width: 29px; height: 29px; padding: 0; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line); }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--purple); }
+input[type="color"] { width: 31px; height: 31px; border: none; padding: 0; background: none; }
+select { padding: 8px; border-radius: 10px; border: 1px solid var(--line); background: white; color: var(--ink); }
+.exports { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.primary { background: var(--purple); color: white; border-color: var(--purple); font-weight: 750; }
+.primary:hover:not(:disabled) { background: #685395; }
+#status { min-height: 22px; font-size: 12px; line-height: 1.6; margin: 12px 0 0; color: #68528b; }
+.privacy { text-align: center; font-size: 11px; color: var(--muted); padding: 0 24px 28px; }
+@media (max-width: 760px) {
+  header { padding: 22px 18px; }
+  .badge { display: none; }
+  main { grid-template-columns: 1fr; padding: 0 18px 25px; gap: 25px; }
+  .device { max-width: 390px; }
+  .panel { padding: 20px; }
+  .intro { text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  button { transition: none; }
+}
+
+:root{--paper:#f7f5ef;--ink:#423f37;--muted:#929084;--line:#e5e1d6;--purple:#ad6449}
+body{background:var(--paper);font-family:"Malgun Gothic",system-ui,sans-serif}button{border-radius:9px;transition:background .18s,transform .18s}button:hover:not(:disabled){background:#f3e6da}header{max-width:1120px;padding:26px 32px;border-bottom:1px solid var(--line);margin-bottom:30px}.brand{font-size:20px;letter-spacing:-1px;display:flex;align-items:center;gap:10px}.brand span{color:var(--ink)}.brand svg{width:36px;height:36px}.badge{font-size:10px;letter-spacing:2px}main{max-width:1120px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:42px;padding:0 32px 38px}main>section:first-child{position:sticky;top:24px;align-self:start}.intro{margin:3px 0 22px}.eyebrow{font-size:10px;letter-spacing:2px;color:#a36c55}h1{font-size:34px;letter-spacing:-1.8px;line-height:1.32;margin:13px 0}.intro p{font-size:12px;line-height:1.8;margin:0}.device{max-width:none;padding:16px;background:#eee8dc;border:1px solid #dfd7c7;border-radius:20px;box-shadow:0 10px 25px #65513b08}.device-label{text-align:left;display:flex;justify-content:space-between;font-size:9px;color:#87806f;letter-spacing:2px;margin:1px 3px 13px}.device-label:after{content:'●  LIVE PREVIEW';color:#858e72;letter-spacing:1px;font-size:8px}.screen{border:1px solid #e2daca;border-radius:12px;padding:0;background:#fcf9f1;box-shadow:none}canvas{border-radius:12px}.screen-label{top:16px;left:16px;background:#fffdf6d9;border:1px solid #e7e1d6;padding:6px 9px;border-radius:5px;font-size:9px;color:#7e7667}.device-buttons{margin-top:13px;gap:8px}.device-buttons button{width:38px;height:30px;border-radius:7px;border:1px solid #dcd3c2;background:#faf7ef;box-shadow:0 2px 0 #ded6c7;font-size:10px;color:#81725e}.device-buttons button:nth-child(2){width:66px;background:#e0a688;color:#fff;border-color:#cb9377;box-shadow:0 2px 0 #bd876c}.preview-caption{font-size:10px;margin:13px 0;color:#9a9284}.panel{padding:22px 0;margin:0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none}.panel:first-child{padding-top:0}.panel:last-child{border:0}.panel h2{font-size:14px;letter-spacing:-.4px;margin-bottom:16px;display:flex;align-items:center;gap:8px}.panel h2 span{font-size:9px;border:1px solid #d9ceba;padding:4px 5px;border-radius:4px;color:#9c8867;margin:0}.upload{background:#fdfbf6;border:1px dashed #ccbdA8;padding:18px;display:grid;grid-template-columns:38px 1fr;text-align:left;align-items:center;gap:12px}.upload svg{width:36px;height:36px;color:#af7a5c}.upload strong{font-size:12px;font-weight:600}.upload small{font-size:10px}.control{font-size:11px;grid-template-columns:70px 1fr 42px;margin-top:16px}.control input[type=range]{accent-color:#a88c69;height:3px}.control output{font-size:10px;font-variant-numeric:tabular-nums}.row{font-size:11px}.row button{padding:7px 10px;font-size:10px;background:transparent;color:#8b8070}.reactions{gap:7px}.reaction{padding:12px 3px 9px;background:#fcfbf7;border-color:#e5e0d5;font-size:10px;color:#857b6b}.reaction svg{display:block;width:35px;height:35px;margin:0 auto 6px;color:#716553}.reaction[aria-pressed=true]{background:#f4e5d7;border-color:#bf9171;color:#835c43;box-shadow:none}.help{font-size:10px;margin-bottom:0;line-height:1.8}#reactionDescription{min-height:18px;margin-top:11px;color:#9a8a77}.swatch{width:25px;height:25px}.color-row{gap:10px}.swatch[aria-pressed=true]{box-shadow:0 0 0 2px #a98c6e}select{font-size:11px;border-radius:6px;padding:7px;background:#fcfbf7}input[type=checkbox]{accent-color:#ad795d;vertical-align:middle}.exports button{font-size:12px;padding:13px 8px;border-radius:8px;background:#fcfaf5}.exports .primary{background:#a66f53;border-color:#a66f53}.exports .primary:hover{background:#8e5c43}#status{font-size:10px;color:#9b765b;min-height:16px;margin-top:9px}.privacy{font-size:10px;border-top:1px solid var(--line);padding:18px 20px 24px;max-width:1056px;margin:auto}button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#ba9574}
+@media(min-width:761px){.screen{max-width:410px;margin:auto}.device{max-width:445px;margin:0}.intro h1 br{display:none}}
+@media(max-width:760px){header{padding:19px 20px;margin-bottom:22px}main{padding:0 20px 24px;gap:25px;grid-template-columns:1fr;max-width:540px}main>section:first-child{position:static}.intro{text-align:left}.intro h1{font-size:29px}.intro h1 br{display:none}.intro p br{display:none}.device{max-width:420px}.panel{padding:20px 0}.brand{font-size:18px}.preview-caption{margin-top:12px}}
+
+:root{--paper:#f2f6ec;--ink:#40523b;--muted:#89957c;--line:#dce5d2;--purple:#688854}
+body{background:radial-gradient(circle at 15% 20%,#e0ebd750,transparent 35%),#f5f7ef}.brand span{color:#688854}.brand svg rect{fill:#dbe8cb}.badge,.eyebrow{color:#7c9569}.panel h2 span{border-color:#c7d5b8;color:#75915e}.upload{border-color:#b1c59a;background:#fbfcf6}.upload svg{color:#799663}.reaction[aria-pressed=true]{background:#e5efd9;border-color:#8ba773;color:#47663d}.reaction svg{color:#526547}.reaction svg>path:first-child{fill:#f5f8e9}.swatch[aria-pressed=true]{box-shadow:0 0 0 2px #7d9c62}.control input[type=range],input[type=checkbox]{accent-color:#7b985d}.exports .primary{background:#6c8754;border-color:#6c8754}.exports .primary:hover{background:#536e3e}#status{color:#6f855c}button:hover:not(:disabled){background:#e7efdb}button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#8ba977}
+.pet-stage{position:relative;padding:60px 15px 35px;max-width:490px;margin:auto;background:linear-gradient(90deg,#bfd1aa17 1px,transparent 1px),linear-gradient(#bfd1aa17 1px,transparent 1px);background-size:22px 22px;border-radius:22px}.device{position:relative;isolation:isolate;width:100%;max-width:365px;margin:auto;padding:58px 42px 42px;border:3px solid #60784c;border-radius:47% 47% 43% 43% / 38% 38% 48% 48%;background:radial-gradient(ellipse at 30% 10%,#fffef2 0%,#f5f8dc 26%,#dce8b9 65%,#b4ce95 100%);box-shadow:inset 0 5px 0 #fffff2,inset 0 -8px 0 #9eb781,inset 6px 0 10px #ffffff80,9px 12px 0 #d0debe,14px 20px 22px #425c3415}.device:before,.device:after{content:'';position:absolute;z-index:-1;top:-22px;width:79px;height:79px;border:3px solid #526348;border-radius:50%;background:radial-gradient(circle at 35% 30%,#708568,#3e4f3b 75%);box-shadow:inset 0 4px 0 #91a384}.device:before{left:23px;transform:rotate(-20deg)}.device:after{right:23px;transform:rotate(20deg)}.device-label{justify-content:center;font-size:9px;letter-spacing:3px;margin:0 0 13px;color:#627948;font-weight:800}.device-label:after{display:none}.screen{position:relative;max-width:none;margin:0;border:7px solid #98ae77;border-radius:25px;padding:3px;background:#d9e4b7;box-shadow:0 0 0 2px #577043,0 0 0 5px #fffdea,inset 0 3px 5px #52663840}canvas{border-radius:16px}.screen-label{font-size:8px;left:11px;top:11px;padding:4px 6px;border:0;background:#fffdecbb;color:#687750}.screen:after{content:'';position:absolute;inset:0;background:linear-gradient(125deg,#ffffff20 0%,#ffffff10 35%,transparent 36%);pointer-events:none;border-radius:17px}.device-buttons{gap:20px;align-items:center;margin-top:25px}.device-buttons button,.device-buttons button:nth-child(2){position:relative;width:38px;height:35px;padding:0;border:2px solid #69824f;border-radius:45% 45% 48% 48%;background:linear-gradient(#f1f6d3,#bace94);box-shadow:0 4px 0 #7c9461,inset 0 2px 0 #fffdeb;color:#466136;font-size:9px}.device-buttons button:nth-child(2){width:45px;height:40px}.paw{display:block;width:20px;height:19px;margin:auto;pointer-events:none}.paw-label{position:absolute;font-size:7px;color:#64804b;bottom:-19px;left:0;right:0;letter-spacing:1px}.pet-ribbon{position:absolute;width:90px;height:78px;top:-33px;right:3px;z-index:5;transform:rotate(14deg);pointer-events:none}.pet-sticker{position:absolute;width:41px;height:41px;left:12px;top:126px;transform:rotate(-16deg);pointer-events:none}.pet-clover{position:absolute;width:30px;height:30px;right:15px;top:150px;transform:rotate(12deg);pointer-events:none}.pet-bottom{position:absolute;width:80px;height:18px;bottom:9px;left:calc(50% - 40px);opacity:.7}.pet-charm{position:absolute;width:71px;height:139px;right:-33px;bottom:33px;transform:rotate(-11deg);filter:drop-shadow(3px 5px 0 #586e3220);pointer-events:none}.stage-star{position:absolute;color:#9ab37b;font-size:26px;left:18px;top:75px}.stage-star.second{left:auto;right:12px;top:auto;bottom:42px;font-size:18px}.preview-caption{margin-top:14px;font-size:10px;color:#849674}.intro h1{color:#3f5538}.intro p{color:#859079}
+@media(max-width:760px){.pet-stage{padding:48px 13px 30px;max-width:420px}.device{max-width:330px;padding:52px 38px 40px}.pet-charm{right:-23px;width:59px}.device:before,.device:after{width:69px;height:69px}.pet-ribbon{width:79px;right:4px}.pet-sticker{width:34px;left:8px}.pet-clover{width:24px;right:10px}.device-buttons{gap:18px}.screen-label{font-size:7px}.intro h1{font-size:28px}}
+@media(max-width:360px){.device{padding-left:30px;padding-right:30px}.pet-charm{right:-19px;width:49px}}
+
+.pet-stage{padding:10px 0 15px;background:none;max-width:480px}.device{width:100%;max-width:440px;aspect-ratio:512 / 600;padding:0;border:0;border-radius:0;background-color:transparent;background-size:100% 100%;background-repeat:no-repeat;box-shadow:none;isolation:auto}.device:before,.device:after{display:none}.device>.pet-ribbon,.device>.pet-sticker,.device>.pet-clover,.device>.pet-bottom,.device>.pet-charm{display:none}.stage-star{display:none}.screen{position:absolute;left:23.6328125%;top:28.666667%;width:52.734375%;height:42%;padding:0;margin:0;border:0;box-shadow:inset 0 2px 4px #5c724022;border-radius:7%;background:#eef4dc;overflow:hidden}.screen canvas{width:100%;height:100%;border-radius:0}.screen:after{background:linear-gradient(125deg,#ffffff16,transparent 45%);border-radius:0}.screen-label{font-size:7px;padding:3px 5px;top:8px;left:8px;opacity:.65}.device-buttons{position:absolute;inset:76% 23% 13%;display:flex;align-items:center;justify-content:space-around;margin:0;gap:0}.device-buttons button,.device-buttons button:nth-child(2){width:24%;height:100%;border:0;border-radius:50%;background:transparent;box-shadow:none;padding:0}.device-buttons button:hover:not(:disabled){background:#ffffff22;transform:none}.device-buttons .paw,.paw-label{visibility:hidden}.device-buttons button:focus-visible{outline:2px solid #8ba977}.device-buttons button:disabled{opacity:1}.screen.dragover{outline-offset:-5px}.panel{border-color:#e4e9db}.reaction{border-color:#e4e9dc}.reaction[aria-pressed=true]{border-color:#c1d0af;box-shadow:0 2px 7px #7185560a}
+@media(max-width:760px){.pet-stage{padding:0;max-width:420px}.device{max-width:390px;padding:0}.screen-label{font-size:6px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="12" fill="#e9dcca"/><path d="M9 25C9 13 15 10 20 10S31 13 31 25C31 31 9 31 9 25Z" fill="#fffcf4" stroke="#a78c6d"/><path d="M16 22v2m8-2v2m-6 2q2 2 4 0" stroke="#80684f" stroke-linecap="round"/></svg>포켓 <span>모찌</span></div>
+</header>
+
+<main>
+  <section aria-label="캐릭터 미리보기">
+    <div class="pet-stage"><span class="stage-star" aria-hidden="true">✧</span><span class="stage-star second" aria-hidden="true">✦</span><div class="device"><svg class="pet-ribbon" viewBox="0 0 100 85" aria-hidden="true"><defs><linearGradient id="silk" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#f0f5db"/><stop offset=".4" stop-color="#c0d7a5"/><stop offset=".75" stop-color="#92b57c"/><stop offset="1" stop-color="#d9e6bd"/></linearGradient><linearGradient id="knot"><stop stop-color="#91ac76"/><stop offset=".45" stop-color="#e1ebc9"/><stop offset=".7" stop-color="#d4e4b7"/><stop offset="1" stop-color="#9ebd84"/></linearGradient></defs><path d="M44 30C36 41 26 45 15 61l12-3 2 11c9-14 17-23 22-34M55 32c0 14 3 29 14 45l2-13 12 2C70 50 68 37 62 30" fill="url(#silk)"/><path d="M48 29C34 10 13 2 10 15c-3 10 2 26 10 28 9 2 19-6 28-9M53 29C68 8 89 7 91 20c2 11-5 22-12 23-9 0-18-5-26-9" fill="url(#silk)"/><path d="M14 16c10 0 19 8 31 14M86 19c-10 0-19 7-29 12" fill="none" stroke="#faffea" stroke-opacity=".7" stroke-width="1.2"/><path d="M19 38c11-1 19-5 27-6m33 7c-9-1-15-5-23-7M30 56l15-21m25 21L58 35" fill="none" stroke="#789961" stroke-opacity=".35" stroke-width="1"/><path d="M44 23q7-3 13 0l2 14q-8 5-16 0Z" fill="url(#knot)"/><path d="m47 24-1 10" stroke="#ffffef" stroke-opacity=".7" stroke-width="1"/></svg><svg class="pet-sticker" viewBox="0 0 77 70" aria-hidden="true"><g stroke="none"><circle cx="19" cy="19" r="11" fill="#586254"/><circle cx="58" cy="19" r="11" fill="#586254"/><path d="M9 43C5 15 64 12 67 40S10 69 9 43Z" fill="#fffef5"/><ellipse cx="25" cy="38" rx="7" ry="10" transform="rotate(24 25 38)" fill="#586254"/><ellipse cx="51" cy="38" rx="7" ry="10" transform="rotate(-24 51 38)" fill="#586254"/><path d="m35 46 4 2 3-2m-3 2v4m-4 0q4 3 8 0" fill="none" stroke="#77816d" stroke-width="1.1"/></g></svg><svg class="pet-clover" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 20C-7 12 13-9 20 13 27-9 47 12 20 20 47 28 27 49 20 27 13 49-7 28 20 20Z" fill="#a9c58b" stroke="#759756" stroke-width="1.5"/><path d="m21 23 4 14" stroke="#759756" fill="none"/></svg><svg class="pet-bottom" viewBox="0 0 80 18" aria-hidden="true"><path d="M3 9h15m44 0h15" stroke="#78975d"/><path d="m40 2 3 4 5 1-4 4 1 5-5-2-5 2 1-5-4-4 5-1Z" fill="none" stroke="#78975d"/></svg><svg class="pet-charm" viewBox="0 0 77 150" aria-hidden="true"><path d="M39 1v24c0 10 10 9 10 18s-10 10-10 19" stroke="#a5b399" stroke-width="1.3" fill="none"/><circle cx="39" cy="65" r="9" fill="none" stroke="#a5b399" stroke-width="1.3"/><g transform="translate(0 66)"><path d="M9 31 4 52 15 72h45l13-20-7-24" fill="#f5f8e8" stroke="#dbe2ce" stroke-width=".7"/><g stroke="none"><circle cx="19" cy="19" r="11" fill="#586254"/><circle cx="58" cy="19" r="11" fill="#586254"/><path d="M9 43C5 15 64 12 67 40S10 69 9 43Z" fill="#fffef5"/><ellipse cx="25" cy="38" rx="7" ry="10" transform="rotate(24 25 38)" fill="#586254"/><ellipse cx="51" cy="38" rx="7" ry="10" transform="rotate(-24 51 38)" fill="#586254"/><path d="m35 46 4 2 3-2m-3 2v4m-4 0q4 3 8 0" fill="none" stroke="#77816d" stroke-width="1.1"/></g></g></svg>
+      <div class="screen" id="dropzone">
+        <canvas id="preview" width="512" height="512" aria-label="모찌 캐릭터 리액션 미리보기"></canvas>
+        <span class="screen-label" id="sceneLabel">01 · 행복</span>
+      </div>
+      <div class="device-buttons">
+        <button id="previous" aria-label="이전 리액션"><svg class="paw" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="6" cy="7" rx="2.5" ry="3" transform="rotate(-20 6 7)"/><ellipse cx="12" cy="5" rx="2.5" ry="3"/><ellipse cx="18" cy="7" rx="2.5" ry="3" transform="rotate(20 18 7)"/><path d="M5 17c0-4 3-7 7-7s7 3 7 7c0 5-5 2-7 2s-7 3-7-2Z"/></svg><span class="paw-label">PREV</span></button>
+        <button id="pause" aria-label="애니메이션 일시정지" aria-pressed="false"><svg class="paw" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="6" cy="7" rx="2.5" ry="3" transform="rotate(-20 6 7)"/><ellipse cx="12" cy="5" rx="2.5" ry="3"/><ellipse cx="18" cy="7" rx="2.5" ry="3" transform="rotate(20 18 7)"/><path d="M5 17c0-4 3-7 7-7s7 3 7 7c0 5-5 2-7 2s-7 3-7-2Z"/></svg><span class="paw-label">PAUSE</span></button>
+        <button id="next" aria-label="다음 리액션"><svg class="paw" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="6" cy="7" rx="2.5" ry="3" transform="rotate(-20 6 7)"/><ellipse cx="12" cy="5" rx="2.5" ry="3"/><ellipse cx="18" cy="7" rx="2.5" ry="3" transform="rotate(20 18 7)"/><path d="M5 17c0-4 3-7 7-7s7 3 7 7c0 5-5 2-7 2s-7 3-7-2Z"/></svg><span class="paw-label">NEXT</span></button>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section aria-label="리액션 편집 도구">
+    <div class="panel">
+      <h2><span>01</span>얼굴 넣기</h2>
+      <button class="upload" id="upload">
+        <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="5" y="7" width="28" height="26" rx="4" stroke="currentColor"/><circle cx="14" cy="15" r="3" stroke="currentColor"/><path d="m7 28 8-8 6 6 5-5 6 7M32 4v8m-4-4h8" stroke="currentColor" stroke-linecap="round"/></svg><span><strong>사진 가져오기</strong><small>파일 선택 · 화면에 드롭 · 붙여넣기</small></span>
+      </button>
+      <input type="file" id="file" accept="image/*" hidden>
+      <label class="control">
+        <span>얼굴 확대</span>
+        <input id="zoom" type="range" min="1" max="2.8" step=".05" value="1">
+        <output id="zoomValue" for="zoom">1.00×</output>
+      </label>
+      <label class="control">
+        <span>좌우 위치</span>
+        <input id="faceX" type="range" min="-100" max="100" value="0">
+        <output id="faceXValue" for="faceX">0</output>
+      </label>
+      <label class="control">
+        <span>상하 위치</span>
+        <input id="faceY" type="range" min="-100" max="100" value="0">
+        <output id="faceYValue" for="faceY">0</output>
+      </label>
+      <div class="row" style="margin-top:14px">
+        <button id="resetFace">위치 초기화</button>
+        <button id="removePhoto">사진 지우기</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2><span>02</span>기분 고르기</h2>
+      <div class="reactions" id="reactions"></div>
+    </div>
+
+    <div class="panel">
+      <h2><span>03</span>색 입히기</h2>
+      <div class="color-row" id="colors">
+        <span style="font-size:12px;margin-right:5px">몸 색상</span>
+      </div>
+      <div class="row" style="margin-top:17px">
+        <label for="background">배경</label>
+        <select id="background">
+          <option value="#eef4dc">연두</option><option value="#fcf9f1">크림</option>
+          <option value="#f1eafa">라벤더</option>
+          <option value="#eaf5ef">민트</option>
+          <option value="#fff0f2">분홍</option>
+          <option value="#edf3ff">하늘</option>
+        </select>
+        <label><input id="transparent" type="checkbox"> 투명하게 저장</label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2><span>04</span>저장</h2>
+      <div class="exports">
+        <button id="savePng">PNG 저장</button>
+        <button id="saveGif" class="primary">GIF 저장</button>
+      </div>
+      <p class="help">PNG 512 × 600 · GIF 320 × 375 · 2초 반복</p>
+      <p id="status" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+  const canvas = $('preview');
+  const ctx = canvas.getContext('2d');
+  const TAU = Math.PI * 2;
+  const reactions = [
+    { id: 'happy', name: '행복' },
+    { id: 'love', name: '사랑' },
+    { id: 'cry', name: '울음' },
+    { id: 'angry', name: '분노' },
+    { id: 'surprise', name: '놀람' },
+    { id: 'shy', name: '부끄러움' },
+    { id: 'sleep', name: '졸림' },
+    { id: 'cheer', name: '응원' }
+  ];
+  const colors = ['#d5e3b8', '#efc9c1', '#cbdcc7', '#eddaa5', '#cbdbe5', '#d9cde2'];
+  const state = {
+    image: null, zoom: 1, faceX: 0, faceY: 0,
+    color: colors[0], background: $('background').value,
+    reaction: 0, paused: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    time: 0, busy: false
+  };
+  let uploadVersion = 0;
+  let last = performance.now();
+
+  function ellipse(c, x, y, rx, ry, fill) {
+    c.beginPath();
+    c.ellipse(x, y, rx, ry, 0, 0, TAU);
+    c.fillStyle = fill;
+    c.fill();
+  }
+  function stroke(c, points, color, width = 5) {
+    c.beginPath();
+    c.moveTo(points[0][0], points[0][1]);
+    for (let i = 1; i < points.length; i++) c.lineTo(points[i][0], points[i][1]);
+    c.strokeStyle = color;
+    c.lineWidth = width;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    c.stroke();
+  }
+  function star(c, x, y, radius, fill, rotation = 0) {
+    c.save();
+    c.translate(x, y);
+    c.rotate(rotation);
+    c.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + i * Math.PI / 5;
+      const r = i % 2 ? radius * .48 : radius;
+      const px = Math.cos(a) * r, py = Math.sin(a) * r;
+      if (i === 0) c.moveTo(px, py); else c.lineTo(px, py);
+    }
+    c.closePath();
+    c.fillStyle = fill;
+    c.fill();
+    c.restore();
+  }
+  function heart(c, x, y, size, fill) {
+    c.save();
+    c.translate(x, y);
+    c.scale(size / 30, size / 30);
+    c.beginPath();
+    c.moveTo(0, 13);
+    c.bezierCurveTo(-35, -8, -18, -31, 0, -13);
+    c.bezierCurveTo(18, -31, 35, -8, 0, 13);
+    c.fillStyle = fill;
+    c.fill();
+    c.restore();
+  }
+  function label(c, text, x, y, size, color) {
+    c.fillStyle = color;
+    c.font = `800 ${size}px system-ui, sans-serif`;
+    c.textAlign = 'center';
+    c.fillText(text, x, y);
+  }
+  function arm(c, x, y, angle, color) {
+    c.save();
+    c.translate(x, y);
+    c.rotate(angle);
+    ellipse(c, 0, 10, 15, 22, '#a58e75');
+    ellipse(c, 0, 9, 13, 21, color);
+    ellipse(c, -4, 8, 3, 7, '#ffffff50');
+    c.restore();
+  }
+  function drop(c, x, y, size) {
+    c.beginPath();
+    c.moveTo(x, y - size);
+    c.bezierCurveTo(x + size, y, x + size, y + size, x, y + size);
+    c.bezierCurveTo(x - size, y + size, x - size, y, x, y - size);
+    c.fillStyle = '#8bcdea';
+    c.fill();
+    ellipse(c, x - size * .22, y + size * .15, size * .2, size * .35, '#e1f8ff');
+  }
+
+  function defaultFace(c, mode, t) {
+    const ink = '#685741';
+    if (mode === 'sleep' || mode === 'happy') {
+      for (const x of [-24, 24]) {
+        c.beginPath();
+        c.arc(x, -12, 11, mode === 'happy' ? Math.PI : 0, mode === 'happy' ? TAU : Math.PI);
+        c.strokeStyle = ink;
+        c.lineWidth = 4;
+        c.stroke();
+      }
+    } else if (mode === 'angry') {
+      stroke(c, [[-35, -26], [-15, -18]], ink, 4);
+      stroke(c, [[15, -18], [35, -26]], ink, 4);
+      ellipse(c, -24, -10, 5, 8, ink);
+      ellipse(c, 24, -10, 5, 8, ink);
+    } else if (mode === 'love') {
+      heart(c, -24, -13, 12, '#d86892');
+      heart(c, 24, -13, 12, '#d86892');
+    } else {
+      const blink = Math.cos(TAU * t / 2) > .985 ? 2 : 9;
+      ellipse(c, -24, -14, 5, blink, ink);
+      ellipse(c, 24, -14, 5, blink, ink);
+    }
+    if (mode === 'surprise') {
+      ellipse(c, 0, 16, 9, 12, ink);
+    } else if (mode === 'cry' || mode === 'angry') {
+      c.beginPath();
+      c.arc(0, 28, 10, Math.PI, TAU);
+      c.strokeStyle = ink;
+      c.lineWidth = 3.5;
+      c.stroke();
+    } else if (mode === 'sleep') {
+      ellipse(c, 0, 15, 4, 5, ink);
+    } else {
+      c.beginPath();
+      c.arc(0, 6, 12, 0, Math.PI);
+      c.strokeStyle = ink;
+      c.lineWidth = 3.5;
+      c.stroke();
+    }
+  }
+
+  function render(c, t, transparent = false) {
+    const w = c.canvas.width, h = c.canvas.height;
+    c.clearRect(0, 0, w, h);
+    c.save();
+    c.scale(w / 512, h / 512);
+
+    if (!transparent) {
+      c.fillStyle = state.background;
+      c.fillRect(0, 0, 512, 512);
+      c.fillStyle = '#7e66880d';
+      for (let y = 18; y < 512; y += 25)
+        for (let x = 18; x < 512; x += 25) c.fillRect(x, y, 2, 2);
+    }
+
+    const mode = reactions[state.reaction].id;
+    const p = TAU * t / 2;
+    let bob = Math.sin(p) * 4, angle = Math.sin(p) * .035;
+    let sx = 1, sy = 1, left = -.5, right = .5;
+
+    if (mode === 'happy') {
+      bob = -Math.max(0, Math.sin(p * 2)) * 28;
+      sx = 1 + Math.cos(p * 4) * .035;
+      sy = 1 - Math.cos(p * 4) * .035;
+      left = -1.5 + Math.sin(p * 2) * .2;
+      right = 1.5 - Math.sin(p * 2) * .2;
+    } else if (mode === 'love') {
+      angle = Math.sin(p) * .09;
+      left = -.9; right = .9;
+    } else if (mode === 'cry') {
+      bob = Math.sin(p * 4) * 3;
+      angle = Math.sin(p * 4) * .035;
+      left = -2.3; right = 2.3;
+    } else if (mode === 'angry') {
+      angle = Math.sin(p * 6) * .045;
+      sx = 1.04; sy = .97;
+      left = -1.3; right = 1.3;
+    } else if (mode === 'surprise') {
+      const jump = (1 - Math.cos(p)) / 2;
+      bob = -jump * 24; sx = 1 - jump * .06; sy = 1 + jump * .1;
+      left = -2; right = 2;
+    } else if (mode === 'shy') {
+      angle = Math.sin(p) * .12;
+      left = .75; right = -.75;
+    } else if (mode === 'sleep') {
+      angle = .16 + Math.sin(p) * .06;
+      bob = Math.sin(p) * 3; sy = 1 + Math.sin(p) * .015;
+      left = -.2; right = .2;
+    } else if (mode === 'cheer') {
+      bob = -Math.max(0, Math.sin(p * 2)) * 17;
+      left = -2.55 + Math.sin(p * 2) * .15;
+      right = 2.55 - Math.sin(p * 2) * .15;
+    }
+
+    ellipse(c, 256, 411, 91 + bob * .4, 10, '#65724b14');
+
+    c.save();
+    c.translate(256, 365 + bob);
+    c.rotate(angle);
+    c.scale(sx, sy);
+
+    // Soft rice-cake panda, with rounded ears and tucked paws.
+    const fur = c.createLinearGradient(-25,-180,35,45);
+    fur.addColorStop(0,'#77796f');fur.addColorStop(.5,'#53584e');fur.addColorStop(1,'#3f483e');
+    for(const side of [-1,1]) {
+      c.save();c.translate(side*79,-139);c.rotate(side*(.12+Math.sin(p)*.045));
+      ellipse(c,0,0,25,27,fur);
+      ellipse(c,-3,-5,13,15,'#89908055');
+      c.restore();
+      ellipse(c,side*43,31,24,16,fur);
+      ellipse(c,side*43-4,26,12,5,'#a6af9630');
+    }
+    c.beginPath();c.moveTo(-118,-22);
+    c.bezierCurveTo(-125,-71,-98,-135,-61,-151);
+    c.bezierCurveTo(-28,-166,28,-166,61,-151);
+    c.bezierCurveTo(98,-135,125,-71,118,-22);
+    c.bezierCurveTo(114,22,72,37,0,37);
+    c.bezierCurveTo(-72,37,-114,22,-118,-22);c.closePath();
+    const dough=c.createRadialGradient(-35,-115,12,0,-50,145);
+    dough.addColorStop(0,'#fffef6');dough.addColorStop(.55,'#faf8e9');
+    dough.addColorStop(.84,state.color);dough.addColorStop(1,state.color);
+    c.fillStyle=dough;c.fill();
+    c.save();c.clip();
+    const shade=c.createLinearGradient(0,-30,0,40);
+    shade.addColorStop(0,'#858b6000');shade.addColorStop(1,'#858b601a');
+    c.fillStyle=shade;c.fillRect(-130,-30,260,75);c.restore();
+    c.save();c.globalAlpha=.34;ellipse(c,-43,-137,16,4,'#ffffff');c.restore();
+    for(const [side,rotation] of [[-1,left],[1,right]]) {
+      c.save();c.translate(side*88,-24);c.rotate(rotation*.65);
+      const paw=c.createLinearGradient(-10,-8,12,23);
+      paw.addColorStop(0,'#7c8272');paw.addColorStop(.6,'#555f4e');paw.addColorStop(1,'#424d3e');
+      c.beginPath();c.moveTo(0,-8);c.bezierCurveTo(-16,-8,-18,10,-10,20);
+      c.bezierCurveTo(0,30,14,21,14,9);c.bezierCurveTo(14,-1,8,-8,0,-8);
+      c.fillStyle=paw;c.fill();ellipse(c,-5,2,3,5,'#ffffff14');c.restore();
+    }
+    c.save();c.translate(0,13);c.rotate(-.12);
+    for(const [x,y] of [[-4,-4],[4,-4],[-4,4],[4,4]]) ellipse(c,x,y,5,5,'#91ac78');
+    stroke(c,[[1,5],[3,13]],'#829c6c',1.4);c.restore();
+    c.save();
+    c.translate(0, -83);
+    if(state.image) {
+      const rim=c.createRadialGradient(-12,-15,15,0,0,75);
+      rim.addColorStop(0,'#fffef8');rim.addColorStop(.83,'#fffdf3');rim.addColorStop(1,'#e9e7d3');
+      ellipse(c,0,0,73,67,rim);
+    }
+    c.save();
+    c.beginPath();
+    c.ellipse(0, 0, 62, 58, 0, 0, TAU);
+    c.clip();
+    if (state.image) {
+      const im = state.image;
+      const scale = Math.max(124 / im.width, 116 / im.height) * state.zoom;
+      const iw = im.width * scale, ih = im.height * scale;
+      c.drawImage(im,
+        -iw / 2 + state.faceX * .55,
+        -ih / 2 + state.faceY * .55, iw, ih);
+    } else {
+      c.save();c.scale(.83,.83);defaultFace(c, mode, t);c.restore();
+    }
+    c.restore();
+
+    const blush = mode === 'shy' ? .65 : mode === 'angry' ? .55 : .30;
+    c.save();
+    c.globalAlpha = blush;
+    ellipse(c, -43, 14, 12, 6, '#eaa6a0');
+    ellipse(c, 43, 14, 12, 6, '#eaa6a0');
+    c.restore();
+
+    if (mode === 'cry') {
+      for (const side of [-1, 1]) {
+        const q = (t / .5 + (side === 1 ? .5 : 0)) % 1;
+        drop(c, side * 42, 7 + q * 54, 6 * (1 - q * .3));
+      }
+    }
+    if (mode === 'shy') {
+      for (const side of [-1, 1]) {
+        stroke(c, [[side * 39, 15], [side * 35, 24]], '#b7597c', 2);
+        stroke(c, [[side * 46, 15], [side * 42, 24]], '#b7597c', 2);
+      }
+    }
+    c.restore();
+    c.restore();
+
+    // 感情ごとのループするエフェクト。
+    c.save();
+    c.translate(0, 40);
+    if (mode === 'happy') {
+      for (let i = 0; i < 5; i++) {
+        const a = p + i * TAU / 5;
+        const x = 256 + Math.cos(a) * 142;
+        const y = 235 + Math.sin(a) * 105;
+        star(c, x, y, 7 + 3 * Math.sin(p + i), '#e7bd65', a);
+      }
+    } else if (mode === 'love') {
+      for (let i = 0; i < 5; i++) {
+        const q = (t / 2 + i / 5) % 1;
+        c.save();
+        c.globalAlpha = Math.sin(q * Math.PI);
+        heart(c, 139 + i * 57 + Math.sin(p + i) * 10,
+          335 - q * 225, 13 + i % 3 * 4, '#e78aa9');
+        c.restore();
+      }
+    } else if (mode === 'angry') {
+      const x = 355 + Math.sin(p * 6) * 3, y = 143;
+      stroke(c, [[x - 15, y - 14], [x - 5, y - 14], [x - 5, y - 5]], '#d96d79', 5);
+      stroke(c, [[x + 15, y - 14], [x + 5, y - 14], [x + 5, y - 5]], '#d96d79', 5);
+      stroke(c, [[x - 15, y + 14], [x - 5, y + 14], [x - 5, y + 5]], '#d96d79', 5);
+      stroke(c, [[x + 15, y + 14], [x + 5, y + 14], [x + 5, y + 5]], '#d96d79', 5);
+      ellipse(c, 155, 151 - Math.sin(p) * 8, 12, 8, '#dccedb');
+      ellipse(c, 144, 132 - Math.sin(p) * 8, 8, 6, '#dccedb');
+    } else if (mode === 'surprise') {
+      c.save();
+      c.globalAlpha = .55 + .45 * (1 - Math.cos(p)) / 2;
+      label(c, '!', 369, 185 + Math.sin(p) * 7, 45, '#cf9b49');
+      star(c, 141, 187, 13, '#e4bb68', p);
+      c.restore();
+    } else if (mode === 'shy') {
+      for (let i = 0; i < 3; i++) {
+        const x = 143 + i * 110, y = 151 + Math.sin(p + i) * 14;
+        for (let j = 0; j < 5; j++) {
+          ellipse(c, x + Math.cos(j * TAU / 5) * 7,
+            y + Math.sin(j * TAU / 5) * 7, 5, 5, '#edbbcf');
+        }
+        ellipse(c, x, y, 3, 3, '#efdca6');
+      }
+    } else if (mode === 'sleep') {
+      for (let i = 0; i < 3; i++) {
+        const q = (t / 2 + i / 3) % 1;
+        c.save();
+        c.globalAlpha = Math.sin(q * Math.PI);
+        label(c, 'z', 329 + q * 50, 224 - q * 115, 15 + q * 14, '#9b8cbe');
+        c.restore();
+      }
+    } else if (mode === 'cheer') {
+      for (let i = 0; i < 24; i++) {
+        const q = (t / 2 + i / 24) % 1;
+        const x = 87 + (i * 71 % 340) + Math.sin(p + i) * 10;
+        const y = 80 + q * 315;
+        c.save();
+        c.translate(x, y);
+        c.rotate(p + i);
+        c.fillStyle = ['#d8a5cf', '#ebc778', '#9fcaba', '#9ebce7'][i % 4];
+        c.fillRect(-3, -6, 6, 12);
+        c.restore();
+      }
+    }
+    c.restore();
+    c.restore();
+  }
+
+  function updateReaction() {
+    const r = reactions[state.reaction];
+    $('sceneLabel').textContent = `${String(state.reaction + 1).padStart(2, '0')} · ${r.name}`;
+    document.querySelectorAll('.reaction').forEach((b, i) => {
+      b.setAttribute('aria-pressed', String(i === state.reaction));
+    });
+    render(ctx, state.time);
+  }
+
+  reactions.forEach((r, i) => {
+    const b = document.createElement('button');
+    b.className = 'reaction';
+    const faces = [
+      '<path d="M11 18q3-5 6 0m6 0q3-5 6 0M16 23q4 6 8 0"/>',
+      '<path d="M11 16q-3-5 1-5 3 0 3 3 3-5 5-2 2 3-5 8Zm13 0q-3-5 1-5 3 0 3 3 3-5 5-2 2 3-5 8Z"/><path d="M18 25q3 3 6 0"/>',
+      '<path d="m11 15 6-2m7 0 6 2M14 18v3m13-3v3m-9 6q3-4 6 0"/><path d="M12 25v4m17-4v4" stroke="#86aebe"/>',
+      '<path d="m11 13 6 3m7 0 6-3m-15 7v2m12-2v2m-9 6q3-4 6 0"/>',
+      '<path d="M14 15v3m12-3v3"/><ellipse cx="20" cy="26" rx="3" ry="4"/>',
+      '<path d="M14 16v3m12-3v3m-9 5q3 3 6 0"/><path d="m9 23 3-2m16 2 3-2" stroke="#cc998b"/>',
+      '<path d="M11 18q3 4 6 0m6 0q3 4 6 0m-11 7h4M29 5h6l-6 6h6"/>',
+      '<path d="M11 18q3-5 6 0m6 0q3-5 6 0M16 23q4 7 8 0M4 12 2 8m34 4 2-4"/>'
+    ];
+    b.innerHTML = `<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 27C4 16 9 7 20 7s16 9 14 20c-1 8-27 8-28 0Z" fill="#fcf5e6"/>${faces[i]}</svg>${r.name}`;
+    b.setAttribute('aria-pressed', 'false');
+    b.onclick = () => {
+      state.reaction = i;
+      state.time = 0;
+      updateReaction();
+    };
+    $('reactions').appendChild(b);
+  });
+
+  function selectColor(value) {
+    state.color = value;
+    document.querySelectorAll('.swatch').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.color === value)));
+    render(ctx, state.time);
+  }
+  colors.forEach((color, i) => {
+    const b = document.createElement('button');
+    b.className = 'swatch';
+    b.style.background = color;
+    b.dataset.color = color;
+    b.setAttribute('aria-label', `몸 색상 ${['연두', '살구', '세이지', '버터', '하늘', '라일락'][i]}`);
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.onclick = () => {
+      customColor.value = color;
+      selectColor(color);
+    };
+    $('colors').appendChild(b);
+  });
+  const customColor = document.createElement('input');
+  customColor.type = 'color';
+  customColor.value = state.color;
+  customColor.setAttribute('aria-label', '직접 몸 색상 선택');
+  customColor.oninput = () => selectColor(customColor.value);
+  $('colors').appendChild(customColor);
+
+  function syncFace() {
+    for (const key of ['zoom', 'faceX', 'faceY']) {
+      $(key).value = state[key];
+      $(`${key}Value`).textContent = key === 'zoom'
+        ? `${state[key].toFixed(2)}×` : String(state[key]);
+    }
+    render(ctx, state.time);
+  }
+  for (const key of ['zoom', 'faceX', 'faceY']) {
+    $(key).oninput = () => {
+      state[key] = Number($(key).value);
+      syncFace();
+    };
+  }
+  $('resetFace').onclick = () => {
+    state.zoom = 1; state.faceX = 0; state.faceY = 0;
+    syncFace();
+  };
+  $('removePhoto').onclick = () => {
+    uploadVersion++;
+    state.image = null;
+    $('file').value = '';
+    $('status').textContent = '';
+    render(ctx, state.time);
+  };
+
+  async function loadPhoto(file) {
+    if (state.busy || !file) return;
+    if (!file.type.startsWith('image/')) {
+      $('status').textContent = '이미지 파일을 선택해 주세요.';
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      $('status').textContent = '20MB 이하의 이미지를 사용해 주세요.';
+      return;
+    }
+    const version = ++uploadVersion;
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    $('status').textContent = '사진을 준비하는 중…';
+    image.onload = () => {
+      try {
+        if (version !== uploadVersion || state.busy) return;
+        // 큰 원본과 움직이는 GIF 업로드도 작은 정지 캔버스로 정규화합니다.
+        const fitted = document.createElement('canvas');
+        const scale = Math.min(1, 1024 / Math.max(image.naturalWidth, image.naturalHeight));
+        fitted.width = Math.max(1, Math.round(image.naturalWidth * scale));
+        fitted.height = Math.max(1, Math.round(image.naturalHeight * scale));
+        fitted.getContext('2d').drawImage(image, 0, 0, fitted.width, fitted.height);
+        state.image = fitted;
+        state.zoom = 1; state.faceX = 0; state.faceY = 0;
+        syncFace();
+        $('status').textContent = '사진 불러오기 완료';
+      } catch (error) {
+        $('status').textContent = '사진을 처리하지 못했어요. JPG 또는 PNG로 다시 시도해 주세요.';
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      if (version === uploadVersion)
+        $('status').textContent = '읽을 수 없는 이미지예요. JPG 또는 PNG로 다시 시도해 주세요.';
+    };
+    image.src = url;
+  }
+  $('upload').onclick = () => $('file').click();
+  $('file').onchange = e => {
+    loadPhoto(e.target.files[0]);
+    e.target.value = '';
+  };
+  document.addEventListener('paste', e => {
+    if (state.busy) return;
+    const item = [...(e.clipboardData?.items || [])].find(x => x.type.startsWith('image/'));
+    if (item) {
+      e.preventDefault();
+      loadPhoto(item.getAsFile());
+    }
+  });
+  const zone = $('dropzone');
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    if (!state.busy) zone.classList.add('dragover');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    loadPhoto(e.dataTransfer.files[0]);
+  });
+  // 화면 밖에 드롭한 파일이 현재 페이지를 대체하지 않도록 막습니다.
+  window.addEventListener('dragover', e => e.preventDefault());
+  window.addEventListener('drop', e => e.preventDefault());
+
+  $('background').onchange = e => {
+    state.background = e.target.value;
+    render(ctx, state.time);
+  };
+  function updatePause() {
+    $('pause').querySelector('.paw-label').textContent = state.paused ? 'PLAY' : 'PAUSE';
+    $('pause').setAttribute('aria-pressed', String(state.paused));
+    $('pause').setAttribute('aria-label', state.paused ? '애니메이션 재생' : '애니메이션 일시정지');
+  }
+  $('pause').onclick = () => {
+    state.paused = !state.paused;
+    updatePause();
+  };
+  function step(direction) {
+    state.reaction = (state.reaction + direction + reactions.length) % reactions.length;
+    state.time = 0;
+    updateReaction();
+  }
+  $('previous').onclick = () => step(-1);
+  $('next').onclick = () => step(1);
+
+  function tick(now) {
+    const dt = Math.min((now - last) / 1000, .05);
+    last = now;
+    if (!state.paused && !state.busy) state.time = (state.time + dt) % 2;
+    if (!state.busy) render(ctx, state.time);
+    requestAnimationFrame(tick);
+  }
+
+  function download(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+  let disabledStates = [];
+  function setBusy(busy) {
+    state.busy = busy;
+    if (busy) {
+      // 내보내는 동안 사진 로딩과 설정 변경으로 프레임이 달라지지 않게 합니다.
+      uploadVersion++;
+      disabledStates = [...document.querySelectorAll('button,input,select')]
+        .map(el => [el, el.disabled]);
+      disabledStates.forEach(([el]) => el.disabled = true);
+    } else {
+      disabledStates.forEach(([el, disabled]) => el.disabled = disabled);
+      disabledStates = [];
+    }
+  }
+
+  async function prepareDeviceFrame() {
+    const ornament = (selector, x, y, width, height, rotation=0) => {
+      const element = document.querySelector(selector);
+      if (!element) return '';
+      return `<g transform="rotate(${rotation} ${x+width/2} ${y+height/2})"><svg x="${x}" y="${y}" width="${width}" height="${height}" viewBox="${element.getAttribute('viewBox')}">${element.innerHTML}</svg></g>`;
+    };
+    const paw = document.querySelector('.paw').innerHTML;
+    const buttons = [180,256,332].map((x,i) => `<g><ellipse cx="${x}" cy="486" rx="${i===1?27:23}" ry="${i===1?24:21}" fill="#a5bd91"/><ellipse cx="${x}" cy="480" rx="${i===1?27:23}" ry="${i===1?24:21}" fill="url(#button)" stroke="none"/><svg x="${x-12}" y="466" width="24" height="24" viewBox="0 0 24 24" fill="#91a87d">${paw}</svg></g>`).join('');
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="600" viewBox="0 0 512 600"><defs><radialGradient id="shell" cx=".3" cy=".1" r=".9"><stop stop-color="#fffff6"/><stop offset=".28" stop-color="#f0f4df"/><stop offset=".65" stop-color="#dce8c6"/><stop offset=".88" stop-color="#c2d6a8"/><stop offset="1" stop-color="#aec997"/></radialGradient><linearGradient id="button" x2="0" y2="1"><stop stop-color="#f8fbe9"/><stop offset=".5" stop-color="#dce9c6"/><stop offset="1" stop-color="#b6cc9d"/></linearGradient><radialGradient id="ear" cx=".3" cy=".2" r=".85"><stop stop-color="#8b9782"/><stop offset=".45" stop-color="#66745d"/><stop offset="1" stop-color="#48553f"/></radialGradient><linearGradient id="bezel" x2=".2" y2="1"><stop stop-color="#a9bd91"/><stop offset=".5" stop-color="#d8e4c0"/><stop offset="1" stop-color="#eff4dd"/></linearGradient></defs><circle cx="131" cy="82" r="48" fill="url(#ear)" stroke="none"/><circle cx="371" cy="82" r="48" fill="url(#ear)" stroke="none"/><path d="M256 64C144 64 65 139 57 283C47 448 105 549 256 552C407 549 465 448 455 283C447 139 368 64 256 64Z" fill="#b5c9a2" stroke="none"/><path d="M256 65C144 65 66 139 58 279C48 437 110 540 256 541C402 540 464 437 454 279C446 139 368 65 256 65Z" fill="url(#shell)" stroke="none"/><path d="M89 210C104 116 177 76 254 76" fill="none" stroke="#fffef2" stroke-width="2.5" stroke-opacity=".7" stroke-linecap="round"/><rect x="104" y="155" width="304" height="286" rx="30" fill="#f5f8e8"/><rect x="109" y="160" width="294" height="276" rx="27" fill="url(#bezel)"/><rect x="121" y="172" width="270" height="252" rx="18" fill="#d9e4b7"/><path d="M108 453c4 35 35 63 62 69" fill="none" stroke="#fffff3" stroke-width="1.5" stroke-opacity=".4"/><ellipse cx="160" cy="111" rx="32" ry="8" transform="rotate(-23 160 111)" fill="#fffffa" opacity=".32"/>${buttons}${ornament('.pet-ribbon',350,30,101,88,14)}${ornament('.pet-sticker',61,246,46,46,-16)}${ornament('.pet-clover',411,275,34,34,12)}${ornament('.pet-bottom',211,522,90,20)}${ornament('.pet-charm',436,350,72,158,-11)}</svg>`;
+    const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+    try {
+      const im=new Image();
+      await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src=url;});
+      return im;
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function renderDevice(c,t,transparent,frame) {
+    const w=c.canvas.width,h=c.canvas.height;
+    c.clearRect(0,0,w,h);
+    if(!transparent){c.fillStyle='#f5f7ef';c.fillRect(0,0,w,h);}
+    c.save();c.scale(w/512,h/600);c.drawImage(frame,0,0,512,600);
+    const screen=document.createElement('canvas');screen.width=screen.height=512;
+    render(screen.getContext('2d'),t,false);
+    c.save();c.beginPath();c.roundRect(121,172,270,252,18);c.clip();
+    c.drawImage(screen,121,172,270,252);c.restore();c.restore();
+  }
+
+  $('savePng').onclick = async () => {
+    if (state.busy) return;
+    setBusy(true);
+    $('status').textContent = 'PNG를 만드는 중…';
+    try {
+      const out = document.createElement('canvas');
+      out.width = 512; out.height = 600;
+      const frame=await prepareDeviceFrame();
+      renderDevice(out.getContext('2d'), state.time, $('transparent').checked, frame);
+      const blob = await new Promise((resolve, reject) => {
+        out.toBlob(b => b ? resolve(b) : reject(new Error('PNG encoding failed')), 'image/png');
+      });
+      download(blob, `pocket-mochi-${reactions[state.reaction].id}.png`);
+      $('status').textContent = 'PNG를 만들었어요. 다운로드를 확인해 주세요.';
+    } catch (error) {
+      $('status').textContent = 'PNG 저장에 실패했어요. 다시 시도해 주세요.';
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  /*
+   * 독립형 GIF89a 인코더.
+   * 고정 6×6×6 RGB 팔레트 + 투명 인덱스.
+   * LZW는 200개 리터럴마다 CLEAR를 출력해 9비트를 유지합니다.
+   * 복잡한 압축 대신 호환성과 단일 파일 구성을 우선합니다.
+   */
+  function makeGif(width, height, transparent) {
+    const chunks = [];
+    const word = (arr, n) => arr.push(n & 255, (n >> 8) & 255);
+    const header = [];
+    for (const ch of 'GIF89a') header.push(ch.charCodeAt(0));
+    word(header, width);
+    word(header, height);
+    header.push(0xF7, 0, 0); // 256색 global color table.
+    const palette = new Uint8Array(768);
+    for (let r = 0; r < 6; r++)
+      for (let g = 0; g < 6; g++)
+        for (let b = 0; b < 6; b++) {
+          const i = 1 + r * 36 + g * 6 + b;
+          palette[i * 3] = r * 51;
+          palette[i * 3 + 1] = g * 51;
+          palette[i * 3 + 2] = b * 51;
+        }
+    chunks.push(new Uint8Array(header), palette);
+    // NETSCAPE2.0: 무한 반복.
+    chunks.push(new Uint8Array([
+      0x21, 0xFF, 11,
+      78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48,
+      3, 1, 0, 0, 0
+    ]));
+
+    function addFrame(rgba) {
+      // disposal=2로 이전 프레임의 흔적을 지웁니다.
+      chunks.push(new Uint8Array([
+        0x21, 0xF9, 4, transparent ? 9 : 8,
+        8, 0, 0, 0
+      ]));
+      const descriptor = [0x2C];
+      word(descriptor, 0); word(descriptor, 0);
+      word(descriptor, width); word(descriptor, height);
+      descriptor.push(0, 8); // local table 없음, 최소 LZW code size=8.
+      chunks.push(new Uint8Array(descriptor));
+
+      const count = width * height;
+      const clearCount = Math.floor((count - 1) / 200);
+      const capacity = Math.ceil((count + clearCount + 2) * 9 / 8);
+      const bytes = new Uint8Array(capacity);
+      let buffer = 0, bits = 0, pos = 0, literals = 0;
+      function emit(code) {
+        buffer |= code << bits;
+        bits += 9;
+        while (bits >= 8) {
+          bytes[pos++] = buffer & 255;
+          buffer >>>= 8;
+          bits -= 8;
+        }
+      }
+      emit(256); // CLEAR.
+      for (let p = 0; p < rgba.length; p += 4) {
+        if (literals === 200) {
+          emit(256);
+          literals = 0;
+        }
+        let index = 0;
+        if (!transparent || rgba[p + 3] >= 128) {
+          // 가벼운 ordered dithering으로 팔레트 밴딩을 줄입니다.
+          const pixel = p / 4, x = pixel % width, y = Math.floor(pixel / width);
+          const matrix = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+          const offset = (matrix[(y % 4) * 4 + x % 4] - 7.5) * 2;
+          const q = value => Math.max(0, Math.min(5, Math.round((value + offset) / 51)));
+          index = 1 + q(rgba[p]) * 36 + q(rgba[p + 1]) * 6 + q(rgba[p + 2]);
+        }
+        emit(index);
+        literals++;
+      }
+      emit(257); // END.
+      if (bits) bytes[pos++] = buffer & 255;
+
+      const data = bytes.subarray(0, pos);
+      const blocks = new Uint8Array(pos + Math.ceil(pos / 255) + 1);
+      let source = 0, target = 0;
+      while (source < pos) {
+        const n = Math.min(255, pos - source);
+        blocks[target++] = n;
+        blocks.set(data.subarray(source, source + n), target);
+        target += n;
+        source += n;
+      }
+      blocks[target] = 0;
+      chunks.push(blocks);
+    }
+    return {
+      addFrame,
+      finish() {
+        chunks.push(new Uint8Array([0x3B]));
+        return new Blob(chunks, { type: 'image/gif' });
+      }
+    };
+  }
+
+  $('saveGif').onclick = async () => {
+    if (state.busy) return;
+    setBusy(true);
+    try {
+      const size = 320, height = 375, frames = 25;
+      const frame=await prepareDeviceFrame();
+      const transparent = $('transparent').checked;
+      const out = document.createElement('canvas');
+      out.width = size; out.height = height;
+      const c = out.getContext('2d', { willReadFrequently: true });
+      const gif = makeGif(size, height, transparent);
+      for (let i = 0; i < frames; i++) {
+        $('status').textContent = `움짤 만드는 중… ${Math.round(i / frames * 100)}%`;
+        // 진행 표시를 화면에 반영할 시간을 줍니다.
+        await new Promise(resolve => setTimeout(resolve, 0));
+        renderDevice(c, i * 2 / frames, transparent, frame);
+        gif.addFrame(c.getImageData(0, 0, size, height).data);
+      }
+      const blob = gif.finish();
+      download(blob, `pocket-mochi-${reactions[state.reaction].id}.gif`);
+      $('status').textContent =
+        `GIF를 만들었어요! 약 ${(blob.size / 1024 / 1024).toFixed(1)}MB · 다운로드를 확인해 주세요.`;
+    } catch (error) {
+      console.error(error);
+      $('status').textContent = '움짤 저장에 실패했어요. 다른 사진으로 다시 시도해 주세요.';
+    } finally {
+      setBusy(false);
+      render(ctx, state.time);
+    }
+  };
+
+  prepareDeviceFrame().then(frame => {
+    const raster=document.createElement('canvas');raster.width=1024;raster.height=1200;
+    raster.getContext('2d').drawImage(frame,0,0,1024,1200);
+    document.querySelector('.device').style.backgroundImage=`url(${raster.toDataURL('image/png')})`;
+  }).catch(error => { console.error(error); $('status').textContent='기기 틀을 불러오지 못했습니다. 새로고침해 주세요.'; });
+  updateReaction();
+  updatePause();
+  syncFace();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
