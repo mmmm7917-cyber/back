@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>다마고치 기기 공방</title>
+  <style>
+    :root{
+      --bg:#f6f3ee;
+      --panel:#fffdf9;
+      --line:#e6ddd0;
+      --ink:#4a4038;
+      --accent:#c98f86;
+      --shadow:rgba(62,48,42,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif;
+    }
+    button,input,select{font:inherit}
+    header{
+      padding:18px 26px;
+      font-size:22px;
+      font-weight:700;
+    }
+    header small{
+      font-weight:400;
+      font-size:13px;
+      color:#9a8d80;
+      margin-left:8px;
+    }
+    main{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:18px;
+      padding:0 26px 26px;
+    }
+    aside{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:6px 16px;
+      max-height:calc(100vh - 90px);
+      overflow:auto;
+    }
+    .sec{padding:12px 0;border-bottom:1px dashed var(--line)}
+    .sec:last-child{border-bottom:0}
+    .lab{
+      font-size:12px;letter-spacing:.08em;color:#a08f80;margin-bottom:8px;font-weight:700
+    }
+    .seg{display:flex;flex-wrap:wrap;gap:6px}
+    .seg button{
+      flex:1; min-width:60px;
+      padding:8px 6px;border:1px solid var(--line);
+      background:#fff;border-radius:10px;cursor:pointer;font-size:13px;color:var(--ink)
+    }
+    .seg button.on{
+      background:var(--accent);
+      color:#fff;border-color:var(--accent);
+    }
+    label.row{
+      display:flex;justify-content:space-between;align-items:center;font-size:13px;margin:8px 0 2px
+    }
+    input[type=range]{width:100%;accent-color:var(--accent)}
+    input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}
+    select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+    .upload{
+      display:block;text-align:center;padding:14px;border:2px dashed var(--line);border-radius:12px;cursor:pointer;font-size:14px
+    }
+    .upload input{display:none}
+    .check{
+      font-size:13px;display:flex;gap:6px;align-items:center;margin-top:8px
+    }
+    .hidden{display:none}
+    .stage{
+      background:var(--panel);border:1px solid var(--line);border-radius:16px;
+      display:flex;flex-direction:column;align-items:center;padding:16px
+    }
+    canvas{
+      width:100%;max-width:640px;height:auto;border-radius:12px;background:#f5f0eb;
+      box-shadow:0 18px 40px rgba(58,47,40,.08);
+    }
+    .bar{
+      display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center
+    }
+    .bar button{
+      padding:10px 20px;border-radius:12px;border:0;background:var(--ink);color:#fff;cursor:pointer
+    }
+    @media(max-width:820px){main{grid-template-columns:1fr}aside{max-height:none}}
+  </style>
+</head>
+<body>
+  <header>✳ 다마고치 기기 공방</header>
+  <main>
+    <aside>
+      <div class="sec">
+        <div class="lab">이미지</div>
+        <label class="upload">＋ 이미지 올리기<input type="file" id="upload" accept="image/*"></label>
+        <label class="check"><input type="checkbox" id="rmbg">배경 제거</label>
+        <label class="row">배경 허용치<output id="tolO"></output></label>
+        <input type="range" id="tol" min="5" max="120" value="40">
+      </div>
+
+      <div class="sec">
+        <div class="lab">몸체</div>
+        <div class="seg">
+          <button data-k="body" data-v="egg" class="on">알</button>
+          <button data-k="body" data-v="mini">미니</button>
+          <button data-k="body" data-v="heart">하트</button>
+        </div>
+        <label class="row">몸체 색<input type="color" id="bodyColor" value="#f4d8cf"></label>
+        <label class="row">바닥 색<input type="color" id="groundColor" value="#f3eee7"></label>
+      </div>
+
+      <div class="sec">
+        <div class="lab">화면</div>
+        <div class="seg">
+          <button data-k="screen" data-v="pixel" class="on">픽셀</button>
+          <button data-k="screen" data-v="soft">소프트</button>
+          <button data-k="screen" data-v="lcd">LCD</button>
+        </div>
+        <label class="row">픽셀 크기<output id="pixelO"></output></label>
+        <input type="range" id="pixelSize" min="4" max="32" value="12">
+        <label class="row">화면 테마
+          <select id="theme">
+            <option value="classic">클래식 그린</option>
+            <option value="mono">흑백</option>
+            <option value="pink">핑크</option>
+            <option value="color">컬러</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="sec">
+        <div class="lab">효과</div>
+        <label class="check"><input type="checkbox" id="holo" checked>홀로그램</label>
+        <label class="check"><input type="checkbox" id="screenGrid" checked>격자선</label>
+        <label class="check"><input type="checkbox" id="bounce" checked>캐릭터 통통 움직임</label>
+      </div>
+
+      <div class="sec">
+        <div class="lab">문구</div>
+        <input type="text" id="txt" maxlength="18" value="MOCHI">
+        <label class="row">글자색<input type="color" id="tc" value="#c98f86"></label>
+      </div>
+
+      <div class="sec">
+        <div class="lab">고리</div>
+        <div class="seg">
+          <button data-k="ring" data-v="silver" class="on">실버</button>
+          <button data-k="ring" data-v="gold">골드</button>
+          <button data-k="ring" data-v="rose">로즈</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="stage">
+      <canvas id="cv" width="1000" height="1200"></canvas>
+      <div class="bar">
+        <button id="save">PNG 저장</button>
+        <button id="saveGif">GIF 저장</button>
+        <span id="gifStatus" role="status" style="font-size:13px" aria-live="polite"></span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    'use strict';
+    const $ = id => document.getElementById(id);
+    const cv = $('cv');
+    const ctx = cv.getContext('2d');
+    const W = 1000, H = 1200;
+    const state = {
+      body: 'egg',
+      screen: 'pixel',
+      ring: 'silver',
+      theme: 'classic',
+      pixelSize: 12,
+      bodyColor: '#f4d8cf',
+      groundColor: '#f3eee7',
+      txt: 'MOCHI',
+      tc: '#c98f86',
+      bounce: true,
+      holo: true,
+      screenGrid: true,
+      removeBg: false,
+      tol: 40,
+      source: null,
+      t: 0
+    };
+
+    const mk = (w,h) => {
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      return c;
+    };
+
+    function defaultAvatar() {
+      const c = mk(400,420), g = c.getContext('2d');
+      const e = (x,y,rx,ry,col,r=0) => {
+        g.beginPath();
+        g.ellipse(x,y,rx,ry,r,0,Math.PI*2);
+        g.fillStyle = col;
+        g.fill();
+      };
+      e(120,110,38,80,'#f3cfcd',-.25);
+      e(280,110,38,80,'#f3cfcd',.25);
+      e(120,115,18,55,'#fff3e3',-.25);
+      e(280,115,18,55,'#fff3e3',.25);
+      e(200,260,165,145,'#f3cfcd');
+      e(200,270,125,105,'#fff5df');
+      e(155,265,11,15,'#4a4038');
+      e(245,265,11,15,'#4a4038');
+      e(125,300,20,11,'#f6b9b3');
+      e(275,300,20,11,'#f6b9b3');
+      g.strokeStyle='#4a4038';g.lineWidth=5;g.lineCap='round';
+      g.beginPath();g.arc(188,292,12,.2,Math.PI-.2);g.stroke();
+      g.beginPath();g.arc(212,292,12,.2,Math.PI-.2);g.stroke();
+      return c;
+    }
+
+    function processImage() {
+      if (!state.source) return null;
+      const src = state.source;
+      const scale = Math.min(1, 700 / Math.max(src.width, src.height));
+      const c = mk(Math.round(src.width * scale), Math.round(src.height * scale));
+      const g = c.getContext('2d');
+      g.drawImage(src, 0, 0, c.width, c.height);
+
+      if (state.removeBg) {
+        const { width:w, height:h } = c;
+        const img = g.getImageData(0,0,w,h);
+        const p = img.data;
+        const tol = Number(state.tol) * 3;
+        const r0 = p[0], g0 = p[1], b0 = p[2];
+        const seen = new Uint8Array(w*h);
+        const stack = [];
+        for (let x=0; x<w; x++) stack.push(x, (h-1)*w + x);
+        for (let y=0; y<h; y++) stack.push(y*w, y*w + w - 1);
+
+        while (stack.length) {
+          const i = stack.pop();
+          if (seen[i]) continue;
+          seen[i] = 1;
+          const k=i*4;
+          if (p[k+3] <= 10) continue;
+          if (Math.abs(p[k]-r0)+Math.abs(p[k+1]-g0)+Math.abs(p[k+2]-b0) > tol) continue;
+          p[k+3] = 0;
+
+          const x = i % w;
+          if (x>0) stack.push(i-1);
+          if (x<w-1) stack.push(i+1);
+          if (i>=w) stack.push(i-w);
+          if (i<w*(h-1)) stack.push(i+w);
+        }
+        g.putImageData(img,0,0);
+      }
+      return c;
+    }
+
+    function makePixelArt(img, size) {
+      const src = img || defaultAvatar();
+      const tile = Math.max(4, size); // 4..32
+      const w = src.width;
+      const h = src.height;
+      const c = mk(w, h);
+      const g = c.getContext('2d');
+      const sx = Math.max(1, Math.round(w / tile));
+      const sy = Math.max(1, Math.round(h / tile));
+      const scaleX = Math.max(1, Math.round(w / sx));
+      const scaleY = Math.max(1, Math.round(h / sy));
+
+      // Match pixel style
+      const base = mk(w, h);
+      const bg = base.getContext('2d');
+      bg.imageSmoothingEnabled = false;
+      bg.drawImage(src, 0, 0, w, h);
+
+      const out = mk(w, h);
+      const og = out.getContext('2d');
+      og.imageSmoothingEnabled = false;
+      const data = bg.getImageData(0, 0, w, h).data;
+      const cell = Math.max(4, tile);
+
+      for (let y = 0; y < h; y += cell) {
+        for (let x = 0; x < w; x += cell) {
+          let r=0,g2=0,b=0,a=0,count=0;
+          for (let yy=0; yy<cell; yy++) {
+            for (let xx=0; xx<cell; xx++) {
+              const px = x + xx, py = y + yy;
+              if (px >= w || py >= h) continue;
+              const idx = (py*w + px) * 4;
+              const alpha = data[idx+3];
+              if (alpha < 10) continue;
+              r += data[idx];
+              g2 += data[idx+1];
+              b += data[idx+2];
+              a += alpha;
+              count++;
+            }
+          }
+          if (count === 0) continue;
+          const rr = Math.round(r / count), gg = Math.round(g2 / count), bb = Math.round(b / count);
+          og.fillStyle = `rgba(${rr},${gg},${bb},1)`;
+          og.fillRect(x, y, cell, cell);
+        }
+      }
+      return out;
+    }
+
+    function themeColors(mode) {
+      if (mode === 'mono') return ['#d8d8d8', '#4d4d4d', '#b3b3b3'];
+      if (mode === 'pink') return ['#f9d2d9', '#f39bb2', '#ffebef'];
+      if (mode === 'color') return ['#7ee3a2', '#8cd3ff', '#ffd873'];
+      return ['#b5d7a8', '#6b8f6a', '#d7ebca']; // classic green
+    }
+
+    function shellPath(g) {
+      g.beginPath();
+      if (state.body === 'mini') {
+        g.roundRect(220, 330, 560, 650, 180);
+      } else if (state.body === 'heart') {
+        g.moveTo(500, 365);
+        g.bezierCurveTo(350, 235, 155, 330, 175, 540);
+        g.bezierCurveTo(175, 760, 330, 910, 500, 1010);
+        g.bezierCurveTo(670, 910, 825, 760, 825, 540);
+        g.bezierCurveTo(845, 330, 650, 235, 500, 365);
+      } else {
+        g.ellipse(500, 650, 320, 350, 0, 0, Math.PI * 2);
+      }
+    }
+    function drawBodyShell(g) {
+      g.save();
+      shellPath(g); g.fillStyle = state.bodyColor; g.fill();
+      g.clip();
+      g.fillStyle = 'rgba(255,255,255,.13)';
+      g.beginPath();g.ellipse(370,430,210,140,-.4,0,Math.PI*2);g.fill();
+      g.restore();
+    }
+
+    function drawScreen(g, now) {
+      const x = 500, y = 630;
+      const w = 420, h = 320;
+      const frame = mk(w, h);
+      const fg = frame.getContext('2d');
+
+      // themed background
+      const [a, b, ccol] = themeColors(state.theme);
+      const bgGrad = fg.createLinearGradient(0,0,w,h);
+      bgGrad.addColorStop(0, a);
+      bgGrad.addColorStop(0.4, b);
+      bgGrad.addColorStop(1, ccol);
+      fg.fillStyle = bgGrad;
+      fg.fillRect(0,0,w,h);
+
+      if (state.screen === 'soft') {
+        fg.fillStyle = 'rgba(255,255,255,0.18)';
+        for (let i = 0; i < 12; i++) fg.fillRect(0, i*28+12, w, 1);
+      }
+
+      // content: pixel avatar
+      let art = processImage();
+      if (!art) art = defaultAvatar();
+      art = makePixelArt(art, Number(state.pixelSize));
+
+      const s = Math.min(w / art.width, h / art.height);
+      const aw = art.width * s * 0.82;
+      const ah = art.height * s * 0.82;
+      const px = (w - aw) / 2;
+      const py = (h - ah) / 2;
+
+      fg.save();
+      fg.translate(px, py);
+      fg.beginPath();
+      fg.rect(-px, -py, w, h);
+      fg.clip();
+
+      // subtle screen glow
+      const glow = fg.createRadialGradient(aw*0.5, ah*0.48, 20, aw*0.5, ah*0.5, aw*0.8);
+      glow.addColorStop(0, 'rgba(255,255,255,0.75)');
+      glow.addColorStop(1, 'rgba(255,255,255,0)');
+      fg.fillStyle = glow;
+      fg.fillRect(0,0,aw,ah);
+
+      fg.imageSmoothingEnabled = false;
+      const hop = state.bounce ? -14 * (1 - Math.cos(now * 3)) / 2 : 0;
+      fg.drawImage(art, 0, hop, aw, ah);
+      fg.restore();
+
+      // screen grid
+      if (state.screenGrid) {
+        fg.strokeStyle = 'rgba(255,255,255,0.18)';
+        fg.lineWidth = 1;
+        for (let i = 0; i <= 12; i++) {
+          const x = (w / 12) * i;
+          fg.beginPath(); fg.moveTo(x,0); fg.lineTo(x,h); fg.stroke();
+        }
+        for (let i = 0; i <= 8; i++) {
+          const y = (h / 8) * i;
+          fg.beginPath(); fg.moveTo(0,y); fg.lineTo(w,y); fg.stroke();
+        }
+      }
+
+      // overlay
+      if (state.screen === 'lcd') {
+        const lcd = fg.createLinearGradient(0,0,w,h);
+        lcd.addColorStop(0,'rgba(255,255,255,0.32)');
+        lcd.addColorStop(0.4,'rgba(255,255,255,0)');
+        lcd.addColorStop(1,'rgba(255,255,255,0.18)');
+        fg.fillStyle = lcd;
+        fg.fillRect(0,0,w,h);
+      }
+
+      // actual draw on main canvas
+      const sx = x - w/2, sy = y - h/2;
+      ctx.save();
+      ctx.translate(0, 0);
+
+      // screen frame
+      ctx.fillStyle = '#d5d0cb';
+      ctx.beginPath();
+      ctx.roundRect(sx - 36, sy - 38, w + 72, h + 76, 28);
+      ctx.fill();
+
+      // screen edge
+      ctx.fillStyle = '#a9a3a0';
+      ctx.beginPath();
+      ctx.roundRect(sx - 18, sy - 20, w + 36, h + 40, 18);
+      ctx.fill();
+
+      // screen inside
+      ctx.fillStyle = '#b8c8bc';
+      ctx.beginPath();
+      ctx.roundRect(sx - 6, sy - 8, w + 12, h + 16, 14);
+      ctx.fill();
+
+      // reflective glow
+      const shine = ctx.createLinearGradient(sx, sy, sx + w, sy + h);
+      shine.addColorStop(0, 'rgba(255,255,255,0.40)');
+      shine.addColorStop(0.2, 'rgba(255,255,255,0.08)');
+      shine.addColorStop(0.8, 'rgba(255,255,255,0.02)');
+      shine.addColorStop(1, 'rgba(255,255,255,0.36)');
+      ctx.fillStyle = shine;
+      ctx.beginPath();
+      ctx.roundRect(sx, sy, w, h, 14);
+      ctx.fill();
+
+      ctx.drawImage(frame, sx, sy);
+
+      // casing speaker / buttons
+      ctx.fillStyle = '#f7f0ed';
+      ctx.fillRect(sx + 68, sy + h + 32, 100, 12);
+      ctx.fillRect(sx + w - 168, sy + h + 32, 100, 12);
+      ctx.fillStyle = '#c9b0a2';
+      ctx.beginPath();
+      ctx.arc(sx + w - 70, sy + h + 40, 16, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath();
+      ctx.arc(sx + 70, sy + h + 40, 16, 0, Math.PI * 2); ctx.fill();
+
+      // little status
+      ctx.fillStyle = '#ff8aa3';
+      ctx.beginPath();
+      ctx.arc(sx + 70, sy + 58, 8, 0, Math.PI * 2); ctx.fill();
+
+      // brand text
+      ctx.fillStyle = '#8d7d74';
+      ctx.font = '700 28px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Mochi', sx + w / 2, sy - 42);
+
+      ctx.restore();
+    }
+
+    function drawKeyRing(g, cycle) {
+      const metal = state.ring === 'gold'
+        ? ['#a87a25','#f6dc8f']
+        : state.ring === 'rose'
+          ? ['#b47468','#f7d2c8']
+          : ['#868d95','#f2f4f6'];
+
+      const grad = g.createLinearGradient(500 - 120, 240, 500 + 120, 240);
+      grad.addColorStop(0, metal[1]);
+      grad.addColorStop(0.45, metal[0]);
+      grad.addColorStop(1, metal[1]);
+
+      g.save();
+      g.translate(500, 228);
+
+      g.strokeStyle = grad;
+      g.lineWidth = 12;
+      g.beginPath();
+      g.ellipse(0, 0, 96, 72, 0, 0, Math.PI * 2);
+      g.stroke();
+
+      // ring connector
+      g.lineWidth = 10;
+      g.strokeStyle = grad;
+      g.beginPath();
+      g.moveTo(-14, 48); g.lineTo(-14, 145); g.stroke();
+      g.beginPath();
+      g.moveTo(14, 48); g.lineTo(14, 145); g.stroke();
+      g.restore();
+    }
+
+    function drawHolo(g) {
+      if (!state.holo) return;
+      g.save();shellPath(g);g.clip();
+      const sheen = g.createLinearGradient(170,350,830,980);
+      ['#ffc9dd','#fff1b9','#c8f1e0','#c7e7fa','#e7d0f5'].forEach((c,i)=>sheen.addColorStop(i/4,c));
+      g.globalAlpha=.25;g.fillStyle=sheen;g.fillRect(150,280,700,750);
+      g.restore();
+    }
+
+    function drawBadgeText(g) {
+      const txt = (state.txt || '').trim();
+      if (!txt) return;
+      g.save();
+      g.fillStyle = state.tc;
+      g.font = '800 46px system-ui, sans-serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.lineWidth = 8;
+      g.strokeStyle = 'rgba(255,255,255,0.6)';
+      g.strokeText(txt, 500, 1040);
+      g.fillText(txt, 500, 1040);
+      g.restore();
+    }
+
+    function render() {
+      ctx.clearRect(0,0,W,H);
+
+      // backdrop
+      ctx.fillStyle = state.groundColor;
+      ctx.fillRect(0,0,W,H);
+
+      // floor shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.06)';
+      ctx.beginPath();
+      ctx.ellipse(500, 1075, 270, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Fixed shell and hardware; only the avatar animates.
+      drawBodyShell(ctx);
+
+      // holo layer
+      drawHolo(ctx);
+
+      // screen
+      drawScreen(ctx, state.t);
+
+      // keys
+      drawKeyRing(ctx, state.t);
+
+      // bottom text
+      drawBadgeText(ctx);
+
+      // little heart icon
+      ctx.save();
+      ctx.translate(500, 300);
+      ctx.scale(1.2, 1.2);
+      ctx.fillStyle = '#ff7b9d';
+      ctx.beginPath();
+      ctx.moveTo(0,12);
+      ctx.bezierCurveTo(-14,-12,-30,-12,-30,4);
+      ctx.bezierCurveTo(-30,18,-18,26,0,36);
+      ctx.bezierCurveTo(18,26,30,18,30,4);
+      ctx.bezierCurveTo(30,-12,14,-12,0,12);
+      ctx.fill();
+      ctx.restore();
+
+      // little hand / stand
+      ctx.fillStyle = 'rgba(255,255,255,0.32)';
+      ctx.beginPath();
+      ctx.ellipse(500, 1080, 200, 26, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function outputs() {
+      $('tolO').textContent = $('tol').value;
+      $('pixelO').textContent = $('pixelSize').value + 'px';
+      document.querySelectorAll('[data-show]').forEach(el => el.classList.add('hidden'));
+    }
+
+    function refreshStateFromControls() {
+      state.body = document.querySelector('[data-k="body"].on')?.dataset.v || 'egg';
+      state.screen = document.querySelector('[data-k="screen"].on')?.dataset.v || 'pixel';
+      state.ring = document.querySelector('[data-k="ring"].on')?.dataset.v || 'silver';
+      state.bodyColor = $('bodyColor').value;
+      state.groundColor = $('groundColor').value;
+      state.pixelSize = Number($('pixelSize').value);
+      state.theme = $('theme').value;
+      state.txt = $('txt').value;
+      state.tc = $('tc').value;
+      state.removeBg = $('rmbg').checked;
+      state.tol = Number($('tol').value);
+      state.holo = $('holo').checked;
+      state.screenGrid = $('screenGrid').checked;
+      state.bounce = $('bounce').checked;
+    }
+
+    document.querySelectorAll('.seg button').forEach(btn => {
+      btn.onclick = () => {
+        const group = btn.dataset.k;
+        document.querySelectorAll(`[data-k="${group}"]`).forEach(x => x.classList.toggle('on', x === btn));
+        refreshStateFromControls();
+      };
+    });
+
+    $('upload').onchange = e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const im = new Image();
+      im.onload = () => {
+        state.source = im;
+        refreshStateFromControls();
+      };
+      im.src = URL.createObjectURL(f);
+    };
+
+    ['tol','pixelSize','bodyColor','groundColor','theme','txt','tc','rmbg','holo','screenGrid','bounce']
+      .forEach(id => {
+        $(id).addEventListener('input', () => {
+          refreshStateFromControls();
+        });
+        $(id).addEventListener('change', () => {
+          refreshStateFromControls();
+        });
+      });
+
+    $('save').onclick = () => {
+      render();
+      cv.toBlob(b => {
+        if (!b) return;
+        const a = document.createElement('a');
+        const u = URL.createObjectURL(b);
+        a.href = u;
+        a.download = 'mochi_device.png';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(u), 5000);
+      });
+    };
+
+
+    let exporting = false;
+    // GIF89a encoder: bounded 9-bit LZW dictionary avoids code-width transitions.
+    function gifLzw(pixels) {
+      const bytes=[]; let bits=0, count=0;
+      const emit=c=>{bits|=c<<count;count+=9;while(count>=8){bytes.push(bits&255);bits>>>=8;count-=8;}};
+      let dict=new Map(), next=258, prefix=pixels[0]; emit(256);
+      for(let i=1;i<pixels.length;i++){
+        const c=pixels[i], key=prefix*256+c;
+        if(dict.has(key)){prefix=dict.get(key);continue;}
+        emit(prefix); dict.set(key,next++); prefix=c;
+        if(next===511){emit(256);dict.clear();next=258;}
+      }
+      emit(prefix);emit(257);if(count)bytes.push(bits&255);
+      return bytes;
+    }
+    $('saveGif').onclick = async () => {
+      if(exporting)return;
+      exporting=true;
+      const controls=[...document.querySelectorAll('button,input,select')];
+      const previous=controls.map(e=>e.disabled);controls.forEach(e=>e.disabled=true);
+      const oldTime=state.t, status=$('gifStatus');
+      try {
+        const width=500,height=600,frames=40,parts=[];
+        const push=a=>parts.push(new Uint8Array(a));
+        const word=v=>[v&255,v>>8];
+        push([...Array.from('GIF89a',c=>c.charCodeAt(0)),...word(width),...word(height),247,0,0]);
+        // Build one shared palette from the full scene, including uploaded artwork.
+        const small=mk(width,height), sg=small.getContext('2d',{willReadFrequently:true});
+        const hist=new Map();
+        for(let n=0;n<8;n++){
+          state.t=n/8*Math.PI*2;render();sg.drawImage(cv,0,0,width,height);
+          const d=sg.getImageData(0,0,width,height).data;
+          for(let k=0;k<d.length;k+=16){const key=(d[k]>>3)<<10|(d[k+1]>>3)<<5|(d[k+2]>>3);hist.set(key,(hist.get(key)||0)+1);}
+        }
+        let boxes=[[...hist].map(([k,n])=>({r:(k>>10)*8+4,g:((k>>5)&31)*8+4,b:(k&31)*8+4,n}))];
+        while(boxes.length<256){
+          let bi=-1,score=-1,axis='r';
+          boxes.forEach((box,i)=>{if(box.length<2)return;for(const a of ['r','g','b']){const vals=box.map(p=>p[a]);const v=(Math.max(...vals)-Math.min(...vals))*Math.sqrt(box.reduce((s,p)=>s+p.n,0));if(v>score){score=v;bi=i;axis=a;}}});
+          if(bi<0)break;
+          const box=boxes.splice(bi,1)[0].sort((a,b)=>a[axis]-b[axis]);
+          const total=box.reduce((s,p)=>s+p.n,0);let acc=0,j=0;
+          while(j<box.length-1 && acc<total/2)acc+=box[j++].n;
+          boxes.push(box.slice(0,j),box.slice(j));
+        }
+        const palette=boxes.map(box=>{const total=box.reduce((s,p)=>s+p.n,0);return ['r','g','b'].map(a=>Math.round(box.reduce((s,p)=>s+p[a]*p.n,0)/total));});
+        while(palette.length<256)palette.push([0,0,0]);push(palette.flat());
+        push([33,255,11,...Array.from('NETSCAPE2.0',c=>c.charCodeAt(0)),3,1,0,0,0]);
+        const lookup=new Int16Array(32768).fill(-1);
+        for(let n=0;n<frames;n++){
+          state.t=n/frames*Math.PI*2;render();sg.drawImage(cv,0,0,width,height);
+          const rgba=sg.getImageData(0,0,width,height).data,indices=new Uint8Array(width*height);
+          for(let i=0,k=0;i<indices.length;i++,k+=4){
+            const key=(rgba[k]>>3)<<10|(rgba[k+1]>>3)<<5|(rgba[k+2]>>3);
+            if(lookup[key]<0){let best=Infinity,idx=0;const r=(key>>10)*8+4,g=((key>>5)&31)*8+4,b=(key&31)*8+4;
+              palette.forEach((p,j)=>{const dist=(r-p[0])**2+(g-p[1])**2+(b-p[2])**2;if(dist<best){best=dist;idx=j;}});lookup[key]=idx;}
+            indices[i]=lookup[key];
+          }
+          push([33,249,4,4,5,0,0,0,44,0,0,0,0,...word(width),...word(height),0,8]);
+          const data=gifLzw(indices);
+          for(let j=0;j<data.length;j+=255){const block=data.slice(j,j+255);push([block.length,...block]);}push([0]);
+          status.textContent=`GIF 만드는 중 ${Math.round((n+1)/frames*100)}%`;
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+        push([59]);
+        const url=URL.createObjectURL(new Blob(parts,{type:'image/gif'}));
+        const link=document.createElement('a');link.href=url;link.download='mochi_device.gif';link.click();
+        setTimeout(()=>URL.revokeObjectURL(url),30000);status.textContent='GIF 저장 완료';
+      } catch(error){console.error(error);status.textContent='GIF 저장에 실패했어요. 다시 시도해 주세요.';}
+      finally {state.t=oldTime;exporting=false;controls.forEach((e,i)=>e.disabled=previous[i]);render();}
+    };
+
+    function loop(ts) {
+      if (exporting) { requestAnimationFrame(loop); return; }
+      state.t = ts / 1000 * Math.PI;
+      render();
+      requestAnimationFrame(loop);
+    }
+
+    function init() {
+      $('tolO').textContent = $('tol').value;
+      $('pixelO').textContent = $('pixelSize').value + 'px';
+      refreshStateFromControls();
+      requestAnimationFrame(loop);
+    }
+
+    init();
+  </script>
+</body>
+</html>
