@@ -1,0 +1,128 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>창문형 캐릭터 하우스</title><style>
+:root{--ink:#3f514b;--muted:#8b9690;--line:#e1e7df;--accent:#667e6c;--paper:#fffefa}*{box-sizing:border-box}body{margin:0;background:#f3f5ef;color:var(--ink);font:14px system-ui,-apple-system,"Malgun Gothic",sans-serif}button,input,select{font:inherit}button{cursor:pointer;color:inherit}button:disabled{cursor:wait;opacity:.6}header{max-width:1120px;margin:auto;padding:30px 24px 22px;display:flex;align-items:center;gap:12px}header svg{width:32px;height:38px}h1{font-size:21px;letter-spacing:-.06em;margin:0;font-weight:650}main{max-width:1120px;margin:auto;padding:0 24px 32px;display:grid;grid-template-columns:290px minmax(0,1fr);gap:22px}.controls{background:var(--paper);padding:6px 20px 12px;border-radius:22px;border:1px solid var(--line)}section{padding:19px 0;border-bottom:1px solid var(--line)}section:last-child{border:0}h2{font-size:13px;margin:0 0 13px;font-weight:700;display:flex;align-items:center;gap:8px}h2 span{font-size:10px;color:#93a18e;font-weight:500}label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:12px}output{font-variant-numeric:tabular-nums;color:var(--muted)}input[type=range]{width:100%;height:20px;accent-color:var(--accent);margin:5px 0 0}input[type=color]{border:0;padding:0;background:none;width:32px;height:26px;cursor:pointer}input[type=text],select{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fffefa;color:var(--ink)}input[type=checkbox]{accent-color:var(--accent)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.grid button{border:1px solid var(--line);border-radius:10px;padding:9px 3px;background:#fffefa;font-size:12px}.grid button.on{background:#e5eddf;border-color:#b4c5aa;color:#39533e}.upload{border:1px dashed #acbba5;border-radius:12px;padding:13px;text-align:center;display:block;font-size:12px;background:#f5f8f0;cursor:pointer}.upload input{display:none}.smallbtn{border:0;background:none;padding:7px 0 0;color:var(--muted);font-size:11px}.colorrow{display:grid;grid-template-columns:1fr 1fr;gap:13px}.check{justify-content:flex-start;margin-top:13px}.presets{display:flex;gap:7px;margin-bottom:13px}.presets button{width:28px;height:28px;border:3px solid #fff;outline:1px solid #dbe2d5;border-radius:50%;padding:0}.preview{min-width:0;align-self:start;position:sticky;top:20px}.canvas-wrap{background:#e8eee3;border-radius:24px;padding:16px;position:relative;border:1px solid #dce4d6}canvas{display:block;width:100%;height:auto;border-radius:13px;touch-action:none}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}.toolbar button{border:1px solid #d7dfd0;background:#fffefa;border-radius:11px;padding:11px 17px;font-size:13px}.toolbar .primary{background:var(--accent);border-color:var(--accent);color:#fff}.toolbar .play{margin-right:auto}#status{display:block;min-height:20px;font-size:12px;color:#7d8b77;margin:10px 2px}details{margin-top:12px;font-size:12px}summary{cursor:pointer;color:#7d8b77}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #7d9a75;outline-offset:3px}@media(max-width:760px){header{padding:20px 16px 18px}main{display:flex;flex-direction:column;padding:0 14px 24px;gap:14px}.preview{position:static;order:-1}.canvas-wrap{padding:9px;border-radius:18px}canvas{max-height:560px;width:100%;object-fit:contain}.controls{padding:4px 18px}.toolbar button{padding:10px 13px}h1{font-size:19px}}
+</style></head><body><header><svg viewBox="0 0 32 38" aria-hidden="true"><path fill="#809779" d="M2 36V17a14 14 0 0 1 28 0v19z"/><path fill="#f3f5ef" d="M6 32V17a10 10 0 0 1 20 0v15z"/><path fill="#809779" d="M14 6h4v28h-4zM4 20h24v3H4z"/></svg><h1>창문형 캐릭터 하우스</h1></header><main><aside class="controls">
+<section><h2><span>01</span> 캐릭터</h2><label class="upload">＋ 이미지 올리기<input id="upload" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label><button id="clearImage" class="smallbtn">기본 캐릭터로</button><label>크기 <output id="sizeO"></output></label><input id="size" type="range" min="35" max="150" value="90"><details><summary>위치 조절</summary><label>좌우 <output id="xO"></output></label><input id="x" type="range" min="-160" max="160" value="0"><label>높이 <output id="yO"></output></label><input id="y" type="range" min="-160" max="120" value="0"></details><label class="check"><input type="checkbox" id="bounce" checked>캐릭터 통통 움직임</label></section>
+<section><h2><span>02</span> 창문과 벽</h2><div class="presets"><button data-preset="sage" style="background:#c6d2bd" title="세이지"></button><button data-preset="rose" style="background:#e4c4c6" title="로즈"></button><button data-preset="blue" style="background:#bfd0dc" title="블루"></button><button data-preset="cream" style="background:#e6d9b9" title="크림"></button></div><div class="grid" data-group="shape"><button data-value="arch" class="on">아치</button><button data-value="square">사각</button><button data-value="cottage">코티지</button></div><div class="colorrow"><label>벽<input id="wall" type="color" value="#c6d2bd"></label><label>창틀<input id="frame" type="color" value="#fff9e9"></label></div><label>벽 무늬<select id="pattern"><option value="panel">세로 패널</option><option value="brick">벽돌</option><option value="plain">없음</option></select></label><label class="check"><input type="checkbox" id="crossbar">창살</label></section>
+<section><h2><span>03</span> 커튼</h2><div class="grid" data-group="curtainStyle"><button data-value="plain" class="on">무지</button><button data-value="gingham">깅엄</button><button data-value="none">없음</button></div><label>색<input id="curtain" type="color" value="#d9aaa1"></label><label>열림 <output id="openO"></output></label><input id="open" type="range" min="0" max="100" value="76"></section>
+<section><h2><span>04</span> 창밖</h2><div class="grid" data-group="time"><button data-value="day" class="on">낮</button><button data-value="dusk">노을</button><button data-value="night">밤</button></div><label>날씨<select id="weather"><option value="clear">맑음</option><option value="rain">비</option><option value="snow">눈</option><option value="stars">별빛</option></select></label></section>
+<section><h2><span>05</span> 창가 소품</h2><label>화분<select id="plant"><option value="flowers">작은 꽃</option><option value="leaves">초록 잎</option><option value="cactus">선인장</option><option value="none">없음</option></select></label><div class="colorrow"><label>화분<input id="pot" type="color" value="#b7816d"></label><label>꽃<input id="flower" type="color" value="#f4d99a"></label></div><label class="check"><input type="checkbox" id="lights" checked>전구 장식</label><label>이름표</label><input id="name" type="text" maxlength="20" placeholder="이름 입력" value=""><label class="check"><input type="checkbox" id="roof" checked>작은 지붕</label></section>
+</aside><div class="preview"><div class="canvas-wrap"><canvas id="cv" width="900" height="1000" aria-label="창문형 캐릭터 하우스 미리보기"></canvas></div><div class="toolbar"><button id="pause" class="play">일시정지</button><button id="save">PNG 저장</button><button id="saveGif" class="primary">GIF 저장</button></div><span id="status" role="status" aria-live="polite"></span></div></main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),cv=$('cv'),ctx=cv.getContext('2d');
+const state={shape:'arch',curtainStyle:'plain',time:'day',wall:'#c6d2bd',frame:'#fff9e9',pattern:'panel',curtain:'#d9aaa1',open:76,weather:'clear',plant:'flowers',pot:'#b7816d',flower:'#f4d99a',lights:true,roof:true,crossbar:false,bounce:true,size:90,x:0,y:0,name:'',t:0};
+let source=null,playing=true,exporting=false,last=0;
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+const TAU=Math.PI*2;
+function rr(g,x,y,w,h,r,c){g.beginPath();g.roundRect(x,y,w,h,r);g.fillStyle=c;g.fill();}
+function ellipse(g,x,y,rx,ry,c,rot=0){g.beginPath();g.ellipse(x,y,rx,ry,rot,0,TAU);g.fillStyle=c;g.fill();}
+function line(g,x1,y1,x2,y2,c,w=2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.strokeStyle=c;g.lineWidth=w;g.lineCap='round';g.stroke();}
+function blend(hex,other,amount){const a=hex.match(/\w\w/g).map(x=>parseInt(x,16)),b=other.match(/\w\w/g).map(x=>parseInt(x,16));return '#'+a.map((n,i)=>Math.round(n+(b[i]-n)*amount).toString(16).padStart(2,'0')).join('');}
+function windowPath(g,pad=0){const l=220-pad,r=680+pad,top=220-pad,bottom=755+pad;g.beginPath();if(state.shape==='arch'){g.moveTo(l,bottom);g.lineTo(l,420);g.bezierCurveTo(l,top,l+90,top,r-230,top);g.bezierCurveTo(r-90,top,r,top,r,420);g.lineTo(r,bottom);g.closePath();}else if(state.shape==='cottage'){g.moveTo(l,bottom);g.lineTo(l,365);g.lineTo(450,top);g.lineTo(r,365);g.lineTo(r,bottom);g.closePath();}else{g.roundRect(l,top,r-l,bottom-top,28+pad*.2);}}
+function windowFill(g,pad,c){windowPath(g,pad);g.fillStyle=c;g.fill();}
+function heart(g,x,y,s,c){g.save();g.translate(x,y);g.scale(s,s);g.beginPath();g.moveTo(0,7);g.bezierCurveTo(-22,-7,-13,-20,0,-8);g.bezierCurveTo(13,-20,22,-7,0,7);g.fillStyle=c;g.fill();g.restore();}
+function star(g,x,y,s,c){g.beginPath();g.moveTo(x,y-s);g.quadraticCurveTo(x+s*.17,y-s*.17,x+s,y);g.quadraticCurveTo(x+s*.17,y+s*.17,x,y+s);g.quadraticCurveTo(x-s*.17,y+s*.17,x-s,y);g.quadraticCurveTo(x-s*.17,y-s*.17,x,y-s);g.fillStyle=c;g.fill();}
+function demo(){const c=mk(300,380),g=c.getContext('2d');ellipse(g,148,284,75,87,'#f5e8d3');ellipse(g,104,351,33,20,'#f5e8d3');ellipse(g,193,351,33,20,'#f5e8d3');ellipse(g,79,92,35,66,'#f5e8d3',-.2);ellipse(g,222,92,35,66,'#f5e8d3',.2);ellipse(g,79,92,18,43,'#dfb7ac',-.2);ellipse(g,222,92,18,43,'#dfb7ac',.2);ellipse(g,150,181,118,101,'#f5e8d3');ellipse(g,109,180,7,10,'#62584e');ellipse(g,191,180,7,10,'#62584e');ellipse(g,79,205,19,10,'#edb6ac');ellipse(g,221,205,19,10,'#edb6ac');ellipse(g,150,200,6,4,'#a37d6e');g.strokeStyle='#a37d6e';g.lineWidth=3;g.beginPath();g.arc(144,207,6,0,Math.PI);g.arc(156,207,6,0,Math.PI);g.stroke();rr(g,117,270,66,54,13,'#c3cfb1');heart(g,150,294,.65,'#fff6dc');ellipse(g,102,290,17,27,'#f5e8d3',-.5);ellipse(g,198,290,17,27,'#f5e8d3',.5);return c;}
+const demoArt=demo();
+function sky(g){const colors=state.time==='night'?['#354a62','#596880','#c4c9bf']:state.time==='dusk'?['#edc3b2','#f4d5bc','#c4c6ab']:['#d8e9e7','#edf1df','#b5c8b3'];g.fillStyle=colors[0];g.fillRect(190,190,520,600);if(state.time==='night'){ellipse(g,575,335,34,34,'#fff1c7');ellipse(g,590,324,29,29,colors[0]);for(let i=0;i<18;i++)ellipse(g,240+(i*97)%400,260+(i*53)%240,1.5,1.5,'#f9edd0');}else{ellipse(g,565,340,40,40,state.time==='dusk'?'#f8e2b2':'#fff8db');for(let i=0;i<3;i++){let x=290+i*135,y=350+(i%2)*90;ellipse(g,x,y,48,13,colors[1]);ellipse(g,x-14,y-9,24,20,colors[1]);ellipse(g,x+12,y-6,25,17,colors[1]);}}g.fillStyle=colors[2];g.beginPath();g.moveTo(190,650);g.quadraticCurveTo(350,505,490,630);g.quadraticCurveTo(620,530,710,610);g.lineTo(710,800);g.lineTo(190,800);g.fill();g.fillStyle=state.time==='night'?'#86978a':'#cad5b7';g.beginPath();g.moveTo(190,710);g.quadraticCurveTo(390,600,710,700);g.lineTo(710,800);g.lineTo(190,800);g.fill();}
+function weather(g){const t=state.t/4;if(state.weather==='rain'){for(let i=0;i<56;i++){let x=210+(i*79)%490,y=190+((i*43+ t*1200)%600);line(g,x,y,x-9,y+25,'#f3f8f7',2);}}if(state.weather==='snow'){for(let i=0;i<48;i++){let x=220+(i*79)%460+Math.sin(TAU*t+i)*10,y=190+((i*71+t*600)%600);ellipse(g,x,y,2+(i%3),2+(i%3),'#fffdf5');}}if(state.weather==='stars'){for(let i=0;i<18;i++){g.save();g.globalAlpha=.2+.8*(1+Math.sin(TAU*t+i*1.7))/2;star(g,240+(i*97)%410,255+(i*67)%370,4+i%4,'#fff6d3');g.restore();}}}
+function curtains(g){if(state.curtainStyle==='none')return;const covered=230-Number(state.open)*1.7,pinch=1-.28*state.open/100,hem=1-.1*state.open/100,c=state.curtain,dark=blend(c,'#79695e',.13),light=blend(c,'#ffffff',.24);for(let side=0;side<2;side++){g.save();if(side){g.translate(900,0);g.scale(-1,1);}g.beginPath();g.moveTo(214,198);g.lineTo(220+covered,198);g.bezierCurveTo(225+covered,345,215+covered,490,210+covered*pinch,560);g.bezierCurveTo(215+covered*pinch,635,235+covered*.8,705,220+covered*hem,756);g.quadraticCurveTo(220+covered*.6,770,220+covered*.4,754);g.quadraticCurveTo(230,770,210,754);g.closePath();g.fillStyle=c;g.fill();g.clip();if(state.curtainStyle==='gingham'){g.globalAlpha=.28;g.fillStyle='#fffaf0';for(let x=200;x<480;x+=32)g.fillRect(x,195,14,600);for(let y=200;y<780;y+=32)g.fillRect(200,y,300,14);g.globalAlpha=1;}for(let k=1;k<5;k++){g.beginPath();let x=220+covered*k/5;g.moveTo(x,200);g.bezierCurveTo(x+7,360,x-12,500,220+covered*k/5*.72,560);g.bezierCurveTo(x-10,645,x+4,715,x,780);g.strokeStyle=k%2?light:dark;g.lineWidth=5;g.stroke();}if(state.open>35){rr(g,200,550,covered*.82+25,13,6,blend(state.frame,'#ad987c',.18));}g.restore();}}
+function plant(g,x,y,size,flip=1){if(state.plant==='none')return;g.save();g.translate(x,y);g.scale(size*flip,size);const green='#718d69',light='#91a67d';if(state.plant==='cactus'){rr(g,-20,-120,40,120,20,green);rr(g,-51,-85,19,57,9,light);rr(g,33,-100,20,67,9,light);rr(g,-47,-45,40,17,8,light);rr(g,10,-50,38,17,8,light);for(let i=0;i<6;i++){line(g,-7,-103+i*17,-7,-97+i*17,'#b4c39b',2);line(g,8,-100+i*17,8,-94+i*17,'#b4c39b',2);}flower(g,11,-125,9,state.flower);}else{for(let i=0;i<5;i++){let endX=(i-2)*25,endY=-76-(i%3)*22;line(g,0,4,endX,endY,green,4);ellipse(g,endX*.6-11,endY*.55,20,9,i%2?green:light,-.5);ellipse(g,endX*.6+12,endY*.72,18,8,light,.6);if(state.plant==='flowers')flower(g,endX,endY,11,state.flower);else ellipse(g,endX,endY,12,25,i%2?green:light,endX*.015);}}g.beginPath();g.moveTo(-37,0);g.lineTo(37,0);g.lineTo(28,58);g.quadraticCurveTo(0,66,-28,58);g.closePath();g.fillStyle=state.pot;g.fill();rr(g,-42,-7,84,16,5,blend(state.pot,'#ffffff',.2));g.restore();}
+function flower(g,x,y,s,c){for(let i=0;i<5;i++){let a=i*TAU/5;ellipse(g,x+Math.cos(a)*s*.8,y+Math.sin(a)*s*.8,s*.65,s*.65,c);}ellipse(g,x,y,s*.42,s*.42,'#be9c65');}
+function render(){const g=ctx;g.clearRect(0,0,900,1000);g.fillStyle='#f5f3e9';g.fillRect(0,0,900,1000);
+// House wall, with quiet architectural detailing.
+rr(g,104,150,692,730,24,state.wall);g.save();g.beginPath();g.roundRect(104,150,692,730,24);g.clip();g.strokeStyle=blend(state.wall,'#ffffff',.28);g.lineWidth=2;if(state.pattern==='panel'){for(let x=125;x<800;x+=54)line(g,x,150,x,880,blend(state.wall,'#ffffff',.28),2);}else if(state.pattern==='brick'){for(let j=0;j<16;j++){const y=150+j*49;line(g,105,y,795,y,blend(state.wall,'#ffffff',.3),2);for(let x=104+(j%2)*60;x<796;x+=120)line(g,x,y,x,y+49,blend(state.wall,'#ffffff',.3),2);}}g.restore();
+if(state.roof){g.beginPath();g.moveTo(74,165);g.lineTo(450,65);g.lineTo(826,165);g.quadraticCurveTo(832,176,818,183);g.lineTo(450,95);g.lineTo(82,183);g.quadraticCurveTo(68,179,74,165);g.fillStyle=blend(state.wall,'#61735a',.6);g.fill();}else rr(g,87,145,726,22,8,state.frame);
+// Frame, inset and scene share the exact same opening.
+windowFill(g,25,blend(state.wall,'#7e8b70',.22));windowFill(g,17,state.frame);windowFill(g,3,blend(state.frame,'#ac9f88',.25));g.save();windowPath(g,0);g.clip();sky(g);weather(g);
+const art=source||demoArt;const scale=Math.min(350/art.width,380/art.height)*state.size/100,aw=art.width*scale,ah=art.height*scale,hop=state.bounce? -16*(1-Math.cos(TAU*state.t/2))/2:0;g.drawImage(art,450-aw/2+Number(state.x),750-ah+Number(state.y)+hop,aw,ah);curtains(g);g.restore();
+if(state.crossbar){g.save();windowPath(g);g.clip();rr(g,442,210,16,550,3,state.frame);rr(g,218,435,465,14,2,state.frame);g.restore();}
+rr(g,188,755,524,23,5,state.frame);rr(g,173,773,554,19,5,blend(state.frame,'#b0a38a',.18));rr(g,198,792,504,10,3,blend(state.wall,'#879379',.3));
+plant(g,250,728,.83);plant(g,654,735,.68,-1);
+if(state.lights){g.beginPath();g.moveTo(158,245);g.bezierCurveTo(290,130,605,130,742,245);g.strokeStyle='#8d9579';g.lineWidth=2;g.stroke();for(let i=0;i<11;i++){let u=i/10,x=158+584*u,y=245-84*Math.sin(Math.PI*u);line(g,x,y,x,y+11,'#8d9579',2);ellipse(g,x,y+17,5,7,state.time==='night'?'#ffe9ab':'#fff5d3');}}
+if(state.name.trim()){const text=state.name.trim();g.font='500 24px Georgia, "Malgun Gothic", serif';const width=Math.min(410,Math.max(160,g.measureText(text).width+46));rr(g,450-width/2,826,width,47,12,state.frame);g.fillStyle='#6c7761';g.textAlign='center';g.textBaseline='middle';g.fillText(text,450,850,width-28);}
+// Small ground plants keep the base visually connected.
+line(g,150,892,750,892,'#dce1cf',3);for(let j=0;j<2;j++){let x=j?750:147;for(let i=0;i<3;i++)ellipse(g,x+(i-1)*10,874-i*3,5,16,'#a9b99a',(i-1)*.4);} }
+function sync(){for(const id of ['wall','frame','curtain','pattern','weather','plant','pot','flower','name'])state[id]=$(id).value;for(const id of ['size','x','y','open']){state[id]=Number($(id).value);$(id+'O').textContent=$(id).value+(id==='size'||id==='open'?'%':'');}for(const id of ['bounce','lights','roof','crossbar'])state[id]=$(id).checked;const animated=state.bounce||state.weather!=='clear';$('saveGif').disabled=!animated;$('saveGif').title=animated?'4초 반복 GIF 저장':'캐릭터 움직임이나 비·눈·별빛을 켜 주세요';render();}
+document.querySelectorAll('input,select').forEach(el=>{if(el.id!=='upload')el.addEventListener('input',sync);});
+document.querySelectorAll('[data-group] button').forEach(btn=>btn.addEventListener('click',()=>{const group=btn.parentElement;state[group.dataset.group]=btn.dataset.value;group.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===btn));render();}));
+const palettes={sage:['#c6d2bd','#fff9e9','#d9aaa1','#b7816d','#f4d99a'],rose:['#e4c4c6','#fff5e9','#b7b8cf','#a8827d','#fff0c9'],blue:['#bfd0dc','#fffbed','#c6cdae','#b4937b','#e8b9b1'],cream:['#e6d9b9','#fffaf0','#a9bdaf','#bc8b75','#efe1ac']};
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{['wall','frame','curtain','pot','flower'].forEach((id,i)=>$(id).value=palettes[b.dataset.preset][i]);sync();}));
+$('upload').addEventListener('change',()=>{const f=$('upload').files[0];if(!f)return;const url=URL.createObjectURL(f),im=new Image();im.onload=()=>{source=im;URL.revokeObjectURL(url);$('status').textContent='';sync();};im.onerror=()=>{URL.revokeObjectURL(url);$('status').textContent='이미지를 읽지 못했어요. PNG 또는 JPG로 다시 올려 주세요.';};im.src=url;});
+$('clearImage').onclick=()=>{source=null;$('upload').value='';sync();};
+$('pause').onclick=()=>{playing=!playing;$('pause').textContent=playing?'일시정지':'재생';};
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
+$('save').onclick=()=>{render();cv.toBlob(b=>{if(b)download(b,'window_house.png');else $('status').textContent='PNG 저장에 실패했어요.';},'image/png');};
+function loop(ts){if(!exporting&&playing&&last)state.t=(state.t+Math.min(.1,(ts-last)/1000))%4;last=ts;if(!exporting)render();requestAnimationFrame(loop);}
+    function gifLzw(pixels) {
+      const bytes=[]; let bits=0, count=0;
+      const emit=c=>{bits|=c<<count;count+=9;while(count>=8){bytes.push(bits&255);bits>>>=8;count-=8;}};
+      let dict=new Map(), next=258, prefix=pixels[0]; emit(256);
+      for(let i=1;i<pixels.length;i++){
+        const c=pixels[i], key=prefix*256+c;
+        if(dict.has(key)){prefix=dict.get(key);continue;}
+        emit(prefix); dict.set(key,next++); prefix=c;
+        if(next===511){emit(256);dict.clear();next=258;}
+      }
+      emit(prefix);emit(257);if(count)bytes.push(bits&255);
+      return bytes;
+    }
+    $('saveGif').onclick = async () => {
+      if(exporting)return;
+      exporting=true;
+      const controls=[...document.querySelectorAll('button,input,select')];
+      const previous=controls.map(e=>e.disabled);controls.forEach(e=>e.disabled=true);
+      const oldTime=state.t, status=$('status');
+      try {
+        const width=450,height=500,frames=50,parts=[];
+        const push=a=>parts.push(new Uint8Array(a));
+        const word=v=>[v&255,v>>8];
+        push([...Array.from('GIF89a',c=>c.charCodeAt(0)),...word(width),...word(height),247,0,0]);
+        // Build one shared palette from the full scene, including uploaded artwork.
+        const small=mk(width,height), sg=small.getContext('2d',{willReadFrequently:true});
+        const hist=new Map();
+        for(let n=0;n<8;n++){
+          state.t=n/8*4;render();sg.drawImage(cv,0,0,width,height);
+          const d=sg.getImageData(0,0,width,height).data;
+          for(let k=0;k<d.length;k+=16){const key=(d[k]>>3)<<10|(d[k+1]>>3)<<5|(d[k+2]>>3);hist.set(key,(hist.get(key)||0)+1);}
+        }
+        let boxes=[[...hist].map(([k,n])=>({r:(k>>10)*8+4,g:((k>>5)&31)*8+4,b:(k&31)*8+4,n}))];
+        while(boxes.length<256){
+          let bi=-1,score=-1,axis='r';
+          boxes.forEach((box,i)=>{if(box.length<2)return;for(const a of ['r','g','b']){const vals=box.map(p=>p[a]);const v=(Math.max(...vals)-Math.min(...vals))*Math.sqrt(box.reduce((s,p)=>s+p.n,0));if(v>score){score=v;bi=i;axis=a;}}});
+          if(bi<0)break;
+          const box=boxes.splice(bi,1)[0].sort((a,b)=>a[axis]-b[axis]);
+          const total=box.reduce((s,p)=>s+p.n,0);let acc=0,j=0;
+          while(j<box.length-1 && acc<total/2)acc+=box[j++].n;
+          boxes.push(box.slice(0,j),box.slice(j));
+        }
+        const palette=boxes.map(box=>{const total=box.reduce((s,p)=>s+p.n,0);return ['r','g','b'].map(a=>Math.round(box.reduce((s,p)=>s+p[a]*p.n,0)/total));});
+        while(palette.length<256)palette.push([0,0,0]);push(palette.flat());
+        push([33,255,11,...Array.from('NETSCAPE2.0',c=>c.charCodeAt(0)),3,1,0,0,0]);
+        const lookup=new Int16Array(32768).fill(-1);
+        for(let n=0;n<frames;n++){
+          state.t=n/frames*4;render();sg.drawImage(cv,0,0,width,height);
+          const rgba=sg.getImageData(0,0,width,height).data,indices=new Uint8Array(width*height);
+          for(let i=0,k=0;i<indices.length;i++,k+=4){
+            const key=(rgba[k]>>3)<<10|(rgba[k+1]>>3)<<5|(rgba[k+2]>>3);
+            if(lookup[key]<0){let best=Infinity,idx=0;const r=(key>>10)*8+4,g=((key>>5)&31)*8+4,b=(key&31)*8+4;
+              palette.forEach((p,j)=>{const dist=(r-p[0])**2+(g-p[1])**2+(b-p[2])**2;if(dist<best){best=dist;idx=j;}});lookup[key]=idx;}
+            indices[i]=lookup[key];
+          }
+          push([33,249,4,4,8,0,0,0,44,0,0,0,0,...word(width),...word(height),0,8]);
+          const data=gifLzw(indices);
+          for(let j=0;j<data.length;j+=255){const block=data.slice(j,j+255);push([block.length,...block]);}push([0]);
+          status.textContent=`GIF 만드는 중 ${Math.round((n+1)/frames*100)}%`;
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+        push([59]);
+        const url=URL.createObjectURL(new Blob(parts,{type:'image/gif'}));
+        const link=document.createElement('a');link.href=url;link.download='window_house.gif';link.click();
+        setTimeout(()=>URL.revokeObjectURL(url),30000);status.textContent='GIF 저장 완료';
+      } catch(error){console.error(error);status.textContent='GIF 저장에 실패했어요. 다시 시도해 주세요.';}
+      finally {state.t=oldTime;exporting=false;controls.forEach((e,i)=>e.disabled=previous[i]);render();}
+    };
+
+
+sync();requestAnimationFrame(loop);
+</script></body></html>
