@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>네 자리 남겨 뒀어</title>
+<style>
+*{box-sizing:border-box} :root{--ink:#493b3b;--paper:#fffaf4;--pink:#e9aeb2;--rose:#c8767e;--cream:#fff3df}
+body{margin:0;background:#f4eee8;color:var(--ink);font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+button,input,select{font:inherit;color:inherit} button,select,input[type=color]{border:1px solid #dccbc0;background:#fffaf7;border-radius:10px;min-height:38px}
+button{padding:8px 12px;cursor:pointer} button:hover{background:#fff1e8}.app{width:min(1180px,100%);margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(22px,3vw,32px);font-weight:500;margin:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.save{background:#be6f78;color:white;border-color:#be6f78}.save:hover{background:#a75c65}
+.layout{display:grid;grid-template-columns:minmax(0,760px) 330px;gap:16px;align-items:start}.stagewrap{background:#dfcfc4;border-radius:24px;padding:12px;box-shadow:0 10px 30px #6f4b3920}
+.stage{position:relative;width:100%;aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#f8eee4;touch-action:none}.stage svg{display:block;width:100%;height:100%}
+.panel{background:var(--paper);border:1px solid #e6d8ce;border-radius:18px;padding:14px;max-height:calc(100vh - 100px);overflow:auto}
+details{border-bottom:1px solid #eadfd7;padding:4px 0}details:last-child{border:0}summary{cursor:pointer;font-weight:700;padding:11px 2px;list-style:none}summary::-webkit-details-marker{display:none}
+summary:after{content:"＋";float:right;color:#a67d77}details[open] summary:after{content:"－"}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:3px 0 12px}.field{display:grid;gap:5px;font-size:12px}.field.wide{grid-column:1/-1}.field label{color:#7f6865}.field input,.field select{width:100%;padding:7px 8px}.field input[type=color]{padding:3px}
+.range{accent-color:#be6f78}.mini{font-size:11px;color:#8c7772;margin:4px 0 10px}.toggle{display:flex;align-items:center;gap:7px;font-size:12px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.seg button{font-size:11px;padding:6px 4px}.seg button.on{background:#d98d95;color:white;border-color:#d98d95}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.panel{max-height:none}header{align-items:flex-start;flex-direction:column}.app{padding:10px}.stagewrap{padding:7px;border-radius:17px}}
+</style>
+</head>
+<body>
+<main class="app">
+ <header><h1>네 자리 남겨 뒀어</h1><div class="actions"><button id="random">랜덤</button><button id="reset">초기화</button><button class="save" id="save">PNG 저장</button></div></header>
+ <div class="layout">
+  <div class="stagewrap"><div class="stage" id="stage"></div></div>
+  <aside class="panel">
+   <details open><summary>침실</summary><div class="grid">
+    <div class="field"><label>벽</label><input type="color" data-k="wall"></div>
+    <div class="field"><label>침대 머리판</label><input type="color" data-k="headboard"></div>
+    <div class="field"><label>프레임</label><input type="color" data-k="frame"></div>
+    <div class="field"><label>조명</label><select data-k="light"><option value="day">낮</option><option value="sunset">저녁</option><option value="night">밤</option></select></div>
+    <div class="field wide"><label>침대 장식</label><select data-k="roomDeco"><option value="strawberry">딸기</option><option value="flower">꽃</option><option value="star">별</option><option value="none">없음</option></select></div>
+   </div></details>
+   <details open><summary>침구</summary><div class="grid">
+    <div class="field"><label>이불색</label><input type="color" data-k="duvet"></div>
+    <div class="field"><label>포인트색</label><input type="color" data-k="accent"></div>
+    <div class="field wide"><label>이불 무늬</label><select data-k="pattern"><option value="check">체크</option><option value="strawberry">딸기</option><option value="flower">잔꽃</option><option value="dot">도트</option><option value="plain">민무늬</option></select></div>
+    <div class="field"><label>프릴</label><select data-k="frill"><option value="yes">있음</option><option value="no">없음</option></select></div>
+    <div class="field"><label>베개 형태</label><select data-k="pillow"><option value="frill">프릴</option><option value="round">둥근</option><option value="scallop">물결</option></select></div>
+   </div></details>
+   <details open><summary>왼쪽 친구</summary><div class="grid">
+    <div class="field"><label>동물</label><select data-k="aAnimal"><option value="rabbit">토끼</option><option value="cat">고양이</option><option value="dog">강아지</option><option value="bear">곰</option><option value="fox">여우</option><option value="wolf">늑대</option></select></div>
+    <div class="field"><label>털색</label><input type="color" data-k="aColor"></div>
+    <div class="field"><label>표정</label><select data-k="aFace"><option value="sleep">잠듦</option><option value="smile">미소</option><option value="open">깨어 있음</option><option value="grumpy">불만</option></select></div>
+    <div class="field"><label>볼</label><input type="color" data-k="aBlush"></div>
+    <div class="field wide"><label>자리</label><select data-k="aPose"><option value="tucked">이불 속</option><option value="peek">빼꼼</option><option value="pillow">베개 위</option></select></div>
+    <div class="field wide"><label>크기</label><input class="range" type="range" min="75" max="120" data-k="aSize"></div>
+   </div></details>
+   <details><summary>오른쪽 친구</summary><div class="grid">
+    <div class="field"><label>동물</label><select data-k="bAnimal"><option value="rabbit">토끼</option><option value="cat">고양이</option><option value="dog">강아지</option><option value="bear">곰</option><option value="fox">여우</option><option value="wolf">늑대</option></select></div>
+    <div class="field"><label>털색</label><input type="color" data-k="bColor"></div>
+    <div class="field"><label>표정</label><select data-k="bFace"><option value="sleep">잠듦</option><option value="smile">미소</option><option value="open">깨어 있음</option><option value="grumpy">불만</option></select></div>
+    <div class="field"><label>볼</label><input type="color" data-k="bBlush"></div>
+    <div class="field wide"><label>자리</label><select data-k="bPose"><option value="tucked">이불 속</option><option value="peek">빼꼼</option><option value="pillow">베개 위</option></select></div>
+    <div class="field wide"><label>크기</label><input class="range" type="range" min="75" max="120" data-k="bSize"></div>
+   </div></details>
+   <details><summary>상황</summary><div class="grid">
+    <div class="field wide"><label>이불 상태</label><select data-k="blanketState"><option value="shared">같이 덮기</option><option value="left">왼쪽이 독차지</option><option value="right">오른쪽이 독차지</option><option value="split">각자 덮기</option></select></div>
+    <label class="toggle wide"><input type="checkbox" data-k="plush"> 작은 인형 놓기</label>
+    <label class="toggle wide"><input type="checkbox" data-k="note"> 베개 위 쪽지</label>
+   </div><p class="mini">화면의 친구를 좌우로 끌어 자리를 조절할 수 있어.</p></details>
+  </aside>
+ </div>
+</main>
+<script>
+const defaults={wall:'#f5eee5',headboard:'#d99fa7',frame:'#c9858c',light:'day',roomDeco:'strawberry',duvet:'#fff8e8',accent:'#d9898e',pattern:'strawberry',frill:'yes',pillow:'frill',aAnimal:'rabbit',aColor:'#fff0d7',aFace:'sleep',aBlush:'#efadb1',aPose:'peek',aSize:'100',bAnimal:'dog',bColor:'#d8a372',bFace:'smile',bBlush:'#e99d98',bPose:'tucked',bSize:'96',blanketState:'shared',plush:true,note:false,aX:330,bX:670};
+let s={...defaults}; try{Object.assign(s,JSON.parse(localStorage.getItem('pairBed')||'{}'))}catch(e){}
+const stage=document.querySelector('#stage');
+const esc=x=>String(x).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&apos;','"':'&quot;'}[c]));
+function defs(){
+return `<defs>
+<pattern id="check" width="48" height="48" patternUnits="userSpaceOnUse"><rect width="48" height="48" fill="${s.duvet}"/><rect width="16" height="48" x="16" fill="${s.accent}" opacity=".72"/><rect width="48" height="16" y="16" fill="${s.accent}" opacity=".72"/></pattern>
+<pattern id="dot" width="46" height="46" patternUnits="userSpaceOnUse"><rect width="46" height="46" fill="${s.duvet}"/><circle cx="23" cy="23" r="6" fill="${s.accent}"/></pattern>
+<pattern id="flower" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="${s.duvet}"/><g fill="${s.accent}" transform="translate(32 32)"><circle r="5"/><circle cy="-10" r="7"/><circle cx="10" r="7"/><circle cy="10" r="7"/><circle cx="-10" r="7"/></g></pattern>
+<pattern id="strawberry" width="76" height="76" patternUnits="userSpaceOnUse"><rect width="76" height="76" fill="${s.duvet}"/><g transform="translate(38 38) rotate(-8)"><path d="M-14-8Q0-18 14-8Q13 17 0 23Q-13 17-14-8" fill="${s.accent}"/><path d="M-12-10Q-5-20 0-11Q6-21 13-10Q5-7 0-4Q-6-7-12-10" fill="#779777"/><g fill="#ffe5bf"><circle cx="-5" cy="1" r="1.6"/><circle cx="6" cy="3" r="1.6"/><circle cy="12" r="1.6"/></g></g></pattern>
+<filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="13" flood-color="#68433d" flood-opacity=".18"/></filter>
+<filter id="soft"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#68433d" flood-opacity=".14"/></filter>
+</defs>`}
+function ears(animal,c){
+ if(animal==='rabbit')return `<g fill="${c}"><ellipse cx="-58" cy="-72" rx="26" ry="69" transform="rotate(-12 -58 -72)"/><ellipse cx="58" cy="-72" rx="26" ry="69" transform="rotate(12 58 -72)"/></g><g fill="#eeb8b2" opacity=".65"><ellipse cx="-58" cy="-74" rx="10" ry="45" transform="rotate(-12 -58 -74)"/><ellipse cx="58" cy="-74" rx="10" ry="45" transform="rotate(12 58 -74)"/></g>`;
+ if(animal==='cat'||animal==='fox'||animal==='wolf'){let p=animal==='fox'?72:58;return `<path d="M-86-22L-${p}-96L-21-45Z M86-22L${p}-96L21-45Z" fill="${c}"/><path d="M-70-39L-58-75L-37-45Z M70-39L58-75L37-45Z" fill="#eab0aa" opacity=".65"/>`}
+ if(animal==='dog')return `<path d="M-72-45Q-125-53-116 20Q-108 66-72 41L-53-15Z M72-45Q125-53 116 20Q108 66 72 41L53-15Z" fill="${c}"/><path d="M-91-27Q-111-23-99 30" fill="none" stroke="#8c6659" stroke-width="7" stroke-linecap="round" opacity=".38"/>`;
+ return `<circle cx="-68" cy="-43" r="38" fill="${c}"/><circle cx="68" cy="-43" r="38" fill="${c}"/><circle cx="-68" cy="-43" r="18" fill="#eab0aa" opacity=".55"/><circle cx="68" cy="-43" r="18" fill="#eab0aa" opacity=".55"/>`;
+}
+function face(type){
+ if(type==='sleep')return `<path d="M-49 2q18 16 36 0M13 2q18 16 36 0" fill="none" stroke="#59443e" stroke-width="8" stroke-linecap="round"/><path d="M-11 37q11 10 22 0" fill="none" stroke="#59443e" stroke-width="7" stroke-linecap="round"/>`;
+ if(type==='smile')return `<ellipse cx="-32" cy="7" rx="8" ry="13" fill="#59443e"/><ellipse cx="32" cy="7" rx="8" ry="13" fill="#59443e"/><path d="M-17 36q17 18 34 0" fill="none" stroke="#59443e" stroke-width="7" stroke-linecap="round"/>`;
+ if(type==='grumpy')return `<path d="M-49 10l31-9M49 10L18 1" stroke="#59443e" stroke-width="8" stroke-linecap="round"/><circle cx="-32" cy="14" r="7" fill="#59443e"/><circle cx="32" cy="14" r="7" fill="#59443e"/><path d="M-13 46q13-12 26 0" fill="none" stroke="#59443e" stroke-width="7" stroke-linecap="round"/>`;
+ return `<ellipse cx="-32" cy="7" rx="11" ry="16" fill="#59443e"/><ellipse cx="32" cy="7" rx="11" ry="16" fill="#59443e"/><circle cx="-28" cy="2" r="3" fill="white"/><circle cx="36" cy="2" r="3" fill="white"/><path d="M-12 39q12 8 24 0" fill="none" stroke="#59443e" stroke-width="7" stroke-linecap="round"/>`;
+}
+function friend(id,x){
+ let animal=s[id+'Animal'],c=s[id+'Color'],bl=s[id+'Blush'],size=+s[id+'Size']/100,pose=s[id+'Pose'];
+ let y=pose==='pillow'?455:pose==='peek'?515:555;
+ let ear=animal==='dog'?'':ears(animal,c);
+ const dogEars=animal==='dog'?`<g fill="${c}"><path d="M-12-51C-10-65-34-65-58-55C-78-46-73-31-56-28C-36-25-18-35-12-51Z"/><path d="M12-51C10-65 34-65 58-55C78-46 73-31 56-28C36-25 18-35 12-51Z"/></g><g fill="none" stroke="${bl}" stroke-width="3" opacity=".65" stroke-linecap="round"><path d="M-13-51C-18-35-36-25-56-28C-66-30-72-35-72-41"/><path d="M13-51C18-35 36-25 56-28C66-30 72-35 72-41"/></g>`:'';
+ const contour='M-96 20C-96-24-55-56 0-56C55-56 96-24 96 20C96 65 55 94 0 94C-55 94-96 65-96 20Z';
+ if(['cat','fox','wolf'].includes(animal)){let tall=animal==='fox'?108:animal==='wolf'?98:80;ear=`<path d="M-95 3Q-108-20-91-${tall-18}Q-82-${tall+12}-61-${tall-1}L-24-42M95 3Q108-20 91-${tall-18}Q82-${tall+12} 61-${tall-1}L24-42" fill="${c}"/><path d="M-87-29Q-86-${tall-6}-67-${tall-17}L-47-39M87-29Q86-${tall-6} 67-${tall-17}L47-39" fill="${bl}" opacity=".38"/>`}
+ if(animal!=='dog'){
+  const leftClip=`${id}-ear-left`,rightClip=`${id}-ear-right`;
+  ear=`<defs><clipPath id="${leftClip}"><rect x="-200" y="-220" width="200" height="440"/></clipPath><clipPath id="${rightClip}"><rect x="0" y="-220" width="200" height="440"/></clipPath></defs><g transform="translate(13 0)"><g clip-path="url(#${leftClip})">${ear}</g></g><g transform="translate(-13 0)"><g clip-path="url(#${rightClip})">${ear}</g></g>`;
+ }
+ let whiskers=animal==='cat'?`<path d="M-90 31l20 3m-19 14l18-1M90 31l-20 3m19 14l-18-1" stroke="${bl}" stroke-width="5" stroke-linecap="round" opacity=".8"/>`:'';
+ return `<g class="friend" data-id="${id}" transform="translate(${x} ${y}) scale(${size})" style="cursor:grab">${ear}<path d="${contour}" fill="${c}"/>${dogEars}<ellipse cx="-62" cy="53" rx="20" ry="11" fill="${bl}" opacity=".55"/><ellipse cx="62" cy="53" rx="20" ry="11" fill="${bl}" opacity=".55"/>${whiskers}<g transform="translate(0 32) scale(.79 .66)">${face(s[id+'Face'])}</g></g>`;
+}
+function pillowAt(x){
+ let trim='';
+ if(s.pillow==='frill'){
+  let d='M18 0';for(let t=18;t<258;t+=24)d+=`Q${t+12} -13 ${t+24} 0`;
+  d+='Q286 -3 274 18';for(let t=18;t<186;t+=24)d+=`Q287 ${t+12} 274 ${t+24}`;
+  d+='Q286 216 258 205';for(let t=258;t>18;t-=24)d+=`Q${t-12} 218 ${t-24} 205`;
+  d+='Q-12 216 0 186';for(let t=186;t>18;t-=24)d+=`Q-13 ${t-12} 0 ${t-24}`;d+='Q-12-12 18 0Z';
+  let folds='';for(let t=30;t<260;t+=24)folds+=`M${t} -4l2 12M${t} 209l2-12`;for(let t=30;t<190;t+=24)folds+=`M-4 ${t}l12 2M278 ${t}l-12 2`;
+  trim=`<path d="${d}" fill="${s.accent}"/><path d="${folds}" fill="none" stroke="${s.duvet}" stroke-width="1.4" opacity=".65"/>`;
+ }
+ return `<g transform="translate(${x} 338)">${trim}<rect x="5" y="5" width="264" height="195" rx="${s.pillow==='round'?60:28}" fill="${s.duvet}"/><rect x="13" y="13" width="248" height="179" rx="23" fill="none" stroke="${s.accent}" stroke-width="1.4" opacity=".4"/></g>`;
+}
+function scallop(y,color){let p='';for(let x=115;x<=885;x+=44)p+=`<circle cx="${x}" cy="${y}" r="24" fill="${color}"/>`;return p}
+function decor(){
+ if(s.roomDeco==='none')return '';
+ if(s.roomDeco==='star')return '<g fill="#f5d677"><path d="M118 166l8 17 19 2-14 13 4 19-17-9-17 9 4-19-14-13 19-2z"/><path d="M860 140l6 13 15 2-11 10 3 15-13-8-14 8 3-15-11-10 15-2z"/></g>';
+ if(s.roomDeco==='flower')return '<g fill="#f3bec0"><circle cx="126" cy="183" r="13"/><circle cx="103" cy="183" r="13"/><circle cx="115" cy="163" r="13"/><circle cx="115" cy="203" r="13"/><circle cx="115" cy="183" r="8" fill="#e6bd67"/></g>';
+ return '<g transform="translate(112 176) scale(.8)"><path d="M-22-8Q0-27 22-8Q20 28 0 37Q-20 28-22-8" fill="#cc6670"/><path d="M-18-12Q-8-28 0-13Q10-29 20-12Q8-7 0-3Q-8-7-18-12" fill="#789576"/></g>';
+}
+function render(){
+ let bg=s.light==='night'?'#252c46':s.light==='sunset'?'#f2d0bd':s.wall;
+ let overlay=s.light==='night'?'<rect width="1000" height="1000" fill="#26304c" opacity=".16"/>':s.light==='sunset'?'<rect width="1000" height="1000" fill="#f2a67c" opacity=".10"/>':'';
+ let fill=s.pattern==='plain'?s.duvet:`url(#${s.pattern})`;
+ let fr=s.frill==='yes'?scallop(866,s.accent):'';
+ let ax=s.aX,bx=s.bX;
+ let beforeA=s.blanketState==='right',beforeB=s.blanketState==='left';
+ let blanketX=s.blanketState==='left'?120:s.blanketState==='right'?390:120,blanketW=s.blanketState==='left'||s.blanketState==='right'?490:760;
+ let split=s.blanketState==='split';
+ let pillows=`<g filter="url(#soft)">${pillowAt(188)}${pillowAt(538)}</g>`;
+ let blanket=split?`<path d="M102 596Q290 550 487 598L487 868H102Z" fill="${fill}"/><path d="M513 598Q710 550 898 596V868H513Z" fill="${fill}"/><path d="M102 596Q290 550 487 598M513 598Q710 550 898 596" fill="none" stroke="${s.accent}" stroke-width="18"/>`:`<path d="M${blanketX} 594Q500 530 ${blanketX+blanketW} 594V872H${blanketX}Z" fill="${fill}"/><path d="M${blanketX} 594Q500 530 ${blanketX+blanketW} 594" fill="none" stroke="${s.accent}" stroke-width="18"/>`;
+ let note=s.note?'<g transform="translate(595 393) rotate(7)" filter="url(#soft)"><rect width="126" height="82" rx="5" fill="#fff5b8"/><path d="M24 30h77M24 48h58" stroke="#b69d75" stroke-width="4" stroke-linecap="round"/></g>':'';
+ let plush=s.plush?'<g transform="translate(142 722)" filter="url(#soft)"><circle cx="0" cy="-43" r="28" fill="#d6a779"/><circle cx="-22" cy="-65" r="12" fill="#d6a779"/><circle cx="22" cy="-65" r="12" fill="#d6a779"/><ellipse cy="8" rx="35" ry="45" fill="#d6a779"/><circle cx="-10" cy="-45" r="3"/><circle cx="10" cy="-45" r="3"/></g>':'';
+ stage.innerHTML=`<svg id="art" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">${defs()}<rect width="1000" height="1000" fill="${bg}"/><path d="M0 270H1000" stroke="#d6c5b8" stroke-width="8" opacity=".55"/><g opacity=".34"><path d="M145 0v270M855 0v270" stroke="#fff" stroke-width="18"/><path d="M0 110h1000" stroke="#fff" stroke-width="8"/></g>${decor()}<g filter="url(#shadow)"><rect x="110" y="225" width="780" height="660" rx="75" fill="${s.frame}"/><rect x="145" y="250" width="710" height="310" rx="62" fill="${s.headboard}"/><path d="M160 295Q500 245 840 295" fill="none" stroke="#fff" stroke-width="8" opacity=".32"/><rect x="115" y="480" width="770" height="400" rx="48" fill="${s.duvet}"/></g>${pillows}${note}${beforeA?'':friend('a',ax)}${beforeB?'':friend('b',bx)}${blanket}${beforeA?friend('a',ax):''}${beforeB?friend('b',bx):''}${fr}${plush}<path d="M112 850Q500 900 888 850" fill="none" stroke="#fff" stroke-width="7" opacity=".25"/>${overlay}</svg>`;
+ localStorage.setItem('pairBed',JSON.stringify(s)); bindDrag();
+}
+document.querySelectorAll('[data-k]').forEach(el=>{let k=el.dataset.k;if(el.type==='checkbox')el.checked=!!s[k];else el.value=s[k];el.addEventListener('input',()=>{s[k]=el.type==='checkbox'?el.checked:el.value;render()})});
+function sync(){document.querySelectorAll('[data-k]').forEach(el=>{let k=el.dataset.k;if(el.type==='checkbox')el.checked=!!s[k];else el.value=s[k]})}
+function bindDrag(){document.querySelectorAll('.friend').forEach(g=>{g.onpointerdown=e=>{g.setPointerCapture(e.pointerId);let id=g.dataset.id,start=e.clientX,orig=+s[id+'X'];g.onpointermove=ev=>{let scale=1000/stage.getBoundingClientRect().width;s[id+'X']=Math.max(210,Math.min(790,orig+(ev.clientX-start)*scale));render()};g.onpointerup=()=>{g.onpointermove=null}}})}
+document.querySelector('#reset').onclick=()=>{s={...defaults};sync();render()};
+document.querySelector('#random').onclick=()=>{let pick=a=>a[Math.floor(Math.random()*a.length)];s.aAnimal=pick(['rabbit','cat','dog','bear','fox','wolf']);s.bAnimal=pick(['rabbit','cat','dog','bear','fox','wolf']);s.aFace=pick(['sleep','smile','open','grumpy']);s.bFace=pick(['sleep','smile','open']);s.pattern=pick(['check','strawberry','flower','dot','plain']);s.blanketState=pick(['shared','split','left','right']);sync();render()};
+document.querySelector('#save').onclick=()=>{let svg=document.querySelector('#art').cloneNode(true);svg.setAttribute('width','1600');svg.setAttribute('height','1600');let str=new XMLSerializer().serializeToString(svg),blob=new Blob([str],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{let c=document.createElement('canvas');c.width=c.height=1600;let x=c.getContext('2d');x.drawImage(img,0,0,1600,1600);URL.revokeObjectURL(url);c.toBlob(b=>{let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='네_자리_남겨_뒀어.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)},'image/png')};img.src=url};
+render();
+</script>
+</body></html>
