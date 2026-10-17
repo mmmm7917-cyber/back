@@ -1,0 +1,111 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>사물함 교차 오염도</title><style>
+:root{--bg:#e9e6de;--paper:#f9f8f3;--ink:#282b2a;--line:#c7c5bb;--muted:#747872;--green:#546e61}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",system-ui,sans-serif}.wrap{max-width:1050px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ink);padding-bottom:15px;margin-bottom:16px}h1{font-size:26px;margin:3px 0}.eyebrow{font:700 11px monospace;letter-spacing:.14em;color:var(--muted)}.panel{background:var(--paper);border:1px solid var(--line);padding:20px;margin-bottom:14px;border-radius:4px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.field input{width:100%;padding:10px;border:1px solid var(--line);background:#fff;border-radius:3px;font:inherit}.btn{padding:10px 14px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;font:700 13px inherit;border-radius:3px}.btn.secondary{background:#fff;color:var(--ink)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.small{font-size:12px;color:var(--muted);line-height:1.7}.hidden{display:none!important}
+.lockers{display:grid;grid-template-columns:1fr 1fr;gap:14px}.locker{border:5px solid #757c79;background:#a8afaa;padding:8px;box-shadow:inset 0 0 0 2px #d9ddd7,5px 7px 0 #c8c9c1}.lockerTop{background:#e8eae3;border:1px solid #7b8580;padding:8px;display:flex;gap:10px;align-items:center}.portrait{height:48px;width:48px;flex:none;border:1px solid #b9bdb6;background:#d5d8d1;display:grid;place-items:center;font-weight:900;overflow:hidden}.portrait img{height:100%;width:100%;object-fit:cover}.lockerName{font-weight:900;overflow-wrap:anywhere}.lockerNo{font:11px monospace;color:var(--muted)}.interior{background:#eeede6;border:2px solid #7e8580;min-height:285px;padding:10px;position:relative}.shelf{border-bottom:7px solid #a8ada6;min-height:116px;display:flex;align-items:flex-start;align-content:flex-start;gap:6px;flex-wrap:wrap;padding:9px 0}.shelf:last-child{border:0}.object{display:flex;flex-direction:column;align-items:center;justify-content:center;width:72px;min-height:80px;background:#fffefa;border:1px solid #c8c9bf;padding:5px;position:relative;text-align:center}.object.foreign{border:2px solid #b26b51;background:#fff2e9}.object .emoji{font-size:30px;line-height:1.4}.object .nm{font-size:10px;font-weight:700;word-break:keep-all}.object .origin{font-size:9px;color:#98543e}.empty{color:#9b9d96;font-size:12px;align-self:center;margin:auto}.lockerFoot{font:700 11px monospace;padding:8px;background:#e1e4dc;text-align:center}.stage{display:grid;grid-template-columns:1fr 1fr;gap:14px}.question{font-size:20px;font-weight:900;margin:8px 0 12px;line-height:1.5}.choices{display:grid;gap:8px}.choice{padding:13px;background:#fff;border:1px solid var(--line);text-align:left;cursor:pointer;font:inherit}.choice:hover{border-color:var(--green);background:#f0f4ee}.choice b{display:block;font-size:14px}.choice span{font-size:12px;color:var(--muted)}.progress{height:5px;background:#ddd;margin:12px 0}.progress div{height:100%;background:var(--green);width:0}.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border:1px solid var(--line);padding:12px;background:white}.stat span{font-size:11px;color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:5px}.log{border-top:1px solid var(--line);padding:9px 0;font-size:12px;line-height:1.6}.log:first-child{border:0}.badge{display:inline-block;border:1px solid #ad6a50;color:#95533c;font-size:10px;padding:2px 5px;margin-right:5px}.resultHeading{font-size:23px;font-weight:900;margin:0 0 8px}.summary{line-height:1.8;font-size:13px;margin:12px 0}.barTrack{height:12px;background:#deded7;margin-top:7px}.barFill{height:100%;background:#a76c55;width:0}.analysis{display:grid;grid-template-columns:1fr 1fr;gap:10px}.analysis>div{background:#fff;border:1px solid var(--line);padding:12px}.analysis b{font-size:13px}.analysis p{font-size:12px;line-height:1.6;color:var(--muted)}@media(max-width:720px){.wrap{padding:10px}.panel{padding:13px}.grid,.stage,.analysis{grid-template-columns:1fr}.lockers{gap:7px}.locker{padding:4px;border-width:3px;box-shadow:none}.interior{padding:4px;min-height:230px}.shelf{min-height:95px;gap:3px}.object{width:calc(50% - 3px);min-height:66px;padding:3px}.object .emoji{font-size:22px}.object .nm{font-size:9px}.portrait{width:36px;height:36px}.lockerTop{padding:4px;gap:5px}.lockerName{font-size:12px}h1{font-size:22px}}
+</style></head><body><div class="wrap"><header><div><div class="eyebrow">PERSONAL STORAGE / CROSS-CONTAMINATION STUDY</div><h1>사물함 교차 오염도</h1></div><div class="eyebrow">FILE 09 / TWO SUBJECTS</div></header>
+<section class="panel" id="setup"><div class="grid"><div class="field"><label>캐릭터 A 이름</label><input id="nameA" placeholder="캐릭터 A" maxlength="24"></div><div class="field"><label>캐릭터 B 이름</label><input id="nameB" placeholder="캐릭터 B" maxlength="24"></div><div class="field"><label>A 이미지 (선택)</label><input id="imgA" type="file" accept="image/*"></div><div class="field"><label>B 이미지 (선택)</label><input id="imgB" type="file" accept="image/*"></div></div><p class="small">각 사물함에서 물건을 발견할 때마다 실제 주인과 보관 장소를 선택합니다. 마지막에는 서로의 물건이 얼마나 섞였는지 조사 보고서가 생성됩니다.</p><button class="btn" id="start">검사 시작</button></section>
+<section class="panel hidden" id="game"><div class="eyebrow">INSPECTION <span id="counter"></span> / 12</div><div class="progress"><div id="prog"></div></div><div class="stage"><div><div class="eyebrow" id="cat"></div><div class="question" id="question"></div><div class="choices" id="choices"></div></div><div><div class="eyebrow" style="margin-bottom:8px">CURRENT STORAGE STATUS</div><div class="lockers" id="gameLockers"></div></div></div></section>
+<section class="panel hidden" id="result"><div class="eyebrow">FINAL INSPECTION REPORT</div><h2 class="resultHeading" id="resultTitle"></h2><p class="summary" id="resultDesc"></p><div class="statrow"><div class="stat"><span>전체 물건</span><strong id="total"></strong></div><div class="stat"><span>상대 물건</span><strong id="foreign"></strong></div><div class="stat"><span>교차 오염도</span><strong id="rate"></strong></div></div><div class="barTrack"><div class="barFill" id="ratebar"></div></div><div class="analysis" id="analysis" style="margin-top:14px"></div><h3>사물함 최종 상태</h3><div class="lockers" id="finalLockers"></div><h3>발견 기록</h3><div id="records"></div><div class="row" style="margin-top:18px"><button class="btn" id="save">조사 보고서 PNG 저장</button><button class="btn secondary" id="retry">다시 검사</button></div></section></div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const items=[
+["🗝️","열쇠","소지품"],["🧥","겉옷","의류"],["✉️","접힌 메모","기록"],["🍬","간식","식품"],["💊","약통","생활"],["📷","사진","기록"],["🧣","목도리","의류"],["🔌","충전기","전자기기"],["📖","작은 수첩","기록"],["☕","텀블러","생활"],["🎧","이어폰","전자기기"],["🎁","포장된 선물","소지품"]
+];
+let s=null;
+const imgData=inp=>new Promise((resolve,reject)=>{const f=inp.files?.[0];if(!f)return resolve(null);const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(f)});
+function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function boxHTML(i){
+const n=s.names[i],things=s.found.filter(x=>x.place===i);
+return `<div class="locker"><div class="lockerTop"><div class="portrait">${s.img[i]?`<img src="${s.img[i]}" alt="">`:i===0?"A":"B"}</div><div><div class="lockerName">${escapeHTML(n)}</div><div class="lockerNo">LOCKER ${i===0?"A-01":"B-02"}</div></div></div><div class="interior"><div class="shelf">${things.slice(0,4).map(objHTML).join("")||'<span class="empty">미검사</span>'}</div><div class="shelf">${things.slice(4).map(objHTML).join("")}</div></div><div class="lockerFoot">CONTENTS: ${things.length} / FOREIGN: ${things.filter(x=>x.owner!==i).length}</div></div>`
+}
+function objHTML(x){return `<div class="object ${x.owner!==x.place?"foreign":""}"><span class="emoji">${x.icon}</span><span class="nm">${escapeHTML(x.name)}</span>${x.owner!==x.place?`<span class="origin">${escapeHTML(s.names[x.owner])} 소유</span>`:""}</div>`}
+function renderLockers(id){$(id).innerHTML=boxHTML(0)+boxHTML(1)}
+function question(){
+const item=items[s.i];
+$("counter").textContent=String(s.i+1).padStart(2,"0");
+$("prog").style.width=(s.i/12*100)+"%";
+$("cat").textContent=item[2].toUpperCase()+" / ITEM "+String(s.i+1).padStart(2,"0");
+$("question").textContent=`${item[0]} ${item[1]} 발견. 어디에 있으며 누구의 물건일까?`;
+const choices=$("choices");choices.innerHTML="";
+const opts=[[0,0],[1,1],[0,1],[1,0]];
+opts.forEach(([place,owner])=>{
+ const b=document.createElement("button");b.className="choice";
+ const foreign=place!==owner;
+ const label=foreign?`${s.names[place]}의 사물함 · ${s.names[owner]} 소유`:`${s.names[place]}의 사물함 · 본인 소유`;
+ b.innerHTML=`<b>${escapeHTML(label)}</b><span>${foreign?"상대의 물건이 보관된 상태":"자기 물건을 자기 사물함에 보관"}</span>`;
+ b.onclick=()=>choose(place,owner);choices.appendChild(b)
+});
+renderLockers("gameLockers");
+}
+function choose(place,owner){
+const [icon,name,category]=items[s.i];
+s.found.push({icon,name,category,place,owner});
+s.i++;
+if(s.i===items.length)finish();else question()
+}
+function finish(){
+$("game").classList.add("hidden");$("result").classList.remove("hidden");
+const total=s.found.length,foreign=s.found.filter(x=>x.owner!==x.place).length,rate=Math.round(foreign/total*100);
+let type=rate===0?"완전 분리형":rate<=25?"낮은 교차 보관형":rate<=50?"부분 혼재형":rate<=75?"높은 혼재형":"경계 소실형";
+$("resultTitle").textContent=`${s.names[0]} × ${s.names[1]} · ${type}`;
+$("resultDesc").textContent=`총 ${total}개 물건 중 ${foreign}개가 실제 주인과 다른 사물함에서 발견되었습니다. 이는 선택한 물건의 소유·보관 관계를 바탕으로 계산한 창작용 교차 오염도입니다.`;
+$("total").textContent=total;$("foreign").textContent=foreign;$("rate").textContent=rate+"%";$("ratebar").style.width=rate+"%";
+$("analysis").innerHTML=[0,1].map(i=>{
+ const own=s.found.filter(x=>x.place===i),other=own.filter(x=>x.owner!==i);
+ return `<div><b>${escapeHTML(s.names[i])}의 사물함</b><p>보관 물건 ${own.length}개 · 상대 소유 ${other.length}개</p><p>${other.length?"상대 물건: "+other.map(x=>escapeHTML(x.name)).join(", "):"상대 소유 물건 없음"}</p></div>`
+}).join("");
+renderLockers("finalLockers");
+$("records").innerHTML=s.found.map((x,i)=>`<div class="log">${String(i+1).padStart(2,"0")} · ${x.icon} ${escapeHTML(x.name)} — 보관: ${escapeHTML(s.names[x.place])} / 소유: ${escapeHTML(s.names[x.owner])} ${x.place!==x.owner?'<span class="badge">교차 보관</span>':""}</div>`).join("");
+}
+function wrap(c,t,x,y,w,line=30){
+let text="",yy=y;for(const ch of [...t]){if(c.measureText(text+ch).width>w&&text){c.fillText(text,x,yy);yy+=line;text=ch}else text+=ch}if(text)c.fillText(text,x,yy);return yy+line
+}
+function loadImg(data){return new Promise(resolve=>{if(!data)return resolve(null);const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=data})}
+function cover(c,img,x,y,w,h){if(!img)return;const z=Math.max(w/img.width,h/img.height),iw=img.width*z,ih=img.height*z;c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(img,x+(w-iw)/2,y+(h-ih)/2,iw,ih);c.restore()}
+async function savePNG(){
+const W=1200,H=1250+s.found.length*48,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
+c.fillStyle="#f9f8f3";c.fillRect(0,0,W,H);c.fillStyle="#292c29";c.fillRect(65,62,1070,4);
+c.fillStyle="#757872";c.font="700 18px monospace";c.fillText("PERSONAL STORAGE / INSPECTION REPORT",72,105);
+c.fillStyle="#252925";c.font="bold 45px sans-serif";c.fillText("사물함 교차 오염도",72,170);
+c.font="bold 26px sans-serif";c.fillText(s.names.join(" × "),72,224);
+const imgs=await Promise.all(s.img.map(loadImg));
+for(let i=0;i<2;i++){
+const x=72+i*540,y=265;c.fillStyle="#e5e6df";c.fillRect(x,y,500,260);
+c.fillStyle="#fdfcf7";c.fillRect(x+12,y+12,476,236);
+c.fillStyle="#dadbd2";c.fillRect(x+22,y+22,88,88);cover(c,imgs[i],x+22,y+22,88,88);
+c.fillStyle="#252925";c.font="bold 23px sans-serif";c.fillText(s.names[i],x+124,y+58);
+const own=s.found.filter(o=>o.place===i),foreign=own.filter(o=>o.owner!==i);
+c.fillStyle="#70756e";c.font="18px sans-serif";c.fillText(`보관 ${own.length}개 / 상대 물건 ${foreign.length}개`,x+124,y+89);
+own.forEach((o,j)=>{const cx=x+24+(j%4)*114,cy=y+128+Math.floor(j/4)*55;
+c.fillStyle=o.owner!==i?"#b16f54":"#d4d6ce";c.fillRect(cx,cy,106,45);
+c.fillStyle="#222";c.font="16px sans-serif";c.fillText(o.icon+" "+o.name,cx+5,cy+29);
+});
+}
+const n=s.found.filter(o=>o.owner!==o.place).length,rate=Math.round(n/s.found.length*100);
+c.fillStyle="#252925";c.font="bold 30px sans-serif";c.fillText(`교차 오염도 ${rate}%`,72,610);
+c.fillStyle="#dfded6";c.fillRect(72,640,1055,17);c.fillStyle="#a76c55";c.fillRect(72,640,1055*rate/100,17);
+c.fillStyle="#777";c.font="18px sans-serif";c.fillText(`전체 ${s.found.length}개 / 상대 소유 ${n}개`,72,699);
+c.fillStyle="#282b29";c.font="bold 23px sans-serif";c.fillText("발견 기록",72,768);
+let y=808;c.font="19px sans-serif";
+for(let i=0;i<s.found.length;i++){
+ const o=s.found[i];if(i%2===0){c.fillStyle="#eeece5";c.fillRect(72,y-25,1055,45)}
+ c.fillStyle="#2c302c";c.fillText(`${String(i+1).padStart(2,"0")}   ${o.icon} ${o.name}`,85,y+5);
+ c.fillStyle=o.place!==o.owner?"#985b44":"#656961";c.fillText(`보관: ${s.names[o.place]}    소유: ${s.names[o.owner]}`,450,y+5);
+ y+=48
+}
+c.fillStyle="#777";c.font="17px monospace";c.fillText("INSPECTION COMPLETE / FICTIONAL RECORD",72,H-80);
+const blob=await new Promise(r=>cv.toBlob(r,"image/png"));if(!blob){alert("PNG 생성에 실패했습니다.");return}
+const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="locker-inspection-"+Date.now()+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)
+}
+$("start").onclick=async()=>{
+try{
+const imgs=await Promise.all([imgData($("imgA")),imgData($("imgB"))]);
+s={names:[$("nameA").value.trim()||"캐릭터 A",$("nameB").value.trim()||"캐릭터 B"],img:imgs,found:[],i:0};
+$("setup").classList.add("hidden");$("result").classList.add("hidden");$("game").classList.remove("hidden");question();
+}catch(e){alert("이미지를 읽지 못했습니다. 다시 선택해 주세요.")}
+};
+$("retry").onclick=()=>{$("result").classList.add("hidden");$("setup").classList.remove("hidden")};
+$("save").onclick=savePNG;
+})();
+</script></body></html>
