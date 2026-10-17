@@ -1,0 +1,117 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>캐릭터 스노볼</title><style>
+:root{--ink:#3f514b;--muted:#8b9690;--line:#e1e7df;--accent:#827798;--paper:#fffefa}*{box-sizing:border-box}body{margin:0;background:#f5f2f7;color:var(--ink);font:14px system-ui,-apple-system,"Malgun Gothic",sans-serif}button,input,select{font:inherit}button{cursor:pointer;color:inherit}button:disabled{cursor:wait;opacity:.6}header{max-width:1120px;margin:auto;padding:30px 24px 22px;display:flex;align-items:center;gap:12px}header svg{width:32px;height:38px}h1{font-size:21px;letter-spacing:-.06em;margin:0;font-weight:650}main{max-width:1120px;margin:auto;padding:0 24px 32px;display:grid;grid-template-columns:290px minmax(0,1fr);gap:22px}.controls{background:var(--paper);padding:6px 20px 12px;border-radius:22px;border:1px solid var(--line)}section{padding:19px 0;border-bottom:1px solid var(--line)}section:last-child{border:0}h2{font-size:13px;margin:0 0 13px;font-weight:700;display:flex;align-items:center;gap:8px}h2 span{font-size:10px;color:#93a18e;font-weight:500}label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:12px}output{font-variant-numeric:tabular-nums;color:var(--muted)}input[type=range]{width:100%;height:20px;accent-color:var(--accent);margin:5px 0 0}input[type=color]{border:0;padding:0;background:none;width:32px;height:26px;cursor:pointer}input[type=text],select{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fffefa;color:var(--ink)}input[type=checkbox]{accent-color:var(--accent)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.grid button{border:1px solid var(--line);border-radius:10px;padding:9px 3px;background:#fffefa;font-size:12px}.grid button.on{background:#e5eddf;border-color:#b4c5aa;color:#39533e}.upload{border:1px dashed #acbba5;border-radius:12px;padding:13px;text-align:center;display:block;font-size:12px;background:#f5f8f0;cursor:pointer}.upload input{display:none}.smallbtn{border:0;background:none;padding:7px 0 0;color:var(--muted);font-size:11px}.colorrow{display:grid;grid-template-columns:1fr 1fr;gap:13px}.check{justify-content:flex-start;margin-top:13px}.presets{display:flex;gap:7px;margin-bottom:13px}.presets button{width:28px;height:28px;border:3px solid #fff;outline:1px solid #dbe2d5;border-radius:50%;padding:0}.preview{min-width:0;align-self:start;position:sticky;top:20px}.canvas-wrap{background:#eee8f1;border-radius:24px;padding:16px;position:relative;border:1px solid #dce4d6}canvas{display:block;width:100%;height:auto;border-radius:13px;touch-action:none}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}.toolbar button{border:1px solid #d7dfd0;background:#fffefa;border-radius:11px;padding:11px 17px;font-size:13px}.toolbar .primary{background:var(--accent);border-color:var(--accent);color:#fff}.toolbar .play{margin-right:auto}#status{display:block;min-height:20px;font-size:12px;color:#7d8b77;margin:10px 2px}details{margin-top:12px;font-size:12px}summary{cursor:pointer;color:#7d8b77}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #7d9a75;outline-offset:3px}@media(max-width:760px){header{padding:20px 16px 18px}main{display:flex;flex-direction:column;padding:0 14px 24px;gap:14px}.preview{position:static;order:-1}.canvas-wrap{padding:9px;border-radius:18px}canvas{max-height:560px;width:100%;object-fit:contain}.controls{padding:4px 18px}.toolbar button{padding:10px 13px}h1{font-size:19px}}
+</style></head><body><header><svg viewBox="0 0 32 38" aria-hidden="true"><circle cx="16" cy="15" r="12" fill="#d3d9eb"/><path d="M7 27h18l3 9H4z" fill="#a79ab8"/><circle cx="11" cy="10" r="2" fill="#fff"/><circle cx="21" cy="18" r="1.5" fill="#fff"/></svg><h1>캐릭터 스노볼</h1></header><main><aside class="controls">
+<section><h2><span>01</span> 캐릭터</h2><label class="upload">＋ 이미지 올리기<input id="upload" type="file" accept="image/png,image/jpeg,image/webp"></label><button id="clearImage" class="smallbtn">기본 캐릭터로</button><label>크기<output id="sizeO"></output></label><input id="size" type="range" min="30" max="160" value="95"><details><summary>위치 조절</summary><label>좌우<output id="xO"></output></label><input id="x" type="range" min="-180" max="180" value="0"><label>높이<output id="yO"></output></label><input id="y" type="range" min="-180" max="100" value="0"></details></section>
+<section><h2><span>02</span> 유리구</h2><div class="presets"><button data-preset="lilac" style="background:#beb0d0" title="라일락"></button><button data-preset="rose" style="background:#dfb1bb" title="로즈"></button><button data-preset="mint" style="background:#a9c9bc" title="민트"></button><button data-preset="night" style="background:#687c9e" title="미드나이트"></button></div><div class="grid" data-group="shape"><button data-value="round" class="on">둥근 구</button><button data-value="dome">돔</button><button data-value="bell">벨</button></div><label>안쪽 배경<input id="sky" type="color" value="#e6e6f3"></label><label>장면<select id="scene"><option value="winter">눈꽃 정원</option><option value="garden">꽃정원</option><option value="moon">달과 별</option><option value="plain">비우기</option></select></label><label class="check"><input id="glass" type="checkbox" checked>유리 반사</label></section>
+<section><h2><span>03</span> 받침대와 리본</h2><label>받침대<select id="base"><option value="classic">클래식</option><option value="scallop">꽃잎</option><option value="wood">나무</option></select></label><div class="colorrow"><label>받침대<input id="baseColor" type="color" value="#b5a5c4"></label><label>리본<input id="ribbonColor" type="color" value="#eee2ef"></label></div><label class="check"><input id="ribbon" type="checkbox" checked>리본 장식</label><label>이름표<input id="name" type="text" maxlength="20" placeholder="이름 입력"></label><label>바깥 배경<input id="background" type="color" value="#f6f3f7"></label></section>
+<section><h2><span>04</span> 흩날리는 조각</h2><label>모양<select id="particle"><option value="snow">눈송이</option><option value="petal">꽃잎</option><option value="star">별</option><option value="heart">하트</option></select></label><label>색<input id="particleColor" type="color" value="#ffffff"></label><label>양<output id="amountO"></output></label><input id="amount" type="range" min="0" max="140" value="65"><label>속도<select id="speed"><option value="0.5">느리게</option><option value="1" selected>보통</option><option value="2">빠르게</option></select></label><label class="check"><input id="drift" type="checkbox" checked>옆으로 살랑이기</label></section>
+</aside><div class="preview"><div class="canvas-wrap"><canvas id="cv" width="900" height="1000" aria-label="캐릭터 스노볼 미리보기"></canvas></div><div class="toolbar"><button id="shake" class="play">흔들기</button><button id="pause">일시정지</button><button id="save">PNG 저장</button><button id="saveGif" class="primary">GIF 저장</button></div><span id="status" role="status" aria-live="polite"></span></div></main><script>
+'use strict';
+const $=id=>document.getElementById(id),cv=$('cv'),ctx=cv.getContext('2d'),TAU=Math.PI*2;
+const state={shape:'round',sky:'#e6e6f3',scene:'winter',glass:true,base:'classic',baseColor:'#b5a5c4',ribbonColor:'#eee2ef',ribbon:true,name:'',background:'#f6f3f7',particle:'snow',particleColor:'#ffffff',amount:65,speed:1,drift:true,size:95,x:0,y:0,t:0};
+let source=null,playing=true,exporting=false,last=0,shakeAge=99;
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+function rr(g,x,y,w,h,r,c){g.beginPath();g.roundRect(x,y,w,h,r);g.fillStyle=c;g.fill();}
+function ellipse(g,x,y,rx,ry,c,rot=0){g.beginPath();g.ellipse(x,y,rx,ry,rot,0,TAU);g.fillStyle=c;g.fill();}
+function line(g,x1,y1,x2,y2,c,w=2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.strokeStyle=c;g.lineWidth=w;g.lineCap='round';g.stroke();}
+function blend(hex,other,amount){const a=hex.match(/\w\w/g).map(x=>parseInt(x,16)),b=other.match(/\w\w/g).map(x=>parseInt(x,16));return '#'+a.map((n,i)=>Math.round(n+(b[i]-n)*amount).toString(16).padStart(2,'0')).join('');}
+function heart(g,x,y,s,c){g.save();g.translate(x,y);g.scale(s,s);g.beginPath();g.moveTo(0,7);g.bezierCurveTo(-22,-7,-13,-20,0,-8);g.bezierCurveTo(13,-20,22,-7,0,7);g.fillStyle=c;g.fill();g.restore();}
+function star(g,x,y,s,c){g.beginPath();g.moveTo(x,y-s);g.quadraticCurveTo(x+s*.17,y-s*.17,x+s,y);g.quadraticCurveTo(x+s*.17,y+s*.17,x,y+s);g.quadraticCurveTo(x-s*.17,y+s*.17,x-s,y);g.quadraticCurveTo(x-s*.17,y-s*.17,x,y-s);g.fillStyle=c;g.fill();}
+function demo(){const c=mk(300,380),g=c.getContext('2d');ellipse(g,148,284,75,87,'#f5e8d3');ellipse(g,104,351,33,20,'#f5e8d3');ellipse(g,193,351,33,20,'#f5e8d3');ellipse(g,79,92,35,66,'#f5e8d3',-.2);ellipse(g,222,92,35,66,'#f5e8d3',.2);ellipse(g,79,92,18,43,'#dfb7ac',-.2);ellipse(g,222,92,18,43,'#dfb7ac',.2);ellipse(g,150,181,118,101,'#f5e8d3');ellipse(g,109,180,7,10,'#62584e');ellipse(g,191,180,7,10,'#62584e');ellipse(g,79,205,19,10,'#edb6ac');ellipse(g,221,205,19,10,'#edb6ac');ellipse(g,150,200,6,4,'#a37d6e');g.strokeStyle='#a37d6e';g.lineWidth=3;g.beginPath();g.arc(144,207,6,0,Math.PI);g.arc(156,207,6,0,Math.PI);g.stroke();rr(g,117,270,66,54,13,'#c3cfb1');heart(g,150,294,.65,'#fff6dc');ellipse(g,102,290,17,27,'#f5e8d3',-.5);ellipse(g,198,290,17,27,'#f5e8d3',.5);return c;}
+const demoArt=demo();
+function globePath(g){g.beginPath();if(state.shape==='round'){g.arc(450,410,292,0,TAU);g.closePath();}else if(state.shape==='dome'){g.moveTo(180,670);g.lineTo(180,392);g.bezierCurveTo(180,95,720,95,720,392);g.lineTo(720,670);g.closePath();}else{g.moveTo(177,670);g.bezierCurveTo(190,600,215,554,215,410);g.bezierCurveTo(215,130,685,130,685,410);g.bezierCurveTo(685,554,710,600,723,670);g.closePath();}}
+function snowflake(g,x,y,s,col){g.save();g.translate(x,y);for(let i=0;i<3;i++){g.rotate(Math.PI/3);line(g,-s,0,s,0,col,1.6);for(let sign of [-1,1]){line(g,sign*s*.55,0,sign*s*.78,s*.24,col,1.2);line(g,sign*s*.55,0,sign*s*.78,-s*.24,col,1.2);}}g.restore();}
+function flower(g,x,y,s,col){for(let i=0;i<5;i++){const a=i*TAU/5;ellipse(g,x+Math.cos(a)*s*.65,y+Math.sin(a)*s*.65,s*.55,s*.55,col);}ellipse(g,x,y,s*.28,s*.28,'#d5b875');}
+function tree(g,x,y,s,col){g.save();g.translate(x,y);g.scale(s,s);rr(g,-6,-15,12,30,3,'#c2b3ad');for(let i=0;i<3;i++){let top=-130+i*32,w=35+i*17;g.beginPath();g.moveTo(0,top);g.quadraticCurveTo(-w*.55,top+40,-w,top+60);g.quadraticCurveTo(0,top+73,w,top+60);g.quadraticCurveTo(w*.55,top+40,0,top);g.fillStyle=col;g.fill();}g.restore();}
+function scenery(g){g.fillStyle=state.sky;g.fillRect(120,100,660,600);
+if(state.scene==='moon'){ellipse(g,585,295,54,54,'#fff1c9');ellipse(g,605,278,47,47,state.sky);for(let i=0;i<13;i++)star(g,245+(i*97)%405,210+(i*71)%260,3+i%4,'#fff4d5');}
+if(state.scene==='winter'){ellipse(g,310,650,220,68,'#eef2f6');ellipse(g,640,654,208,78,'#e3e9ef');tree(g,273,625,.92,'#adbdc2');tree(g,638,632,.68,'#bdcbd2');tree(g,227,647,.5,'#d0dce0');snowflake(g,310,330,19,'#fbfcff');snowflake(g,605,385,13,'#fbfcff');}
+if(state.scene==='garden'){ellipse(g,350,650,210,55,'#d9e4cf');ellipse(g,650,660,210,64,'#cbdac1');for(let i=0;i<7;i++){const x=245+i*65,y=625+(i%3)*13;line(g,x,y+20,x,y-35,'#8fa480',3);ellipse(g,x-9,y-5,16,7,'#a8b891',-.5);ellipse(g,x+10,y-19,14,6,'#97ad86',.5);flower(g,x,y-37,11+i%3, i%2?'#edc6ce':'#fff1cc');}}
+ellipse(g,450,663,264,33,state.scene==='garden'?'#edf1df':'#f9f7f4');}
+function particles(g,front){const count=Number(state.amount);const cycle=state.t/8*state.speed;const burst=shakeAge<3?Math.sin(shakeAge/3*Math.PI):0;for(let i=0;i<count;i++){if((i%3===0)!==front)continue;const seed=i*137.508,offset=(i*73.17)%570;let x=175+(seed%550)+(state.drift?Math.sin(cycle*TAU+i)*13:0),y=112+((offset+cycle*570)%570);x+=Math.sin(i*3.1+shakeAge*9)*burst*26;y-=burst*35*Math.sin(i+shakeAge*4);const s=2+(i*7%5);g.save();g.translate(x,y);g.rotate(Math.sin(cycle*TAU+i)*.5);g.globalAlpha=front?.94:.6;if(state.particle==='petal')ellipse(g,0,0,s*.65,s*1.35,state.particleColor,.5);else if(state.particle==='star')star(g,0,0,s*1.2,state.particleColor);else if(state.particle==='heart')heart(g,0,0,s*.12,state.particleColor);else if(i%6===0)snowflake(g,0,0,s*1.2,state.particleColor);else ellipse(g,0,0,s*.55,s*.55,state.particleColor);g.restore();}}
+function bow(g){if(!state.ribbon)return;const c=state.ribbonColor;g.save();g.translate(450,745);for(let side of [-1,1]){g.save();g.scale(side,1);g.beginPath();g.moveTo(7,10);g.lineTo(50,94);g.lineTo(61,75);g.lineTo(83,81);g.lineTo(26,-3);g.closePath();g.fillStyle=c;g.fill();g.beginPath();g.moveTo(0,0);g.bezierCurveTo(30,-38,97,-57,100,-17);g.bezierCurveTo(107,27,43,30,0,10);g.fillStyle=c;g.fill();g.beginPath();g.moveTo(12,4);g.quadraticCurveTo(53,-10,78,-13);g.strokeStyle=blend(c,'#8d7c91',.18);g.lineWidth=3;g.stroke();g.restore();}rr(g,-15,-14,30,35,10,blend(c,'#ffffff',.15));g.restore();}
+function pedestal(g){const c=state.baseColor,dark=blend(c,'#55485f',.15),light=blend(c,'#ffffff',.22);rr(g,221,668,458,24,12,light);if(state.base==='scallop'){rr(g,233,688,434,104,8,c);for(let i=0;i<11;i++)ellipse(g,249+i*40,788,22,25,c);rr(g,222,808,456,17,8,dark);}else if(state.base==='wood'){rr(g,229,687,442,117,14,c);for(let i=0;i<5;i++){g.beginPath();g.moveTo(247,705+i*19);g.bezierCurveTo(335,697+i*19,526,717+i*19,651,706+i*19);g.strokeStyle=blend(c,'#68503c',.13);g.lineWidth=2;g.stroke();}rr(g,217,799,466,22,10,dark);}else{g.beginPath();g.moveTo(243,690);g.lineTo(657,690);g.lineTo(681,799);g.quadraticCurveTo(450,833,219,799);g.closePath();g.fillStyle=c;g.fill();rr(g,214,799,472,24,11,dark);line(g,257,713,643,713,light,3);}
+if(state.name.trim()){const text=state.name.trim();g.font='500 25px Georgia,"Malgun Gothic",serif';const width=Math.min(360,Math.max(154,g.measureText(text).width+42)),y=state.ribbon?849:738;rr(g,450-width/2,y,width,44,10,'#fff8ee');g.fillStyle=blend(c,'#3d3347',.6);g.textAlign='center';g.textBaseline='middle';g.fillText(text,450,y+22,width-25);}bow(g);}
+function render(){const g=ctx;g.clearRect(0,0,900,1000);g.fillStyle=state.background;g.fillRect(0,0,900,1000);ellipse(g,450,861,238,18,blend(state.background,'#9e93a5',.13));
+g.save();const wobble=shakeAge<.7?Math.sin(shakeAge*30)*.025*(1-shakeAge/.7):0;g.translate(450,700);g.rotate(wobble);g.translate(-450,-700);
+g.save();globePath(g);g.clip();scenery(g);particles(g,false);const art=source||demoArt,scale=Math.min(325/art.width,382/art.height)*state.size/100,aw=art.width*scale,ah=art.height*scale;g.drawImage(art,450-aw/2+state.x,658-ah+state.y,aw,ah);particles(g,true);if(state.glass){g.save();g.globalAlpha=.53;g.strokeStyle='#ffffff';g.lineWidth=13;g.lineCap='round';g.beginPath();if(state.shape==='round')g.arc(450,410,269,Math.PI*1.05,Math.PI*1.31);else {g.moveTo(240,440);g.bezierCurveTo(230,310,280,240,325,225);}g.stroke();g.lineWidth=5;g.globalAlpha=.35;g.beginPath();g.moveTo(676,450);g.quadraticCurveTo(682,520,652,560);g.stroke();g.restore();}g.restore();globePath(g);g.strokeStyle=blend(state.sky,'#ffffff',.6);g.lineWidth=4;g.stroke();pedestal(g);g.restore();}
+function sync(){for(const id of ['sky','scene','base','baseColor','ribbonColor','name','background','particle','particleColor'])state[id]=$(id).value;for(const id of ['size','x','y','amount','speed']){state[id]=Number($(id).value);if($(id+'O'))$(id+'O').textContent=$(id).value+(id==='size'?'%':'');}for(const id of ['glass','ribbon','drift'])state[id]=$(id).checked;$('saveGif').disabled=state.amount===0;$('saveGif').title=state.amount===0?'조각의 양을 늘려 주세요':'선택한 속도로 반복 GIF 저장';render();}
+document.querySelectorAll('input,select').forEach(el=>{if(el.id!=='upload')el.addEventListener('input',sync);});document.querySelectorAll('[data-group] button').forEach(btn=>btn.addEventListener('click',()=>{state.shape=btn.dataset.value;btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===btn));render();}));
+const palettes={lilac:['#e6e6f3','#b5a5c4','#eee2ef','#f6f3f7','#ffffff'],rose:['#f7e5e6','#d5a3ae','#fff0d9','#fbf4f2','#fffaf7'],mint:['#dcece7','#9dbbae','#f3e6c7','#f3f6ef','#ffffff'],night:['#344b69','#7485a5','#ddcba4','#e8ecf3','#fff1cd']};document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{['sky','baseColor','ribbonColor','background','particleColor'].forEach((id,i)=>$(id).value=palettes[b.dataset.preset][i]);if(b.dataset.preset==='night')$('scene').value='moon';sync();}));
+$('upload').addEventListener('change',()=>{const f=$('upload').files[0];if(!f)return;const url=URL.createObjectURL(f),im=new Image();im.onload=()=>{source=im;URL.revokeObjectURL(url);$('status').textContent='';sync();};im.onerror=()=>{URL.revokeObjectURL(url);$('status').textContent='이미지를 읽지 못했어요. PNG 또는 JPG로 다시 올려 주세요.';};im.src=url;});$('clearImage').onclick=()=>{source=null;$('upload').value='';sync();};$('shake').onclick=()=>{shakeAge=0;playing=true;$('pause').textContent='일시정지';};$('pause').onclick=()=>{playing=!playing;$('pause').textContent=playing?'일시정지':'재생';};
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}$('save').onclick=()=>{render();cv.toBlob(b=>{if(b)download(b,'snow_globe.png');else $('status').textContent='PNG 저장에 실패했어요.';},'image/png');};
+function loop(ts){if(!exporting&&playing&&last){const dt=Math.min(.1,(ts-last)/1000);state.t=(state.t+dt)%16;shakeAge+=dt;}last=ts;if(!exporting)render();requestAnimationFrame(loop);}
+    function gifLzw(pixels) {
+      const bytes=[]; let bits=0, count=0;
+      const emit=c=>{bits|=c<<count;count+=9;while(count>=8){bytes.push(bits&255);bits>>>=8;count-=8;}};
+      let dict=new Map(), next=258, prefix=pixels[0]; emit(256);
+      for(let i=1;i<pixels.length;i++){
+        const c=pixels[i], key=prefix*256+c;
+        if(dict.has(key)){prefix=dict.get(key);continue;}
+        emit(prefix); dict.set(key,next++); prefix=c;
+        if(next===511){emit(256);dict.clear();next=258;}
+      }
+      emit(prefix);emit(257);if(count)bytes.push(bits&255);
+      return bytes;
+    }
+    $('saveGif').onclick = async () => {
+      if(exporting)return;
+      exporting=true;
+      const controls=[...document.querySelectorAll('button,input,select')];
+      const previous=controls.map(e=>e.disabled);controls.forEach(e=>e.disabled=true);
+      const oldTime=state.t, oldShake=shakeAge, status=$('status');
+      try {
+        shakeAge=99;
+        const width=450,height=500,frames=80,parts=[];
+        const push=a=>parts.push(new Uint8Array(a));
+        const word=v=>[v&255,v>>8];
+        push([...Array.from('GIF89a',c=>c.charCodeAt(0)),...word(width),...word(height),247,0,0]);
+        // Build one shared palette from the full scene, including uploaded artwork.
+        const small=mk(width,height), sg=small.getContext('2d',{willReadFrequently:true});
+        const hist=new Map();
+        for(let n=0;n<8;n++){
+          state.t=n/8*8/state.speed;render();sg.drawImage(cv,0,0,width,height);
+          const d=sg.getImageData(0,0,width,height).data;
+          for(let k=0;k<d.length;k+=16){const key=(d[k]>>3)<<10|(d[k+1]>>3)<<5|(d[k+2]>>3);hist.set(key,(hist.get(key)||0)+1);}
+        }
+        let boxes=[[...hist].map(([k,n])=>({r:(k>>10)*8+4,g:((k>>5)&31)*8+4,b:(k&31)*8+4,n}))];
+        while(boxes.length<256){
+          let bi=-1,score=-1,axis='r';
+          boxes.forEach((box,i)=>{if(box.length<2)return;for(const a of ['r','g','b']){const vals=box.map(p=>p[a]);const v=(Math.max(...vals)-Math.min(...vals))*Math.sqrt(box.reduce((s,p)=>s+p.n,0));if(v>score){score=v;bi=i;axis=a;}}});
+          if(bi<0)break;
+          const box=boxes.splice(bi,1)[0].sort((a,b)=>a[axis]-b[axis]);
+          const total=box.reduce((s,p)=>s+p.n,0);let acc=0,j=0;
+          while(j<box.length-1 && acc<total/2)acc+=box[j++].n;
+          boxes.push(box.slice(0,j),box.slice(j));
+        }
+        const palette=boxes.map(box=>{const total=box.reduce((s,p)=>s+p.n,0);return ['r','g','b'].map(a=>Math.round(box.reduce((s,p)=>s+p[a]*p.n,0)/total));});
+        while(palette.length<256)palette.push([0,0,0]);push(palette.flat());
+        push([33,255,11,...Array.from('NETSCAPE2.0',c=>c.charCodeAt(0)),3,1,0,0,0]);
+        const lookup=new Int16Array(32768).fill(-1);
+        for(let n=0;n<frames;n++){
+          state.t=n/frames*8/state.speed;render();sg.drawImage(cv,0,0,width,height);
+          const rgba=sg.getImageData(0,0,width,height).data,indices=new Uint8Array(width*height);
+          for(let i=0,k=0;i<indices.length;i++,k+=4){
+            const key=(rgba[k]>>3)<<10|(rgba[k+1]>>3)<<5|(rgba[k+2]>>3);
+            if(lookup[key]<0){let best=Infinity,idx=0;const r=(key>>10)*8+4,g=((key>>5)&31)*8+4,b=(key&31)*8+4;
+              palette.forEach((p,j)=>{const dist=(r-p[0])**2+(g-p[1])**2+(b-p[2])**2;if(dist<best){best=dist;idx=j;}});lookup[key]=idx;}
+            indices[i]=lookup[key];
+          }
+          push([33,249,4,4,Math.round(10/state.speed),0,0,0,44,0,0,0,0,...word(width),...word(height),0,8]);
+          const data=gifLzw(indices);
+          for(let j=0;j<data.length;j+=255){const block=data.slice(j,j+255);push([block.length,...block]);}push([0]);
+          status.textContent=`GIF 만드는 중 ${Math.round((n+1)/frames*100)}%`;
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+        push([59]);
+        const url=URL.createObjectURL(new Blob(parts,{type:'image/gif'}));
+        const link=document.createElement('a');link.href=url;link.download='snow_globe.gif';link.click();
+        setTimeout(()=>URL.revokeObjectURL(url),30000);status.textContent='GIF 저장 완료';
+      } catch(error){console.error(error);status.textContent='GIF 저장에 실패했어요. 다시 시도해 주세요.';}
+      finally {state.t=oldTime;shakeAge=oldShake;exporting=false;controls.forEach((e,i)=>e.disabled=previous[i]);render();}
+    };
+
+
+
+sync();requestAnimationFrame(loop);
+</script></body></html>
