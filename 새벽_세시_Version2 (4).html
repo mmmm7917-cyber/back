@@ -1,0 +1,599 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>새벽 세 시, 같이 듣는 중</title><style>
+*{box-sizing:border-box}body{margin:0;background:#0e1124;color:#ece7f2;font:15px Arial,'Malgun Gothic',sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer;min-height:40px;border:1.5px solid #343a63;border-radius:10px;padding:9px 12px;background:#1a1f3d;color:#ece7f2}
+button:hover{background:#262c55}button.active{background:#efd9a8;color:#16192f;border-color:#efd9a8}
+button:disabled{opacity:.35;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8fa5e8;outline-offset:2px}
+header{max-width:1420px;margin:auto;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:24px;font-weight:900;letter-spacing:-1px}.brand span{color:#efd9a8;margin-right:9px}
+.brand small{display:block;font-size:12px;font-weight:400;color:#8b8fb5;letter-spacing:0}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.layout{max-width:1420px;padding:0 28px 30px;margin:auto;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px}
+.left{min-width:0;position:sticky;top:16px;align-self:start}
+.paper-wrap{padding:15px;background:#161a33;border-radius:20px;border:1px solid #2a3054}
+.canvas{width:100%;aspect-ratio:1;max-height:730px;background:#05060f;border-radius:10px;overflow:hidden}
+.canvas svg{width:100%;height:100%;display:block;touch-action:none}
+.hint{color:#7d82a8;font-size:12px;text-align:center;margin:12px 0 0;line-height:1.6}
+.settings,.editor{background:#141830;border:1px solid #2a3054;border-radius:17px}
+.settings{margin-top:14px;padding:20px}.editor{overflow:hidden;align-self:start}
+.tabs{display:flex;background:#0f1328;border-bottom:1px solid #2a3054;padding:8px;gap:6px}
+.tabs button{flex:1;border:0;font-size:13px;padding:10px 2px;background:transparent}
+.panel{padding:20px}.row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:7px;flex:1;min-width:100px;font-size:13px;color:#9b9fc4}
+.field input:not([type=color]),.field select{width:100%;min-height:42px;padding:9px 10px;border:1px solid #343a63;border-radius:9px;background:#0f1328;color:#ece7f2}
+.field input[type=color]{width:100%;height:39px;border:1px solid #343a63;border-radius:9px;background:#0f1328;padding:4px}
+.group{margin-bottom:20px}.group:last-child{margin-bottom:0}
+.label{font-size:14px;font-weight:bold;margin:0 0 10px;color:#ece7f2}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.choices button{font-size:13px;padding:10px 3px}
+.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.range{display:grid;grid-template-columns:62px 1fr 44px;gap:9px;align-items:center;margin-top:12px;font-size:13px;color:#9b9fc4}
+.range input{width:100%;accent-color:#efd9a8}.range output{text-align:right;font-size:12px}
+.switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;margin-top:12px}
+.check input{accent-color:#efd9a8;width:17px;height:17px}
+.selection{border-top:1px solid #2a3054;padding:18px 20px;background:#101430}
+.selection-title{display:flex;align-items:center;justify-content:space-between;font-weight:bold;margin-bottom:13px;font-size:14px}
+.small{font-size:12px;color:#7d82a8}
+.tools{display:flex;gap:7px;margin-top:15px;flex-wrap:wrap}.tools button{flex:1;min-width:70px;font-size:13px}
+.save{background:#efd9a8;color:#16192f;border:0;font-weight:bold;width:100%;margin-top:15px;padding:14px}
+.save:hover{background:#fff0c9}
+.status{font-size:13px;color:#c9b98f;min-height:18px;text-align:center;margin-top:8px}
+[hidden]{display:none!important}
+dialog{border:1px solid #2a3054;border-radius:17px;width:min(92%,540px);padding:20px;background:#141830;color:#ece7f2}
+dialog::backdrop{background:#05060fcc}dialog img{width:100%;max-height:62vh;object-fit:contain;background:#05060f;border-radius:10px}
+dialog p{font-size:14px;color:#9b9fc4}a{color:#efd9a8}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2a3054;border-radius:10px}
+@media(max-width:850px){header{padding:18px 15px}.brand{font-size:20px}.header-actions button{font-size:12px;padding:8px}
+.layout{padding:0 12px 20px;grid-template-columns:1fr;gap:15px}.left{position:static}.paper-wrap{padding:9px}
+.panel{padding:16px}.canvas{max-height:none}.settings{padding:16px}}
+</style></head><body>
+<header>
+  <div class="brand"><span>☾</span>새벽 세 시</div>
+  <div class="header-actions"><button id="random">랜덤 꾸미기</button><button id="reset">처음으로</button></div>
+</header>
+<main class="layout">
+<section class="left">
+  <div class="paper-wrap"><div class="canvas" id="canvas"></div>
+  <p class="hint" id="hint">스티커를 끌어 옮기세요 · 방향키 이동 · [ ] 회전 · Ctrl+Z 되돌리기 · Ctrl+D 복제</p></div>
+  <div class="settings">
+    <div class="row">
+      <label class="field">화면 비율<select id="ratio"><option value="square">정사각형</option><option value="portrait">세로형</option></select></label>
+      <label class="field">시간대<select id="mood"><option value="dusk">초저녁</option><option value="midnight" selected>한밤중</option><option value="dawn">동트기 전</option></select></label>
+      <label class="field">장면<select id="room"><option value="window" selected>창가</option><option value="open">하늘 가득</option></select></label>
+    </div>
+    <button id="save" class="save">PNG 저장</button>
+    <div id="status" class="status" role="status"></div>
+  </div>
+</section>
+
+<section class="editor">
+<nav class="tabs" aria-label="꾸미기">
+  <button class="active" data-tab="characters">친구</button>
+  <button data-tab="night">밤하늘</button>
+  <button data-tab="music">노래·속삭임</button>
+  <button data-tab="stickers">장식·배치</button>
+</nav>
+
+<div id="characters" class="panel">
+  <div class="switch"><button id="first" class="active">첫 번째 친구</button><button id="second">두 번째 친구</button></div>
+  <div class="group"><label class="field">이름<input id="name" maxlength="14"></label></div>
+  <div class="group"><div class="label">동물</div><div id="species" class="choices"></div></div>
+  <div class="group"><div class="label">표정</div><div id="eyes" class="choices"></div></div>
+  <div class="group"><div class="label">입</div><div id="mouth" class="choices"></div></div>
+  <div class="group"><div class="label">색상</div><div class="colors">
+    <label class="field">얼굴<input type="color" id="fur"></label>
+    <label class="field">귀 안쪽<input type="color" id="inner"></label>
+    <label class="field">눈<input type="color" id="eye"></label>
+    <label class="field">볼<input type="color" id="cheek"></label>
+    <label class="field">잠옷<input type="color" id="pj"></label>
+    <label class="field">무늬<input type="color" id="patch"></label>
+  </div></div>
+  <div class="group"><div class="label">무늬</div><div id="pattern" class="choices"></div></div>
+  <label class="field">볼 터치<select id="blush"><option value="round">동그라미</option><option value="heart">하트</option><option value="none">없음</option></select></label>
+  <label class="check"><input type="checkbox" id="cap">수면 모자</label>
+  <label class="check"><input type="checkbox" id="mole">눈 밑 점</label>
+</div>
+
+<div id="night" class="panel" hidden>
+  <div class="group"><div class="label">밤하늘</div>
+    <div class="range"><label for="stars">별 개수</label><input id="stars" type="range" min="0" max="140" value="70"><output id="starsOut">70</output></div>
+    <label class="check"><input id="twinkle" type="checkbox" checked>크고 작은 별</label>
+    <label class="check"><input id="skyline" type="checkbox" checked>도시 실루엣</label>
+    <label class="check"><input id="glow" type="checkbox" checked>은은한 빛 번짐</label>
+  </div>
+  <div class="group"><div class="label">달</div>
+    <div class="row">
+      <label class="field">모양<select id="phase"><option value="full">보름달</option><option value="half">반달</option><option value="crescent" selected>초승달</option></select></label>
+      <label class="field">달빛색<input type="color" id="moonColor" value="#fdf0cf"></label>
+    </div>
+  </div>
+  <div class="group"><div class="label">방 안</div>
+    <div class="row">
+      <label class="field">이불색<input type="color" id="blanketColor" value="#3c3566"></label>
+      <label class="field">포인트색<input type="color" id="accent" value="#efd9a8"></label>
+    </div>
+    <label class="field" style="margin-top:12px">새벽 시계<input id="clockText" value="AM 3:14" maxlength="10"></label>
+    <label class="check"><input id="showClock" type="checkbox" checked>시계 표시</label>
+  </div>
+</div>
+
+<div id="music" class="panel" hidden>
+  <div class="group"><div class="label">같이 듣는 노래</div>
+    <label class="field">곡명<input id="song" value="잠 못 드는 밤" maxlength="32"></label>
+    <label class="field" style="margin-top:12px">가수<input id="artist" value="Your favorite artist" maxlength="36"></label>
+    <div class="row" style="margin-top:12px">
+      <label class="field">현재 시간<input id="elapsed" value="02:47" maxlength="5" placeholder="02:47"></label>
+      <label class="field">전체 길이<input id="duration" value="04:12" maxlength="5" placeholder="04:12"></label>
+    </div>
+    <label class="check"><input id="showMusic" type="checkbox" checked>음악 카드 표시</label>
+  </div>
+  <div class="group"><div class="label">속삭임</div>
+    <label class="field">첫 번째 친구<input id="quoteA" maxlength="30" value="…아직 안 자?"></label>
+    <label class="field" style="margin-top:12px">두 번째 친구<input id="quoteB" maxlength="30" value="응. 이 곡 끝까지만."></label>
+    <label class="check"><input id="showQuotes" type="checkbox" checked>말풍선 표시</label>
+    <label class="check"><input id="showNames" type="checkbox" checked>이름표 표시</label>
+  </div>
+</div>
+
+<div id="stickers" class="panel" hidden>
+  <div class="group"><div class="label">스티커 추가</div><div class="choices">
+    <button data-add="star">★ 별</button><button data-add="heart">♥ 하트</button><button data-add="note">♪ 음표</button>
+    <button data-add="spark">✦ 반짝임</button><button data-add="zzz">z 졸음</button><button data-add="cloud">☁ 구름</button>
+    <button data-add="shoot">☄ 별똥별</button><button data-add="moon2">☾ 작은 달</button>
+  </div></div>
+  <div class="group"><div class="label">기본 배치</div><div class="choices">
+    <button data-layout="lean">기대어</button><button data-layout="side">나란히</button><button data-layout="sleepy">꾸벅꾸벅</button>
+  </div></div>
+  <div class="group"><div class="label">스티커 테두리</div>
+    <div class="range"><label for="border">테두리</label><input id="border" type="range" min="0" max="14" value="6"><output id="borderOut">6</output></div>
+    <label class="field" style="margin-top:12px">테두리색<input type="color" id="edgeColor" value="#f7efe0"></label>
+    <label class="check"><input id="shadow" type="checkbox" checked>옅은 그림자</label>
+  </div>
+</div>
+
+<div class="selection">
+  <div class="selection-title"><span id="selectedLabel">첫 번째 친구</span><span class="small">선택한 스티커</span></div>
+  <label class="field">요소 선택<select id="element"></select></label>
+  <div class="range"><label for="scale">크기</label><input id="scale" type="range" min="40" max="190" value="100"><output id="scaleOut">100%</output></div>
+  <div class="range"><label for="angle">회전</label><input id="angle" type="range" min="-45" max="45" value="0"><output id="angleOut">0°</output></div>
+  <div class="range"><label for="posX">가로</label><input id="posX" type="range" min="20" max="780"><output id="posXOut"></output></div>
+  <div class="range"><label for="posY">세로</label><input id="posY" type="range" min="20" max="780"><output id="posYOut"></output></div>
+  <label id="stickerColorRow" class="field" style="margin-top:12px" hidden>장식 색<input id="stickerColor" type="color"></label>
+  <div class="tools"><button id="back">뒤로</button><button id="front">앞으로</button><button id="dup">복제</button><button id="remove">숨기기</button></div>
+</div>
+</section>
+</main>
+
+<dialog id="result">
+  <div class="row" style="justify-content:space-between;margin-bottom:12px"><b>완성된 새벽 스티커</b><button id="close">닫기</button></div>
+  <img id="resultImage" alt=""><p>모바일에서는 이미지를 길게 눌러 저장할 수도 있어요.</p><a id="download">PNG 다운로드</a>
+</dialog>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',ink='#1b1a33';
+const moods={
+  dusk:{sky:['#20265e','#4d4079','#cf8f95'],wall:'#241f3d'},
+  midnight:{sky:['#050918','#111a44','#2b3068'],wall:'#11132a'},
+  dawn:{sky:['#161b3c','#4a4274','#eda987'],wall:'#1c1a33'}
+};
+const choices={
+  species:[['bunny','토끼'],['cat','고양이'],['dog','강아지'],['bear','곰'],['fox','여우'],['hamster','햄스터']],
+  eyes:[['sleepy','나른한 눈'],['closed','감은 눈'],['dot','동그란 눈'],['smile','눈웃음'],['spark','반짝이는 눈'],['wink','윙크']],
+  mouth:[['small','작은 입'],['w','고양이 입'],['smile','미소'],['yawn','하품']],
+  pattern:[['none','없음'],['ear','귀 배색'],['eye','한쪽 눈'],['stripes','줄무늬'],['spots','얼룩']]
+};
+const initial=[
+ {name:'모카',species:'bunny',eyes:'sleepy',mouth:'small',fur:'#fdf0d8',inner:'#e8b5a5',eye:'#2a2744',cheek:'#e79a8c',pj:'#4a4480',patch:'#7c74a8',pattern:'ear',blush:'round',cap:true,mole:false},
+ {name:'라떼',species:'cat',eyes:'closed',mouth:'w',fur:'#fff3e2',inner:'#eebfa7',eye:'#2a2744',cheek:'#e79a8c',pj:'#3c5a74',patch:'#c7a98a',pattern:'none',blush:'round',cap:false,mole:true}
+];
+const DECOR=['star','heart','note','spark','zzz','cloud','shoot','moon2'],MAX_DECOR=38;
+const FIELDS=['ratio','mood','room','stars','twinkle','skyline','glow','phase','moonColor','blanketColor','accent','clockText','showClock','song','artist','elapsed','duration','showMusic','quoteA','quoteB','showQuotes','showNames','border','edgeColor','shadow'];
+const STORE='dawn-sheet-v1';
+let chars=initial.map(c=>({...c})),active=0,selected='char0',nextId=20,items=[],svg,defs,drag=null,downloadURL='';
+let past=[],future=[],last='',commitTimer;
+
+/* ---------- SVG 헬퍼 ---------- */
+function E(tag,attrs={},p){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(p)p.append(n);return n}
+function P(p,d,fill=ink,attrs={}){return E('path',{d,fill,...attrs},p)}
+function L(p,d,col=ink,w=4,attrs={}){return P(p,d,'none',{stroke:col,'stroke-width':w,'stroke-linecap':'round','stroke-linejoin':'round',...attrs})}
+function O(p,x,y,rx,ry,fill,attrs={}){return E('ellipse',{cx:x,cy:y,rx,ry,fill,...attrs},p)}
+function R(p,x,y,w,h,rx,fill,attrs={}){return E('rect',{x,y,width:w,height:h,rx,fill,...attrs},p)}
+function T(p,x,y,value,size=18,col=ink,weight=600,max=0,extra={}){
+  const t=E('text',{x,y,fill:col,'font-size':size,'text-anchor':'middle','font-family':'Arial, Malgun Gothic, sans-serif','font-weight':weight,...extra},p);
+  t.textContent=value;
+  if(max&&Array.from(value).reduce((s,c)=>s+(c.charCodeAt(0)>255?size:size*.58),0)>max){t.setAttribute('textLength',max);t.setAttribute('lengthAdjust','spacingAndGlyphs')}
+  return t}
+function starShape(p,x,y,r,col,outline=true){let d='';for(let j=0;j<10;j++){const a=j*Math.PI/5-Math.PI/2,rr=j%2?r*.46:r;d+=(j?'L':'M')+(x+Math.cos(a)*rr).toFixed(2)+' '+(y+Math.sin(a)*rr).toFixed(2)}
+  return P(p,d+'Z',col,outline?{stroke:ink,'stroke-width':2.6,'stroke-linejoin':'round'}:{})}
+function heart(p,x,y,s,col){const g=E('g',{transform:`translate(${x} ${y}) scale(${s})`},p);P(g,'M0 12 C-30 -4 -18 -25 0 -12 C18 -25 30 -4 0 12Z',col);return g}
+/* 재현 가능한 난수(별 위치 고정용) */
+function rng(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}
+
+/* ---------- 캐릭터 ---------- */
+function character(p,c,id){
+  const g=E('g',{},p),edge={stroke:ink,'stroke-width':4.8,'stroke-linejoin':'round'};
+  // 몸통(잠옷)
+  P(g,'M-70 150 C-70 92 -40 70 0 70 C40 70 70 92 70 150Z',c.pj,edge);
+  for(const s of [-1,1]){
+    const col=c.pattern==='ear'?c.patch:c.fur;
+    if(c.species==='bunny'){P(g,`M${s*22} -49 C${s*19} -94 ${s*32} -155 ${s*58} -151 C${s*89} -152 ${s*88} -101 ${s*70} -52Z`,col,edge);L(g,`M${s*46} -75 Q${s*37} -113 ${s*56} -131`,c.inner,12)}
+    else if(c.species==='fox'||c.species==='cat'){const tall=c.species==='fox'?157:117;P(g,`M${s*28} -62 Q${s*45} -${tall-22} ${s*87} -${tall} Q${s*111} -${tall-37} ${s*89} -25Z`,col,edge);P(g,`M${s*51} -69 L${s*84} -${tall-24} L${s*84} -57Z`,c.inner)}
+    else if(c.species==='dog'){/* 접힌 귀는 얼굴 위에 그립니다. */}
+    else{O(g,s*70,-62,c.species==='bear'?31:25,c.species==='bear'?31:25,col,edge);O(g,s*70,-62,16,16,c.inner)}
+  }
+  const face=c.species==='dog'?'M0 -72 C18 -73 30 -71 40 -68 C58 -87 83 -88 100 -72 C119 -54 120 -31 100 -23 C103 -11 104 0 104 12 C104 58 72 77 0 77 C-72 77 -104 58 -104 12 C-104 0 -103 -11 -100 -23 C-120 -31 -119 -54 -100 -72 C-83 -88 -58 -87 -40 -68 C-30 -71 -18 -73 0 -72Z':'M0 -72 C66 -72 102 -44 102 4 C102 58 72 77 0 77 C-72 77 -102 58 -102 4 C-102 -44 -66 -72 0 -72Z';
+  P(g,face,c.fur,edge);
+  const clip=E('clipPath',{id:'face'+id},defs);P(clip,face,'white');
+  const marks=E('g',{'clip-path':`url(#face${id})`},g);
+  if(c.pattern==='eye')O(marks,-39,17,27,31,c.patch);
+  if(c.pattern==='stripes')for(const x of [-23,0,23])P(marks,`M${x-6} -74 L${x} -40 L${x+6} -74Z`,c.patch);
+  if(c.pattern==='spots'){O(marks,76,-22,21,17,c.patch);O(marks,-82,36,14,20,c.patch)}
+  // 옆으로 접힌 끝과 맞닿은 방울이 있는 수면 모자
+  if(c.cap){
+    const hat=E('g',{transform:c.species==='dog'?'translate(0 -17) scale(.78)':'translate(0 0)'},g);
+    P(hat,'M-70 -58 C-56 -88 -29 -113 1 -120 C29 -127 54 -118 65 -103 Q69 -97 66 -89 L55 -87 C50 -99 39 -101 29 -94 C45 -84 60 -70 70 -58 C36 -76 -36 -76 -70 -58Z',c.pj,edge);
+    L(hat,'M29 -94 Q20 -99 13 -99',ink,2.3,{opacity:.5});
+    // 방울 중심을 모자 끝에 겹쳐 빈틈 없이 연결
+    O(hat,63,-86,10.5,10.5,'#fdf0d8',{'stroke':ink,'stroke-width':3.8});
+  }
+  // 머리 윤곽과 이어지는 넓고 둥근 접힌 귀
+  if(c.species==='dog')for(const side of [-1,1]){
+    const ear=E('g',{transform:`scale(${side} 1)`},g);
+    if(c.pattern==='ear'){
+      P(ear,'M40 -68 C58 -87 83 -88 100 -72 C119 -54 120 -31 100 -23 C79 -18 51 -31 47 -52 C46 -58 44 -64 40 -68Z',c.patch);
+      L(ear,'M40 -68 C58 -87 83 -88 100 -72 C119 -54 120 -31 100 -23',ink,4.8);
+    }
+    L(ear,'M47 -52 C49 -36 65 -23 83 -22 Q93 -20 100 -23',c.inner,4.2);
+  }
+  for(const s of [-1,1]){
+    if(c.blush==='round')O(g,s*62,41,15,10,c.cheek);
+    if(c.blush==='heart')heart(g,s*62,41,.66,c.cheek);
+    const x=s*36;
+    if(c.eyes==='smile')L(g,`M${x-9} 24 Q${x} 10 ${x+9} 24`,c.eye,4.5);
+    else if(c.eyes==='closed'||(c.eyes==='wink'&&s===1))L(g,`M${x-9} 19 Q${x} 29 ${x+9} 19`,c.eye,4);
+    else{O(g,x,23,8,c.eyes==='sleepy'?5:10,c.eye);
+      if(c.eyes==='spark'){O(g,x-2,20,2.8,3,'white');O(g,x+3,26,1.5,1.5,'white')}
+      if(c.eyes==='sleepy')L(g,`M${x-9} 18 h18`,c.eye,3)}
+  }
+  if(c.mouth==='small')O(g,0,36,3.6,2.7,c.cheek);
+  if(c.mouth==='w')L(g,'M-11 36 Q-6 45 0 37 Q6 45 11 36',ink,3);
+  if(c.mouth==='smile')L(g,'M-9 36 Q0 46 9 36',ink,3);
+  if(c.mouth==='yawn'){O(g,0,40,8,10,'#b9637a');O(g,0,44,5,5,'#e7a9b4')}
+  if(c.mole)O(g,-54,36,2.1,2.1,ink);
+  return g}
+
+/* ---------- 배경 ---------- */
+function height(){return $('ratio').value==='portrait'?1000:800}
+function sky(){
+  const m=moods[$('mood').value],H=height(),open=$('room').value==='open';
+  const grad=E('linearGradient',{id:'sky',x1:0,y1:0,x2:0,y2:1},defs);
+  m.sky.forEach((c,i)=>E('stop',{offset:(i/(m.sky.length-1)*100)+'%','stop-color':c},grad));
+  if(open){R(svg,0,0,800,H,0,'url(#sky)');drawSky(svg,0,0,800,H)}
+  else{
+    // 방 벽
+    R(svg,0,0,800,H,0,m.wall);
+    // 창문
+    const wx=90,wy=70,ww=620,wh=H-320;
+    R(svg,wx-16,wy-16,ww+32,wh+32,20,'#0a0c1c'); // 창틀 바깥
+    R(svg,wx,wy,ww,wh,10,'url(#sky)');
+    drawSky(svg,wx,wy,ww,wh);
+    // 창틀 격자
+    L(svg,`M${wx+ww/2} ${wy} v${wh}`,'#0a0c1c',14);
+    L(svg,`M${wx} ${wy+wh/2} h${ww}`,'#0a0c1c',14);
+    // 창턱
+    R(svg,wx-26,wy+wh+6,ww+52,20,8,'#0a0c1c');
+  }
+}
+function drawSky(p,x,y,w,h){
+  const g=E('g',{},p),clip=E('clipPath',{id:'skyclip'},defs);
+  R(clip,x,y,w,h,8,'white');g.setAttribute('clip-path','url(#skyclip)');
+  // 별
+  const n=+$('stars').value,bigVary=$('twinkle').checked,rand=rng(1234);
+  for(let i=0;i<n;i++){
+    const sx=x+rand()*w, sy=y+rand()*h*0.82, r=bigVary?(rand()<.15?2.2:rand()*1.1+.5):1;
+    O(g,sx,sy,r,r,'#fdf7e8',{opacity:(0.4+rand()*0.6).toFixed(2)});
+    if(bigVary&&rand()<.08)starShape(g,sx,sy,3.4,'#fff6da',false);
+  }
+  // 달
+  moon(g,x+w-120,y+108,54);
+  // 도시 실루엣
+  if($('skyline').checked){
+    const base=y+h, sr=rng(777); let d=`M${x} ${base}`;let cx=x;
+    while(cx<x+w){const bw=20+sr()*46, bh=40+sr()*120; d+=`L${cx} ${base-bh} L${cx+bw} ${base-bh}`;cx+=bw; if(sr()<.4){const ww2=8;d+=`L${cx} ${base-bh+14}`}}
+    d+=`L${x+w} ${base} Z`;
+    P(g,d,'#060810',{opacity:.92});
+    // 창문 불빛
+    const lr=rng(99);for(let i=0;i<22;i++){const lx=x+lr()*w, ly=base-10-lr()*90;if(ly<base-14)R(g,lx,ly,4,5,1,'#ffd98a',{opacity:.7})}
+  }
+  // 빛 번짐
+  if($('glow').checked){
+    const rg=E('radialGradient',{id:'moonglow'},defs);
+    E('stop',{offset:'0%','stop-color':$('moonColor').value,'stop-opacity':.5},rg);
+    E('stop',{offset:'100%','stop-color':$('moonColor').value,'stop-opacity':0},rg);
+    O(g,x+w-120,y+108,150,150,'url(#moonglow)');
+  }
+}
+function moon(p,x,y,r){
+  const col=$('moonColor').value,phase=$('phase').value;
+  if(phase==='full'){O(p,x,y,r,r,col);crater(p,x,y,r)}
+  else if(phase==='half'){const cId='moonhalf'+Math.random().toString(36).slice(2,7);
+    const clip=E('clipPath',{id:cId},defs);R(clip,x-r,y-r,r,2*r,0,'white');
+    O(p,x,y,r,r,col,{'clip-path':`url(#${cId})`});O(p,x,y,r,r,'none',{stroke:col,'stroke-width':1,opacity:.25})}
+  else{ // 초승달
+    const g=E('g',{},p);O(g,x,y,r,r,col);const bg=moods[$('mood').value].sky[0];O(g,x+r*0.5,y-r*0.15,r*0.92,r*0.92,bg)}
+}
+function crater(p,x,y,r){const c=$('moonColor').value;const d=t=>`rgba(0,0,0,.08)`;
+  O(p,x-r*.3,y-r*.2,r*.16,r*.16,'#0000001a');O(p,x+r*.25,y+r*.3,r*.12,r*.12,'#00000014');O(p,x+r*.1,y-r*.35,r*.1,r*.1,'#00000014')}
+
+/* ---------- 아이템 ---------- */
+function item(id,type,x,y,scale=1,angle=0,extra={}){return{id,type,x,y,scale,angle,hidden:false,...extra}}
+function defaults(){
+  const H=height();
+  items=[
+    item('blanket','blanket',400,H-150,1,0),
+    item('char0','char',285,330,1.05,-6,{index:0}),
+    item('char1','char',545,350,1.05,7,{index:1}),
+    item('music','music',410,H-90,1,0),
+    item('name0','name',210,470,1,-6,{index:0}),
+    item('name1','name',620,492,1,6,{index:1}),
+    item('quote0','quote',545,155,1,4,{index:0}),
+    item('quote1','quote',240,540,1,-4,{index:1}),
+    item('clock','clock',648,118,1,0),
+    item('d1','star',690,250,.9,12,{color:'#fff0c0'}),
+    item('d2','zzz',150,250,.8,-8,{color:'#dcd6f2'}),
+    item('d3','shoot',140,150,.9,0,{color:'#fff0c0'}),
+    item('d4','note',705,620,.6,10,{color:'#dcd6f2'})
+  ];
+}
+function label(a){
+  return a.type==='char'?(a.index===0?'첫 번째 친구':'두 번째 친구')
+    :a.type==='name'?(a.index===0?'첫 번째 이름표':'두 번째 이름표')
+    :a.type==='quote'?(a.index===0?'첫 번째 속삭임':'두 번째 속삭임')
+    :{music:'음악 카드',blanket:'이불',clock:'새벽 시계',star:'별',heart:'하트',note:'음표',spark:'반짝임',zzz:'졸음',cloud:'구름',shoot:'별똥별',moon2:'작은 달'}[a.type]}
+function current(){return items.find(a=>a.id===selected)}
+function transform(a){return `translate(${a.x} ${a.y}) rotate(${a.angle}) scale(${a.scale})`}
+function visible(a){
+  return !a.hidden
+    &&(a.type!=='music'||$('showMusic').checked)
+    &&(a.type!=='quote'||$('showQuotes').checked)
+    &&(a.type!=='name'||$('showNames').checked)
+    &&(a.type!=='clock'||$('showClock').checked)}
+
+/* ---------- 렌더 ---------- */
+function render(exporting=false){
+  svg=E('svg',{xmlns:NS,viewBox:`0 0 800 ${height()}`,width:1200,height:height()*1.5});
+  defs=E('defs',{},svg);
+  // 스티커 필터
+  const filter=E('filter',{id:'sticker',x:'-70%',y:'-70%',width:'240%',height:'240%'},defs);
+  E('feMorphology',{in:'SourceAlpha',operator:'dilate',radius:$('border').value,result:'expanded'},filter);
+  E('feFlood',{'flood-color':$('edgeColor').value,result:'edgecol'},filter);
+  E('feComposite',{in:'edgecol',in2:'expanded',operator:'in',result:'outline'},filter);
+  if($('shadow').checked){
+    E('feGaussianBlur',{in:'expanded',stdDeviation:2,result:'blur'},filter);
+    E('feOffset',{in:'blur',dx:1,dy:3,result:'offset'},filter);
+    E('feFlood',{'flood-color':'#000010','flood-opacity':.35,result:'shade'},filter);
+    E('feComposite',{in:'shade',in2:'offset',operator:'in',result:'shadow'},filter)}
+  const merge=E('feMerge',{},filter);
+  if($('shadow').checked)E('feMergeNode',{in:'shadow'},merge);
+  E('feMergeNode',{in:'outline'},merge);E('feMergeNode',{in:'SourceGraphic'},merge);
+
+  sky();
+
+  for(const a of items){
+    if(!visible(a))continue;
+    const holder=E('g',{'data-id':a.id,transform:transform(a),style:exporting?'':'cursor:grab'},svg),
+          g=E('g',{filter:'url(#sticker)'},holder);
+    if(a.type==='char')character(g,chars[a.index],a.id);
+    else if(a.type==='blanket'){
+      const col=$('blanketColor').value;
+      P(g,'M-230 60 Q-230 -40 -120 -46 Q0 -56 120 -46 Q230 -40 230 60 L230 120 L-230 120Z',col,{stroke:ink,'stroke-width':4});
+      L(g,'M-230 10 Q0 -6 230 10','#ffffff',4,{opacity:.18});
+      // 스티치
+      L(g,'M-205 40 Q0 24 205 40','#000010',3,{opacity:.2,'stroke-dasharray':'8 10'});
+    }
+    else if(a.type==='name'){
+      const name=chars[a.index].name||'친구';
+      R(g,-77,-18,154,36,10,'#11132a',{stroke:$('accent').value,'stroke-width':2});
+      T(g,0,6,name,18,'#f3eee0',700,133)}
+    else if(a.type==='quote'){
+      const q=$(a.index===0?'quoteA':'quoteB').value;
+      P(g,'M-108 -24 Q-117 -24 -117 -10 V13 Q-117 26 -104 26 H-62 L-72 41 L-36 26 H104 Q117 26 117 13 V-10 Q117 -24 104 -24Z','#161a33',
+        {stroke:'#9b96c2','stroke-width':2.4,'stroke-dasharray':'6 5'});
+      T(g,0,6,q,16,'#ece7f2',500,206)}
+    else if(a.type==='clock'){
+      R(g,-66,-24,132,48,12,'#0b0d1e',{stroke:$('accent').value,'stroke-width':2});
+      T(g,0,8,$('clockText').value||'AM 3:14',22,$('accent').value,700,118,{'font-family':'Courier New, monospace'})}
+    else if(a.type==='music'){
+      R(g,-150,-52,300,104,16,'#11142c',{stroke:$('accent').value,'stroke-width':2.4});
+      R(g,-138,-40,30,30,7,$('accent').value);T(g,-123,-18,'♫',21,'#11142c');
+      T(g,14,-26,$('song').value||'곡명',17,'#f3eee0',700,215);
+      T(g,14,-6,$('artist').value,12,'#9b9fc4',400,205);
+      const sec=t=>{const m=/^(\d{1,2}):([0-5]\d)$/.exec(t);return m?+m[1]*60+ +m[2]:0};
+      const progress=Math.min(1,sec($('elapsed').value)/Math.max(1,sec($('duration').value)));
+      L(g,'M-128 20 H128','#2b2f52',4);
+      L(g,`M-128 20 H${-128+256*progress}`,$('accent').value,4);
+      O(g,-128+256*progress,20,5,5,$('accent').value);
+      T(g,-110,40,$('elapsed').value,10,'#9b9fc4',400);
+      T(g,110,40,$('duration').value,10,'#9b9fc4',400)}
+    else if(a.type==='star')starShape(g,0,0,30,a.color);
+    else if(a.type==='heart')heart(g,0,0,1.6,a.color);
+    else if(a.type==='spark')P(g,'M0 -37 Q8 -6 33 0 Q8 6 0 37 Q-8 6 -33 0 Q-8 -6 0 -37Z',a.color);
+    else if(a.type==='note'){L(g,'M-7 14 V-27 L22 -33 V8',a.color,7);O(g,-17,15,13,9,a.color);O(g,12,9,13,9,a.color);L(g,'M-7 -17 L22 -23',a.color,6)}
+    else if(a.type==='zzz'){T(g,0,-8,'z',20,a.color,800);T(g,13,-20,'z',15,a.color,800);T(g,22,-29,'z',11,a.color,800)}
+    else if(a.type==='cloud'){const col=a.color;O(g,-16,4,20,15,col);O(g,8,0,24,19,col);O(g,26,6,16,13,col);R(g,-20,6,52,14,7,col)}
+    else if(a.type==='shoot'){L(g,'M-40 -22 L8 6',a.color,5,{opacity:.7});L(g,'M-26 -6 L6 10',a.color,3,{opacity:.4});starShape(g,16,12,12,a.color)}
+    else if(a.type==='moon2'){const g2=E('g',{},g);O(g2,0,0,22,22,a.color);O(g2,9,-4,20,20,'#11132a')}
+
+    if(!exporting&&a.id===selected){
+      const box=a.type==='char'?[-121,-175,242,335]
+        :a.type==='music'?[-158,-60,316,120]
+        :a.type==='quote'?[-130,-36,260,89]
+        :a.type==='name'?[-88,-28,176,56]
+        :a.type==='clock'?[-72,-30,144,60]
+        :a.type==='blanket'?[-236,-60,472,186]
+        :[-45,-46,90,92];
+      R(holder,...box,12,'none',{stroke:'#efd9a8','stroke-width':1.4,'stroke-dasharray':'5 5','pointer-events':'none'})}
+  }
+  if(!exporting){
+    $('canvas').style.aspectRatio=`800/${height()}`;
+    $('canvas').replaceChildren(svg);
+    $('posY').max=height()-20;
+    bindDrag();
+    clearTimeout(commitTimer);commitTimer=setTimeout(commit,250);
+  }
+  return svg}
+
+/* ---------- 리스트·선택 동기화 ---------- */
+function rebuildList(){
+  const select=$('element');select.replaceChildren();
+  for(const a of items){const o=document.createElement('option');o.value=a.id;o.textContent=label(a)+(visible(a)?'':' · 숨김');select.append(o)}
+  select.value=selected}
+function syncSelection(){
+  const a=current();if(!a)return;rebuildList();
+  $('selectedLabel').textContent=label(a);
+  for(const[id,val]of [['scale',Math.round(a.scale*100)],['angle',Math.round(a.angle)],['posX',Math.round(a.x)],['posY',Math.round(a.y)]]){
+    $(id).value=val;$(id+'Out').textContent=val+(id==='scale'?'%':id==='angle'?'°':'')}
+  $('stickerColorRow').hidden=!a.color;if(a.color)$('stickerColor').value=a.color;
+  $('remove').textContent=DECOR.includes(a.type)?'삭제':a.hidden?'다시 표시':'숨기기';
+  $('dup').disabled=!DECOR.includes(a.type)}
+function select(id){selected=id;const a=current();if(a&&a.type==='char'){active=a.index;syncChar()}syncSelection();render()}
+function syncChar(){
+  const c=chars[active];
+  $('first').classList.toggle('active',active===0);$('second').classList.toggle('active',active===1);
+  for(const k of ['name','fur','inner','eye','cheek','pj','patch','blush'])$(k).value=c[k];
+  for(const k of ['cap','mole'])$(k).checked=c[k];
+  for(const k of Object.keys(choices))for(const b of $(k).children){const yes=b.dataset.value===c[k];b.classList.toggle('active',yes);b.setAttribute('aria-pressed',yes)}}
+
+/* ---------- 드래그 ---------- */
+function coord(e){const point=new DOMPoint(e.clientX,e.clientY);return point.matrixTransform(svg.getScreenCTM().inverse())}
+function bindDrag(){
+  const root=$('canvas');
+  root.onpointerdown=e=>{const target=e.target.closest('[data-id]');if(!target)return;e.preventDefault();
+    const id=target.getAttribute('data-id'),pos=coord(e);select(id);const a=current();
+    drag={id,dx:pos.x-a.x,dy:pos.y-a.y};root.setPointerCapture(e.pointerId)};
+  root.onpointermove=e=>{if(!drag)return;const a=items.find(x=>x.id===drag.id),p=coord(e);
+    a.x=Math.max(20,Math.min(780,p.x-drag.dx));a.y=Math.max(20,Math.min(height()-20,p.y-drag.dy));
+    render();syncSelection()};
+  root.onpointerup=root.onpointercancel=()=>{if(drag){drag=null;commit()}}}
+
+/* ---------- 저장·되돌리기 ---------- */
+function snapshot(){const f={};for(const id of FIELDS){const el=$(id);f[id]=el.type==='checkbox'?el.checked:el.value}return JSON.stringify({chars,items,f,nextId,selected})}
+function restore(s){const d=JSON.parse(s);chars=d.chars;items=d.items;nextId=d.nextId;
+  for(const id in d.f){const el=$(id);if(!el)continue;if(el.type==='checkbox')el.checked=d.f[id];else el.value=d.f[id]}
+  $('starsOut').textContent=$('stars').value;$('borderOut').textContent=$('border').value;
+  selected=items.some(a=>a.id===d.selected)?d.selected:'char0';
+  const a=current();if(a&&a.type==='char')active=a.index;
+  syncChar();render();syncSelection();updateHistoryButtons()}
+function commit(){const s=snapshot();if(s===last)return;if(last){past.push(last);if(past.length>80)past.shift()}future=[];last=s;
+  try{localStorage.setItem(STORE,s)}catch(e){}updateHistoryButtons()}
+function undo(){if(!past.length)return;future.push(last);last=past.pop();applyHistory(last)}
+function redo(){if(!future.length)return;past.push(last);last=future.pop();applyHistory(last)}
+function applyHistory(s){const d=JSON.parse(s);chars=d.chars;items=d.items;nextId=d.nextId;
+  for(const id in d.f){const el=$(id);if(!el)continue;if(el.type==='checkbox')el.checked=d.f[id];else el.value=d.f[id]}
+  $('starsOut').textContent=$('stars').value;$('borderOut').textContent=$('border').value;
+  selected=items.some(a=>a.id===d.selected)?d.selected:'char0';
+  const a=current();if(a&&a.type==='char')active=a.index;
+  syncChar();clearTimeout(commitTimer);render();clearTimeout(commitTimer);syncSelection();
+  try{localStorage.setItem(STORE,s)}catch(e){}updateHistoryButtons()}
+function updateHistoryButtons(){$('undoBtn').disabled=!past.length;$('redoBtn').disabled=!future.length}
+
+/* ---------- UI 바인딩 ---------- */
+for(const[k,opts]of Object.entries(choices))for(const[v,l]of opts){
+  const b=document.createElement('button');b.textContent=l;b.dataset.value=v;
+  b.onclick=()=>{chars[active][k]=v;syncChar();render()};$(k).append(b)}
+
+for(const b of document.querySelectorAll('[data-tab]'))b.onclick=()=>{
+  for(const t of document.querySelectorAll('[data-tab]')){const yes=t===b;t.classList.toggle('active',yes);t.setAttribute('aria-pressed',yes);$(t.dataset.tab).hidden=!yes}};
+
+$('first').onclick=()=>select('char0');$('second').onclick=()=>select('char1');
+for(const k of ['name','fur','inner','eye','cheek','pj','patch','blush'])$(k).oninput=()=>{chars[active][k]=$(k).value;render()};
+for(const k of ['cap','mole'])$(k).onchange=()=>{chars[active][k]=$(k).checked;render()};
+
+for(const id of ['song','artist','elapsed','duration','quoteA','quoteB','clockText','mood','room','phase','moonColor','blanketColor','accent','edgeColor','stars','border','shadow','twinkle','skyline','glow','showMusic','showQuotes','showNames','showClock'])
+  $(id).oninput=()=>{$('starsOut').textContent=$('stars').value;$('borderOut').textContent=$('border').value;render();rebuildList()};
+
+$('ratio').onchange=()=>{for(const a of items)a.y=Math.min(height()-30,a.y);render();syncSelection()};
+$('element').onchange=()=>select($('element').value);
+
+for(const id of ['scale','angle','posX','posY'])$(id).oninput=()=>{
+  const a=current();if(!a)return;a[{scale:'scale',angle:'angle',posX:'x',posY:'y'}[id]]=+$(id).value/(id==='scale'?100:1);
+  syncSelection();render()};
+$('stickerColor').oninput=()=>{const a=current();if(a){a.color=$('stickerColor').value;render()}};
+
+$('front').onclick=()=>{const i=items.findIndex(a=>a.id===selected);if(i<items.length-1)[items[i],items[i+1]]=[items[i+1],items[i]];render();syncSelection()};
+$('back').onclick=()=>{const i=items.findIndex(a=>a.id===selected);if(i>0)[items[i],items[i-1]]=[items[i-1],items[i]];render();syncSelection()};
+$('remove').onclick=()=>{const a=current();if(!a)return;if(DECOR.includes(a.type)){items=items.filter(x=>x!==a);selected='char'+active}else a.hidden=!a.hidden;render();syncSelection()};
+
+function decorCount(){return items.filter(a=>DECOR.includes(a.type)).length}
+function duplicate(){const a=current();if(!a||!DECOR.includes(a.type)){$('status').textContent='장식 스티커만 복제할 수 있어요.';return}
+  if(decorCount()>=MAX_DECOR){$('status').textContent=`장식은 최대 ${MAX_DECOR}개까지예요.`;return}
+  const b={...a,id:'s'+nextId++,x:Math.min(780,a.x+30),y:Math.min(height()-20,a.y+30),hidden:false};
+  items.push(b);$('status').textContent='';select(b.id)}
+$('dup').onclick=duplicate;
+
+for(const b of document.querySelectorAll('[data-add]'))b.onclick=()=>{
+  if(decorCount()>=MAX_DECOR){$('status').textContent=`장식은 최대 ${MAX_DECOR}개까지예요.`;return}
+  const a=item('s'+nextId++,b.dataset.add,400+(Math.random()*80-40),height()/2+(Math.random()*80-40),1,(Math.random()*30-15),{color:['zzz','cloud','note'].includes(b.dataset.add)?'#dcd6f2':$('accent').value});
+  items.push(a);$('status').textContent='';select(a.id)};
+
+for(const b of document.querySelectorAll('[data-layout]'))b.onclick=()=>{
+  const H=height(),mode=b.dataset.layout;
+  const P_={
+    lean:  {char0:[285,330,-6],char1:[545,350,7],name0:[210,470,-6],name1:[620,492,6],quote0:[545,155,4],quote1:[240,540,-4]},
+    side:  {char0:[300,340,0],char1:[500,340,0],name0:[300,480,0],name1:[500,480,0],quote0:[300,150,-3],quote1:[500,150,3]},
+    sleepy:{char0:[320,360,-14],char1:[500,375,13],name0:[250,500,-10],name1:[560,512,10],quote0:[560,165,5],quote1:[235,560,-5]}
+  }[mode];
+  for(const id in P_){const a=items.find(x=>x.id===id);if(a)Object.assign(a,{x:P_[id][0],y:P_[id][1],angle:P_[id][2]})}
+  render();syncSelection()};
+
+$('random').onclick=()=>{const pick=a=>a[Math.floor(Math.random()*a.length)];
+  for(const c of chars){c.species=pick(choices.species)[0];c.eyes=pick(choices.eyes)[0];c.mouth=pick(choices.mouth)[0];
+    c.fur=pick(['#fdf0d8','#d9c6b4','#ebc5bd','#c5ccd5','#f2ce9e']);
+    c.pj=pick(['#4a4480','#3c5a74','#6a4f74','#4f6a5a']);c.blush=pick(['round','heart','none']);c.cap=Math.random()<.5}
+  $('mood').value=pick(['dusk','midnight','dawn']);$('phase').value=pick(['full','half','crescent']);
+  syncChar();render()};
+$('reset').onclick=()=>{if(!confirm('꾸민 내용을 지우고 처음으로 돌아갈까요?'))return;try{localStorage.removeItem(STORE)}catch(e){}location.reload()};
+
+/* 되돌리기 버튼 추가 */
+const undoBtn=document.createElement('button'),redoBtn=document.createElement('button');
+undoBtn.id='undoBtn';redoBtn.id='redoBtn';undoBtn.textContent='↶ 되돌리기';redoBtn.textContent='↷ 다시';
+undoBtn.onclick=undo;redoBtn.onclick=redo;document.querySelector('.header-actions').prepend(undoBtn,redoBtn);
+
+/* 키보드 */
+document.addEventListener('keydown',e=>{
+  const typing=/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)&&e.target.type!=='range';
+  const mod=e.ctrlKey||e.metaKey,k=e.key.toLowerCase();
+  if(mod&&k==='z'){e.preventDefault();e.shiftKey?redo():undo();return}
+  if(mod&&k==='y'){e.preventDefault();redo();return}
+  if(typing||$('result').open)return;
+  if(mod&&k==='d'){e.preventDefault();duplicate();return}
+  const a=current();if(!a)return;const step=e.shiftKey?10:1;
+  const moves={arrowleft:[-step,0],arrowright:[step,0],arrowup:[0,-step],arrowdown:[0,step]};
+  if(moves[k]){e.preventDefault();a.x=Math.max(20,Math.min(780,a.x+moves[k][0]));a.y=Math.max(20,Math.min(height()-20,a.y+moves[k][1]));render();syncSelection()}
+  else if(k==='['||k===']'){a.angle=Math.max(-45,Math.min(45,a.angle+(k===']'?3:-3)));render();syncSelection()}
+  else if(k==='delete'||k==='backspace'){e.preventDefault();$('remove').click()}});
+
+/* 저장 */
+$('close').onclick=()=>$('result').close();
+$('save').onclick=async()=>{const btn=$('save');btn.disabled=true;$('status').textContent='사진을 준비하고 있어요…';
+  try{
+    const out=render(true),source=new Blob([new XMLSerializer().serializeToString(out)],{type:'image/svg+xml;charset=utf-8'}),
+          url=URL.createObjectURL(source),im=new Image();
+    render();
+    await new Promise((ok,no)=>{im.onload=ok;im.onerror=no;im.src=url});
+    const cv=document.createElement('canvas');cv.width=1200;cv.height=height()*1.5;
+    cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);URL.revokeObjectURL(url);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png'));if(!blob)throw Error('png');
+    if(downloadURL)URL.revokeObjectURL(downloadURL);downloadURL=URL.createObjectURL(blob);
+    $('resultImage').src=downloadURL;$('download').href=downloadURL;$('download').download='새벽_세시.png';
+    $('download').click();$('result').showModal();$('status').textContent='PNG가 완성됐어요.'}
+  catch(e){$('status').textContent='저장에 실패했어요. 다시 시도해 주세요.';render()}
+  finally{btn.disabled=false}};
+
+/* 시작 */
+let saved=null;try{saved=localStorage.getItem(STORE)}catch(e){}
+if(saved){try{last=saved;restore(saved);$('status').textContent='이전에 꾸미던 내용을 불러왔어요.'}catch(e){saved=null}}
+if(!saved){defaults();syncChar();render();syncSelection();last=snapshot();updateHistoryButtons()}
+</script></body></html>
