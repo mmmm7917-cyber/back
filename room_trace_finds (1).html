@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>서로의 방에서 발견된 것</title>
+<style>
+:root{--bg:#e8e4dc;--paper:#fbfaf6;--ink:#262521;--muted:#757066;--line:#cac5b8;--warn:#a1664e}
+*{box-sizing:border-box} body{margin:0;color:var(--ink);font-family:"Malgun Gothic",system-ui,sans-serif;background:
+linear-gradient(rgba(255,255,255,.15),rgba(255,255,255,.15)),
+repeating-linear-gradient(0deg,#e7e2d8 0,#e7e2d8 1px,transparent 1px,transparent 24px),var(--bg)}
+button,input{font:inherit} button{cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:20px}
+.paper{background:var(--paper);border:1px solid var(--line);box-shadow:0 12px 30px rgba(70,60,45,.08)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:22px 24px 18px;border-bottom:2px solid var(--ink)}
+.kicker{font:700 11px ui-monospace,Consolas,monospace;letter-spacing:.16em;color:var(--muted);margin-bottom:8px}
+h1{margin:0;font-size:28px;letter-spacing:-.05em}
+.meta{font:12px/1.6 ui-monospace,Consolas,monospace;color:var(--muted);text-align:right}
+.sec{padding:20px 24px;border-bottom:1px solid #ddd8cc}.sec:last-child{border-bottom:0}
+.grid2,.subjects,.rooms,.finalRooms{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{display:block;font-size:12px;font-weight:800;margin:0 0 6px}
+.field input[type=text],.field input[type=file]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:3px;background:#fff;color:var(--ink)}
+.field input[type=file]{padding:8px;font-size:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.small{font-size:12px;color:var(--muted);line-height:1.65}
+.btn{border:1px solid var(--ink);background:transparent;color:var(--ink);padding:10px 14px;border-radius:3px;font-weight:800}
+.btn.primary{background:var(--ink);color:#fff}.btn.soft{border-color:var(--line);color:var(--muted)}
+.hidden{display:none!important}
+.subject{border:1px solid var(--line);background:#fff;padding:10px;display:grid;grid-template-columns:56px 1fr;gap:10px;align-items:center}
+.avatar{width:56px;height:56px;border:1px solid var(--line);background:#e4dfd5;display:grid;place-items:center;font-weight:900;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.subject .name{font-weight:900}.subject .code{font:11px ui-monospace,Consolas,monospace;color:var(--muted);margin-top:4px}
+.statline,.metricgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.statline>div,.metric{border:1px solid var(--line);background:#fff;padding:10px}
+.statline b,.metric b{display:block;font:700 10px ui-monospace,Consolas,monospace;color:var(--muted);margin-bottom:4px}
+.qnum{font:700 11px ui-monospace,Consolas,monospace;color:var(--muted);letter-spacing:.12em}
+.progress{height:4px;background:#ddd8ce;margin:12px 0 18px}.progress>i{display:block;height:100%;width:0;background:var(--ink)}
+.qtitle{font-size:22px;font-weight:900;letter-spacing:-.045em;line-height:1.45;margin-bottom:6px}
+.qdesc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:14px}
+.playgrid{display:grid;grid-template-columns:1.04fr .96fr;gap:14px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{border:1px solid var(--line);background:#fff;text-align:left;padding:14px;border-radius:3px;min-height:96px}
+.choice:hover{border-color:var(--ink)} .choice strong{display:block;font-size:15px;margin-bottom:7px}.choice span{font-size:12px;color:var(--muted);line-height:1.5}
+.room{border:1px solid var(--line);background:#fff}
+.roomhd{padding:9px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.roomhd b{font-size:14px}.roomhd span{font:11px ui-monospace,Consolas,monospace;color:var(--muted)}
+.roomvis{position:relative;height:238px;background:linear-gradient(180deg,#f5f2ea 0 60%, #efe9df 60%);overflow:hidden}
+.window{position:absolute;left:16px;top:16px;width:88px;height:58px;border:4px solid #b9b4a9;background:#dbe2e6}.window:before{content:"";position:absolute;left:40px;top:-4px;width:4px;height:58px;background:#b9b4a9}
+.bed{position:absolute;right:16px;bottom:20px;width:120px;height:64px;border:2px solid #a29c90;background:#d7d0c4}.bed:before{content:"";position:absolute;left:7px;top:8px;width:42px;height:22px;background:#f7f4ee;border:1px solid #c6c0b4}
+.desk{position:absolute;left:14px;bottom:24px;width:78px;height:38px;border:2px solid #8e897e;background:#d8d2c8}.chair{position:absolute;left:22px;bottom:10px;width:26px;height:22px;background:#83877f}.poster{position:absolute;right:18px;top:18px;width:52px;height:72px;border:3px solid #a6a093;background:#e8e4db}
+.roomitems{position:absolute;inset:0;pointer-events:none}
+.tag{position:absolute;min-width:72px;max-width:110px;padding:4px 6px;border-radius:12px;border:1px solid var(--line);background:#fff;font-size:11px;line-height:1.3;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.tag.foreign{border-color:#d3a792;background:#fff7f3}.tag .own{display:block;color:var(--muted);font-size:10px}
+.logbox,.finalList{border:1px solid var(--line);background:#fff}.loghead,.finalList .hd{padding:9px 10px;border-bottom:1px solid var(--line);font:700 11px ui-monospace,Consolas,monospace;color:var(--muted)}
+.logs{max-height:220px;overflow:auto}.log,.record{padding:9px 10px;border-bottom:1px solid #ede9df;font-size:12px;line-height:1.55}.log:last-child,.record:last-child{border-bottom:0}
+.badge{display:inline-flex;padding:2px 6px;border-radius:999px;background:#f4ede9;color:#8e5f49;font-size:10px;font-weight:800;margin-left:6px}
+.resultTitle{font-size:25px;font-weight:900;margin:0 0 6px}.resultLead{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.metric strong{display:block;font-size:22px;margin-top:4px}
+.barTrack{height:14px;background:#e3ddd1;border-radius:999px;overflow:hidden;margin:10px 0 18px}.barFill{height:100%;width:0;background:linear-gradient(90deg,#7f604f,#b58463)}
+.analysis{border-top:2px solid var(--ink);border-bottom:1px solid var(--line);padding:14px 0;margin:16px 0;font-size:13px;line-height:1.75}
+.stamp{display:inline-flex;border:2px solid var(--warn);color:var(--warn);padding:7px 10px;font-weight:900;letter-spacing:.08em;transform:rotate(-2deg);margin-top:8px}
+.note{font:11px ui-monospace,Consolas,monospace;color:var(--muted);margin-top:12px}
+@media(max-width:760px){.wrap{padding:10px}.head,.sec{padding-left:15px;padding-right:15px}.grid2,.subjects,.playgrid,.choices,.rooms,.finalRooms,.statline,.metricgrid{grid-template-columns:1fr}h1{font-size:24px}.qtitle{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap"><main class="paper">
+<header class="head"><div><div class="kicker">ROOM INSPECTION / TRACE DENSITY REPORT</div><h1>서로의 방에서 발견된 것</h1></div><div class="meta">INSPECTION FILE<br>STATUS: ACTIVE</div></header>
+
+<section id="setup" class="sec">
+<div class="grid2">
+<div class="field"><label>캐릭터 A 이름</label><input id="nameA" type="text" value="캐릭터 A" maxlength="24"></div>
+<div class="field"><label>캐릭터 B 이름</label><input id="nameB" type="text" value="캐릭터 B" maxlength="24"></div>
+<div class="field"><label>캐릭터 A 이미지 · 선택</label><input id="imgA" type="file" accept="image/*"></div>
+<div class="field"><label>캐릭터 B 이미지 · 선택</label><input id="imgB" type="file" accept="image/*"></div>
+</div>
+<div class="subjects">
+<div class="subject"><div class="avatar" id="avA">A</div><div><div class="name" id="pvA">캐릭터 A</div><div class="code">ROOM A / PRIVATE SPACE</div></div></div>
+<div class="subject"><div class="avatar" id="avB">B</div><div><div class="name" id="pvB">캐릭터 B</div><div class="code">ROOM B / PRIVATE SPACE</div></div></div>
+</div>
+<div class="row" style="margin-top:14px">
+<button class="btn primary" id="startBtn">조사 시작</button>
+<button class="btn soft" id="resetBtn">초기화</button>
+<span class="small">12개 발견 항목 · 발견 위치와 실제 소유자를 선택하면 방마다 상대 흔적의 밀도를 계산합니다.</span>
+</div>
+</section>
+
+<section id="game" class="sec hidden">
+<div class="statline">
+<div><b>SUBJECT A</b><span id="sA"></span></div>
+<div><b>SUBJECT B</b><span id="sB"></span></div>
+<div><b>ROOM A 상대 흔적</b><span id="liveFA">0</span></div>
+<div><b>ROOM B 상대 흔적</b><span id="liveFB">0</span></div>
+</div>
+<div class="qnum">INSPECTION <span id="qIdx">01</span> / 12</div>
+<div class="progress"><i id="bar"></i></div>
+<div class="qtitle" id="qTitle"></div>
+<div class="qdesc" id="qDesc"></div>
+<div class="playgrid">
+<div>
+<div class="choices" id="choices"></div>
+<div class="logbox"><div class="loghead">CURRENT FINDINGS</div><div class="logs" id="logs"></div></div>
+</div>
+<div class="rooms" id="rooms"></div>
+</div>
+</section>
+
+<section id="result" class="sec hidden">
+<div class="kicker">FINAL TRACE ANALYSIS</div>
+<div class="resultTitle" id="resultTitle"></div>
+<div class="resultLead" id="resultLead"></div>
+<div class="metricgrid">
+<div class="metric"><b>전체 발견물</b><strong id="mTotal">0</strong></div>
+<div class="metric"><b>상대 흔적</b><strong id="mForeign">0</strong></div>
+<div class="metric"><b>ROOM A 상대 흔적</b><strong id="mFA">0</strong></div>
+<div class="metric"><b>ROOM B 상대 흔적</b><strong id="mFB">0</strong></div>
+</div>
+<div><b style="font-size:13px">전체 흔적 밀도</b></div>
+<div class="barTrack"><div class="barFill" id="densityBar"></div></div>
+<div class="analysis" id="analysis"></div>
+<div class="finalRooms" id="finalRooms"></div>
+<div class="finalList" style="margin-top:14px"><div class="hd">INSPECTION RECORD</div><div id="records"></div></div>
+<div class="stamp" id="stamp">INSPECTION CLOSED</div>
+<div class="note">선택한 발견물과 공간 배치를 기반으로 작성된 창작용 조사 기록입니다.</div>
+<div class="row" style="margin-top:18px">
+<button class="btn primary" id="saveBtn">보고서 PNG 저장</button>
+<button class="btn" id="retryBtn">다시 조사하기</button>
+</div>
+</section>
+</main></div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const ITEMS=[
+["🧥","겉옷","침대 발치에 걸려 있다."],["🪥","칫솔","세면대 컵 옆에서 발견됐다."],["📝","짧은 메모","책상 서랍 안쪽에 끼워져 있다."],
+["☕","머그컵","한쪽 침대 옆 협탁에서 발견됐다."],["🔌","충전기","바닥 콘센트 근처에 놓여 있다."],["💊","약봉투","책상 위 구석에 남아 있다."],
+["📷","사진","벽 쪽 프레임 아래로 밀려 있다."],["🗝️","열쇠","문 옆 작은 접시에 놓여 있다."],["🛏️","담요","침대 위에 반쯤 접힌 채 남아 있다."],
+["📖","책","의자 밑에 끼워져 있다."],["🌫️","향수","서랍 가장 안쪽에서 발견됐다."],["🍪","간식 봉지","책상 위에 뜯긴 채 놓여 있다."]
+];
+let st=null;
+const esc=v=>String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+function readFile(inp){const f=inp.files&&inp.files[0]; if(!f) return Promise.resolve(null); return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f);});}
+function setPreview(id,data,fallback){const el=$(id); el.innerHTML=""; if(data){const im=new Image(); im.src=data; el.appendChild(im);} else el.textContent=fallback;}
+$("nameA").oninput=()=>{$("pvA").textContent=$("nameA").value||"캐릭터 A"}; $("nameB").oninput=()=>{$("pvB").textContent=$("nameB").value||"캐릭터 B"};
+$("imgA").onchange=async()=>setPreview("avA",await readFile($("imgA")),"A"); $("imgB").onchange=async()=>setPreview("avB",await readFile($("imgB")),"B");
+function spots(room,idx){const a=[[120,26],[14,96],[78,98],[128,132],[26,168],[98,182],[152,78],[74,52],[142,170],[30,132]], b=[[108,26],[14,88],[68,142],[132,108],[30,172],[98,178],[150,70],[74,52],[130,172],[24,126]]; return (room===0?a:b)[idx%10];}
+function roomHTML(room){const name=st.names[room], arr=st.findings.filter(x=>x.room===room), foreign=arr.filter(x=>x.owner!==room).length; const tags=arr.map((it,idx)=>{const p=spots(room,idx); return '<div class="tag '+(it.owner!==room?'foreign':'')+'" style="left:'+p[0]+'px;top:'+p[1]+'px">'+it.icon+' '+esc(it.name)+'<span class="own">'+(it.owner!==room?esc(st.names[it.owner])+' 소유':'이 방 주인 소유')+'</span></div>';}).join(''); return '<div class="room"><div class="roomhd"><b>'+esc(name)+'의 방</b><span>TRACE '+foreign+' / TOTAL '+arr.length+'</span></div><div class="roomvis"><div class="window"></div><div class="poster"></div><div class="desk"></div><div class="chair"></div><div class="bed"></div><div class="roomitems">'+tags+'</div></div></div>';}
+function updateLive(){const fa=st.findings.filter(x=>x.room===0&&x.owner!==0).length, fb=st.findings.filter(x=>x.room===1&&x.owner!==1).length; $("liveFA").textContent=fa; $("liveFB").textContent=fb;}
+function renderLogs(){const box=$("logs"); box.innerHTML=st.findings.slice().reverse().map((x,ri)=>'<div class="log">'+String(st.findings.length-ri).padStart(2,'0')+' · '+x.icon+' '+esc(x.name)+' — <b>'+esc(st.names[x.room])+'의 방</b> / 소유: '+esc(st.names[x.owner])+(x.room!==x.owner?'<span class="badge">상대 흔적</span>':'')+'</div>').join('') || '<div class="log">아직 발견 기록이 없습니다.</div>';}
+function renderRooms(id){$(id).innerHTML=roomHTML(0)+roomHTML(1);}
+function renderQuestion(){const item=ITEMS[st.i]; $("qIdx").textContent=String(st.i+1).padStart(2,'0'); $("bar").style.width=(st.i/ITEMS.length*100)+'%'; $("qTitle").textContent=item[0]+' '+item[1]+' 발견'; $("qDesc").textContent=item[2]+' 이 물건이 어느 방에 있으며 실제로 누구의 것인지 선택해 주세요.'; const box=$("choices"); box.innerHTML=''; [[0,0],[1,1],[0,1],[1,0]].forEach(opt=>{const room=opt[0],owner=opt[1],foreign=room!==owner; const b=document.createElement('button'); b.className='choice'; b.innerHTML='<strong>'+esc(st.names[room])+'의 방 · '+(foreign?esc(st.names[owner])+' 소유':'방 주인 소유')+'</strong><span>'+(foreign?'상대 물건이 개인 공간에 남아 있는 상태':'방 주인의 물건이 제자리에 있는 상태')+'</span>'; b.onclick=()=>selectOption(room,owner); box.appendChild(b);}); renderRooms("rooms"); renderLogs(); updateLive();}
+function selectOption(room,owner){const item=ITEMS[st.i]; st.findings.push({icon:item[0],name:item[1],room:room,owner:owner}); st.i++; if(st.i<ITEMS.length) renderQuestion(); else finish();}
+function finish(){ $("game").classList.add('hidden'); $("result").classList.remove('hidden'); const total=st.findings.length, foreign=st.findings.filter(x=>x.room!==x.owner).length, fa=st.findings.filter(x=>x.room===0&&x.owner!==0).length, fb=st.findings.filter(x=>x.room===1&&x.owner!==1).length, density=Math.round(foreign/total*100); let type='',lead=''; if(density===0){type='완전 분리형';lead='서로의 흔적이 거의 남지 않는 타입. 각자의 방이 뚜렷하게 분리되어 있습니다.';} else if(density<=25){type='낮은 흔적 침투형';lead='서로의 공간은 기본적으로 분리되어 있지만, 몇 가지 물건이 은근하게 남아 있습니다.';} else if(density<=50){type='부분 혼재형';lead='개인 공간 안에 상대 흔적이 자연스럽게 섞여 있는 타입. 생활권이 부분적으로 겹칩니다.';} else if(density<=75){type='높은 흔적 밀집형';lead='개인 공간이라기보다 공유 공간에 가까운 상태. 상대의 물건이 각 방에 꽤 많이 남습니다.';} else {type='경계 소실형';lead='방의 경계보다 관계의 밀도가 더 강한 타입. 물건만 봐도 서로의 생활권이 깊게 얽혀 있습니다.';} $("resultTitle").textContent=st.names[0]+' × '+st.names[1]+' · '+type; $("resultLead").textContent=lead; $("mTotal").textContent=total; $("mForeign").textContent=foreign; $("mFA").textContent=fa; $("mFB").textContent=fb; $("densityBar").style.width=density+'%'; let roomText=fa>fb?st.names[0]+'의 방에서 상대 흔적이 더 많이 발견되었습니다.':fb>fa?st.names[1]+'의 방에서 상대 흔적이 더 많이 발견되었습니다.':'두 방의 상대 흔적 수가 비슷하게 나타났습니다.'; $("analysis").textContent='총 '+total+'개 발견물 중 '+foreign+'개가 실제 주인과 다른 방에서 발견되었습니다. 전체 흔적 밀도는 '+density+'%입니다. ROOM A 상대 흔적 '+fa+'개, ROOM B 상대 흔적 '+fb+'개로 집계되었습니다. '+roomText; $("finalRooms").innerHTML=roomHTML(0)+roomHTML(1); $("records").innerHTML=st.findings.map((x,i)=>'<div class="record">'+String(i+1).padStart(2,'0')+' · '+x.icon+' '+esc(x.name)+' — 발견 위치: '+esc(st.names[x.room])+'의 방 / 소유: '+esc(st.names[x.owner])+(x.room!==x.owner?'<span class="badge">상대 흔적</span>':'')+'</div>').join(''); $("stamp").textContent=type.toUpperCase().replaceAll(' ','_');}
+function loadImg(data){return new Promise(res=>{if(!data)return res(null); const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=data;});}
+function cover(c,img,x,y,w,h){if(!img)return; const s=Math.max(w/img.width,h/img.height), dw=img.width*s, dh=img.height*s; c.save(); c.beginPath(); c.rect(x,y,w,h); c.clip(); c.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh); c.restore();}
+function roundRect(c,x,y,w,h,r,fill,stroke){c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); if(fill)c.fill(); if(stroke)c.stroke();}
+function drawMiniRoom(c,x,y,w,h,room){c.fillStyle='#fff'; c.strokeStyle='#c8c3b7'; c.lineWidth=2; c.fillRect(x,y,w,h); c.strokeRect(x,y,w,h); c.fillStyle='#f4f0e7'; c.fillRect(x+8,y+36,w-16,h-44); c.fillStyle='#262521'; c.font='bold 20px sans-serif'; c.fillText(st.names[room]+'의 방',x+12,y+25); c.fillStyle='#dbe2e6'; c.fillRect(x+16,y+50,72,42); c.strokeStyle='#b9b4a9'; c.strokeRect(x+16,y+50,72,42); c.fillStyle='#d7d0c4'; c.fillRect(x+w-130,y+h-76,108,52); c.strokeStyle='#a29c90'; c.strokeRect(x+w-130,y+h-76,108,52); c.fillStyle='#d8d2c8'; c.fillRect(x+18,y+h-72,68,30); c.strokeStyle='#8e897e'; c.strokeRect(x+18,y+h-72,68,30); const arr=st.findings.filter(v=>v.room===room); const sp=[[x+106,y+56],[x+22,y+105],[x+80,y+111],[x+132,y+150],[x+28,y+178],[x+98,y+190],[x+w-156,y+92],[x+76,y+70]]; arr.forEach((it,idx)=>{const p=sp[idx%sp.length]; c.fillStyle=it.owner!==room?'#fff3ed':'#f6f6f2'; c.strokeStyle=it.owner!==room?'#d3a792':'#cdc8bb'; roundRect(c,p[0],p[1],86,36,12,true,true); c.fillStyle='#222'; c.font='14px sans-serif'; c.fillText(it.icon+' '+it.name,p[0]+8,p[1]+22);});}
+async function savePNG(){const total=st.findings.length, foreign=st.findings.filter(x=>x.room!==x.owner).length, fa=st.findings.filter(x=>x.room===0&&x.owner!==0).length, fb=st.findings.filter(x=>x.room===1&&x.owner!==1).length, density=Math.round(foreign/total*100), H=1240+st.findings.length*44, W=1400; const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const c=cv.getContext('2d'); c.fillStyle='#fbfaf6'; c.fillRect(0,0,W,H); c.fillStyle='#262521'; c.fillRect(70,70,1260,3); c.fillStyle='#757066'; c.font='700 18px monospace'; c.fillText('ROOM INSPECTION / TRACE DENSITY REPORT',80,112); c.fillStyle='#262521'; c.font='900 48px sans-serif'; c.fillText('서로의 방에서 발견된 것',80,175); c.font='700 26px sans-serif'; c.fillText(st.names[0]+' × '+st.names[1],80,225); const imgs=await Promise.all([loadImg(st.img[0]),loadImg(st.img[1])]); let x1=1030,x2=1175, y1=110; c.fillStyle='#e8e3d8'; c.fillRect(x1,102,108,108); c.fillRect(x2,102,108,108); cover(c,imgs[0],x1+8,y1,92,92); cover(c,imgs[1],x2+8,y1,92,92); c.fillStyle='#666'; c.font='14px sans-serif'; c.fillText(st.names[0],1040,228); c.fillText(st.names[1],1185,228); c.strokeStyle='#c8c3b7'; c.strokeRect(80,275,1240,92); [['전체 발견물',total],['상대 흔적',foreign],['ROOM A 상대 흔적',fa],['ROOM B 상대 흔적',fb]].forEach((m,i)=>{let x=80+i*310; c.fillStyle='#777'; c.font='700 14px monospace'; c.fillText(m[0],x+16,304); c.fillStyle='#222'; c.font='900 32px sans-serif'; c.fillText(String(m[1]),x+16,345); if(i<3){c.fillStyle='#ddd8cc'; c.fillRect(x+309,275,1,92);}}); c.fillStyle='#222'; c.font='700 22px sans-serif'; c.fillText('전체 흔적 밀도 '+density+'%',80,420); c.fillStyle='#e5e0d4'; c.fillRect(80,440,1240,18); c.fillStyle='#b58463'; c.fillRect(80,440,1240*density/100,18); drawMiniRoom(c,80,500,600,300,0); drawMiniRoom(c,720,500,600,300,1); c.fillStyle='#222'; c.font='700 22px sans-serif'; c.fillText('발견 기록',80,860); let yy=900; st.findings.forEach((x,i)=>{if(i%2===0){c.fillStyle='#f0ede5'; c.fillRect(80,yy-25,1240,40);} c.fillStyle='#222'; c.font='17px sans-serif'; c.fillText(String(i+1).padStart(2,'0')+'   '+x.icon+' '+x.name,92,yy); c.fillStyle=x.room!==x.owner?'#9a6149':'#666'; c.fillText('발견 위치: '+st.names[x.room]+'의 방    소유: '+st.names[x.owner],450,yy); yy+=44;}); c.strokeStyle='#a1664e'; c.lineWidth=3; c.strokeRect(1060,yy+24,200,60); c.fillStyle='#a1664e'; c.font='900 21px sans-serif'; c.textAlign='center'; c.fillText('TRACE LOG',1160,yy+62); c.textAlign='left'; c.fillStyle='#777'; c.font='14px monospace'; c.fillText('FICTIONAL INSPECTION REPORT',80,H-70); const blob=await new Promise(res=>cv.toBlob(res,'image/png')); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='room-trace-report-'+Date.now()+'.png'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1200);}
+$("resetBtn").onclick=()=>{$("nameA").value='캐릭터 A'; $("nameB").value='캐릭터 B'; $("pvA").textContent='캐릭터 A'; $("pvB").textContent='캐릭터 B'; $("imgA").value=''; $("imgB").value=''; setPreview("avA",null,"A"); setPreview("avB",null,"B");};
+$("startBtn").onclick=async()=>{try{const A=$("nameA").value.trim()||'캐릭터 A', B=$("nameB").value.trim()||'캐릭터 B', imgA=await readFile($("imgA")), imgB=await readFile($("imgB")); st={i:0,names:[A,B],img:[imgA,imgB],findings:[]}; $("sA").textContent=A; $("sB").textContent=B; $("setup").classList.add('hidden'); $("result").classList.add('hidden'); $("game").classList.remove('hidden'); renderQuestion();}catch(e){alert('이미지를 읽는 중 오류가 발생했습니다. 다시 선택해 주세요.');}};
+$("retryBtn").onclick=()=>{$("result").classList.add('hidden'); $("setup").classList.remove('hidden');};
+$("saveBtn").onclick=savePNG;
+})();
+</script>
+</body>
+</html>
