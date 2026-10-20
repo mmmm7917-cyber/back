@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FAILED KITCHEN</title>
+<style>
+  :root {
+    --bg: #f7f0e9;
+    --panel: #fffaf4;
+    --line: #decfbe;
+    --text: #413327;
+    --sub: #7a6654;
+    --accent: #d16a4d;
+    --accent-soft: #fff1e7;
+    --shadow: rgba(75, 48, 28, 0.12);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg,#f8f2eb 0%,#f2ebe4 100%);
+    color: var(--text);
+    font-family: "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+  }
+  .app {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 16px;
+  }
+  .panel, .preview-wrap {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 10px 24px var(--shadow);
+  }
+  .panel { padding: 16px; }
+  .preview-wrap { padding: 16px; display:flex; flex-direction:column; gap:12px; }
+  h1 { margin: 0; font-size: 24px; letter-spacing: -0.02em; }
+  .section { margin-top: 14px; padding-top: 14px; border-top: 1px dashed #e4d8cd; }
+  .section h2 { margin: 0 0 10px; font-size: 14px; }
+  .control { margin-bottom: 12px; }
+  .control:last-child { margin-bottom: 0; }
+  .control label {
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+    font-size: 13px; margin-bottom: 6px;
+  }
+  .value { color: var(--accent); font-weight: 700; font-size: 12px; }
+  input[type="file"], input[type="range"], select, button {
+    width: 100%;
+    font: inherit;
+  }
+  input[type="file"], select, button {
+    background: #fff;
+    color: inherit;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  input[type="range"] { accent-color: var(--accent); }
+  button { cursor: pointer; transition: transform .12s ease; }
+  button:hover { transform: translateY(-1px); }
+  .accent { background: var(--accent); color: #fff; border-color: #bb5a40; }
+  .soft { background: var(--accent-soft); }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btn-row { display:grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .preview-head { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .preview-title { font-size: 14px; font-weight: 700; }
+  .canvas-shell {
+    background:#efe6de; border:1px solid var(--line); border-radius:16px; padding:12px;
+  }
+  canvas {
+    display:block; width:auto; height:auto; max-width:100%; max-height:78vh; margin:0 auto;
+    object-fit:contain; background:#f9f4ee; border-radius:12px;
+  }
+  .status { min-height:20px; font-size:12px; color:var(--sub); }
+  .hide { display:none !important; }
+  .tiny { font-size: 12px; color: var(--sub); }
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .panel { order: 2; }
+    .preview-wrap { order: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <h1>FAILED KITCHEN</h1>
+
+    <div class="section">
+      <h2>장면</h2>
+      <div class="control">
+        <label>장면</label>
+        <select id="scene">
+          <option value="burn" selected>요리 태우기</option>
+          <option value="bite">한 입만 먹어 봐</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>음식</label>
+          <select id="foodType">
+            <option value="toast">토스트</option>
+            <option value="pancake">팬케이크</option>
+            <option value="cake">케이크</option>
+            <option value="omelet">오믈렛</option>
+            <option value="steak">스테이크</option>
+            <option value="cookie">쿠키</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>배경</label>
+          <select id="bgPreset">
+            <option value="kitchen">파스텔 주방</option>
+            <option value="diner">레트로 식당</option>
+            <option value="studio">단색 스튜디오</option>
+            <option value="night">야간 주방</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>비율</label>
+          <select id="ratio">
+            <option value="1:1" selected>1:1</option>
+            <option value="4:3">4:3</option>
+            <option value="16:9">16:9</option>
+            <option value="9:16">9:16</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>속도</label>
+          <select id="speed">
+            <option value="0.85">느리게</option>
+            <option value="1" selected>보통</option>
+            <option value="1.2">빠르게</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="charASection">
+      <h2>캐릭터 A</h2>
+      <div class="control">
+        <label>이미지</label>
+        <input id="uploadA" type="file" accept="image/png,image/webp,image/jpeg" />
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>크기 <span class="value" id="aScaleVal">100%</span></label>
+          <input id="aScale" type="range" min="50" max="180" value="100" />
+        </div>
+        <div class="control">
+          <label>X <span class="value" id="aXVal">0</span></label>
+          <input id="aX" type="range" min="-260" max="260" value="0" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>Y <span class="value" id="aYVal">0</span></label>
+          <input id="aY" type="range" min="-180" max="180" value="0" />
+        </div>
+        <div class="control">
+          <label>반전</label>
+          <select id="aFlip"><option value="0">안 함</option><option value="1">반전</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="charBSection">
+      <h2>캐릭터 B</h2>
+      <div class="control">
+        <label>이미지</label>
+        <input id="uploadB" type="file" accept="image/png,image/webp,image/jpeg" />
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>크기 <span class="value" id="bScaleVal">100%</span></label>
+          <input id="bScale" type="range" min="50" max="180" value="100" />
+        </div>
+        <div class="control">
+          <label>X <span class="value" id="bXVal">0</span></label>
+          <input id="bX" type="range" min="-260" max="260" value="0" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>Y <span class="value" id="bYVal">0</span></label>
+          <input id="bY" type="range" min="-180" max="180" value="0" />
+        </div>
+        <div class="control">
+          <label>반전</label>
+          <select id="bFlip"><option value="0">안 함</option><option value="1">반전</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>반응</h2>
+      <div class="row">
+        <div class="control" id="reactABox">
+          <label>A</label>
+          <select id="reactionA">
+            <option value="panic" selected>당황</option>
+            <option value="cry">울먹</option>
+            <option value="blank">멍함</option>
+            <option value="run">황급히 도망</option>
+            <option value="angry">버럭</option>
+            <option value="sigh">한숨</option>
+          </select>
+        </div>
+        <div class="control" id="reactBBox">
+          <label>B</label>
+          <select id="reactionB">
+            <option value="happy" selected>해맑음</option>
+            <option value="greedy">또 먹으려 함</option>
+            <option value="blank">멍함</option>
+            <option value="panic">당황</option>
+            <option value="wink">만족</option>
+            <option value="run">황급히 도망</option>
+          </select>
+        </div>
+      </div>
+      <div class="control" id="intensityBox">
+        <label>사고 강도 <span class="value" id="intensityVal">65%</span></label>
+        <input id="intensity" type="range" min="0" max="100" value="65" />
+      </div>
+      <div class="control hide" id="biteBox">
+        <label>먹은 양 <span class="value" id="biteVal">60%</span></label>
+        <input id="biteAmount" type="range" min="10" max="100" value="60" />
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>저장</h2>
+      <div class="row">
+        <div class="control">
+          <label>GIF 크기</label>
+          <select id="gifSize">
+            <option value="320">320px</option>
+            <option value="480" selected>480px</option>
+            <option value="640">640px</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>FPS</label>
+          <select id="gifFps">
+            <option value="8">8</option>
+            <option value="10">10</option>
+            <option value="12" selected>12</option>
+            <option value="15">15</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="savePng" class="soft">PNG 저장</button>
+        <button id="saveGif" class="accent">GIF 저장</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="preview-wrap">
+    <div class="preview-head">
+      <div class="preview-title">미리보기</div>
+      <div class="btn-row" style="width:min(360px,100%);">
+        <button id="playPause" class="soft">일시정지</button>
+        <button id="restart" class="soft">처음부터</button>
+      </div>
+    </div>
+    <div class="canvas-shell">
+      <canvas id="preview" width="800" height="800"></canvas>
+    </div>
+    <div id="status" class="status">준비 완료.</div>
+  </main>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    scene:$('scene'), foodType:$('foodType'), bgPreset:$('bgPreset'), ratio:$('ratio'), speed:$('speed'),
+    uploadA:$('uploadA'), uploadB:$('uploadB'), aScale:$('aScale'), aScaleVal:$('aScaleVal'), aX:$('aX'), aXVal:$('aXVal'), aY:$('aY'), aYVal:$('aYVal'), aFlip:$('aFlip'),
+    bScale:$('bScale'), bScaleVal:$('bScaleVal'), bX:$('bX'), bXVal:$('bXVal'), bY:$('bY'), bYVal:$('bYVal'), bFlip:$('bFlip'),
+    reactionA:$('reactionA'), reactionB:$('reactionB'), intensity:$('intensity'), intensityVal:$('intensityVal'), biteAmount:$('biteAmount'), biteVal:$('biteVal'),
+    charBSection:$('charBSection'), biteBox:$('biteBox'), intensityBox:$('intensityBox'), reactBBox:$('reactBBox'),
+    gifSize:$('gifSize'), gifFps:$('gifFps'), savePng:$('savePng'), saveGif:$('saveGif'),
+    preview:$('preview'), status:$('status'), playPause:$('playPause'), restart:$('restart')
+  };
+
+  const ctx = els.preview.getContext('2d');
+  const off = document.createElement('canvas');
+  const offCtx = off.getContext('2d');
+
+  let imageA = null, imageB = null;
+  let playing = true;
+  let lastTime = performance.now();
+  let playHead = 0;
+  const BASE_DURATION = 3.0;
+
+  function setStatus(msg){ els.status.textContent = msg; }
+  function clamp(v, a=0, b=1){ return Math.max(a, Math.min(b, v)); }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
+  function easeInOutSine(x){ return -(Math.cos(Math.PI * x) - 1) / 2; }
+  function parseRatio(ratio){ const [w,h] = ratio.split(':').map(Number); return {w,h}; }
+
+  function uiSync(){
+    els.aScaleVal.textContent = `${els.aScale.value}%`;
+    els.aXVal.textContent = els.aX.value;
+    els.aYVal.textContent = els.aY.value;
+    els.bScaleVal.textContent = `${els.bScale.value}%`;
+    els.bXVal.textContent = els.bX.value;
+    els.bYVal.textContent = els.bY.value;
+    els.intensityVal.textContent = `${els.intensity.value}%`;
+    els.biteVal.textContent = `${els.biteAmount.value}%`;
+    const biteScene = els.scene.value === 'bite';
+    els.charBSection.classList.toggle('hide', !biteScene);
+    els.biteBox.classList.toggle('hide', !biteScene);
+    els.reactBBox.classList.toggle('hide', !biteScene);
+    els.intensityBox.classList.toggle('hide', biteScene);
+  }
+
+  function resizePreviewCanvas(){
+    const {w,h} = parseRatio(els.ratio.value);
+    const base = 800;
+    if(w >= h){ els.preview.width = base; els.preview.height = Math.round(base * h / w); }
+    else { els.preview.height = base; els.preview.width = Math.round(base * w / h); }
+  }
+
+  ['input','change'].forEach(evt => {
+    [els.scene, els.foodType, els.bgPreset, els.ratio, els.speed, els.aScale, els.aX, els.aY, els.aFlip, els.bScale, els.bX, els.bY, els.bFlip, els.reactionA, els.reactionB, els.intensity, els.biteAmount].forEach(el => el.addEventListener(evt, uiSync));
+    els.ratio.addEventListener(evt, resizePreviewCanvas);
+  });
+  uiSync(); resizePreviewCanvas();
+
+  function bindUpload(input, setter, label){
+    input.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => { setter(img); setStatus(`${label} 불러옴.`); };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  bindUpload(els.uploadA, (img)=>imageA=img, '캐릭터 A');
+  bindUpload(els.uploadB, (img)=>imageB=img, '캐릭터 B');
+
+  function getSettings(){
+    return {
+      scene: els.scene.value,
+      food: els.foodType.value,
+      bgPreset: els.bgPreset.value,
+      ratio: els.ratio.value,
+      speed: +els.speed.value,
+      aScale: +els.aScale.value / 100,
+      aX: +els.aX.value,
+      aY: +els.aY.value,
+      aFlip: els.aFlip.value === '1',
+      bScale: +els.bScale.value / 100,
+      bX: +els.bX.value,
+      bY: +els.bY.value,
+      bFlip: els.bFlip.value === '1',
+      reactionA: els.reactionA.value,
+      reactionB: els.reactionB.value,
+      intensity: +els.intensity.value / 100,
+      biteAmount: +els.biteAmount.value / 100,
+    };
+  }
+
+  function drawRoundedRect(c,x,y,w,h,r){
+    const rr = Math.min(r,w/2,h/2);
+    c.beginPath();
+    c.moveTo(x+rr,y);
+    c.arcTo(x+w,y,x+w,y+h,rr);
+    c.arcTo(x+w,y+h,x,y+h,rr);
+    c.arcTo(x,y+h,x,y,rr);
+    c.arcTo(x,y,x+w,y,rr);
+    c.closePath();
+  }
+
+  function drawBackground(c,w,h,s){
+    let wall='#fff6ed', wall2='#fde8d8', counter='#dcb89e', tile='rgba(140,110,90,0.1)';
+    if(s.bgPreset==='diner'){ wall='#fff0ef'; wall2='#ffd8d1'; counter='#d9b29c'; }
+    if(s.bgPreset==='studio'){ wall='#f4efe8'; wall2='#efe6dc'; counter='#d9cabc'; tile='rgba(120,90,70,0.06)'; }
+    if(s.bgPreset==='night'){ wall='#394557'; wall2='#52627b'; counter='#8d7b72'; tile='rgba(255,255,255,0.1)'; }
+    const grad = c.createLinearGradient(0,0,0,h); grad.addColorStop(0,wall); grad.addColorStop(1,wall2); c.fillStyle=grad; c.fillRect(0,0,w,h);
+
+    if(s.bgPreset!=='studio'){
+      c.save(); c.strokeStyle=tile; c.lineWidth=2;
+      for(let i=1;i<5;i++){ const y=h*0.15+i*(h*0.12); c.beginPath(); c.moveTo(0,y); c.lineTo(w,y); c.stroke(); }
+      for(let x=w*0.08;x<w;x+=w*0.16){ for(let i=0;i<4;i++){ const y=h*0.15+i*(h*0.12); c.beginPath(); c.moveTo(x,y); c.lineTo(x,y+h*0.12); c.stroke(); } }
+      c.restore();
+    }
+
+    c.save();
+    c.fillStyle = s.bgPreset==='night' ? '#6a7686' : '#dfc2a8';
+    drawRoundedRect(c, w*0.1, h*0.2, w*0.28, h*0.02, 12); c.fill();
+    drawRoundedRect(c, w*0.62, h*0.23, w*0.22, h*0.02, 12); c.fill();
+    c.restore();
+
+    function jar(x,y,scale,color){
+      c.save(); c.translate(x,y); c.scale(scale,scale);
+      c.fillStyle='rgba(255,255,255,0.8)'; drawRoundedRect(c,-20,-18,40,36,10); c.fill();
+      c.fillStyle=color; drawRoundedRect(c,-16,-4,32,18,7); c.fill();
+      c.fillStyle='#b6866d'; drawRoundedRect(c,-18,-24,36,8,4); c.fill();
+      c.restore();
+    }
+    jar(w*0.18,h*0.18,1.2,'#f0bb7f'); jar(w*0.30,h*0.18,0.95,'#d26b4e'); jar(w*0.72,h*0.215,0.9,'#b6d39c');
+
+    c.fillStyle = counter; drawRoundedRect(c,0,h*0.72,w,h*0.28,0); c.fill();
+    c.fillStyle = s.bgPreset==='night' ? '#726861' : '#c8a184'; c.fillRect(0,h*0.72,w,h*0.03);
+
+    if(s.scene==='burn'){
+      c.fillStyle = s.bgPreset==='night' ? '#536071' : '#6e7d83'; drawRoundedRect(c,w*0.22,h*0.63,w*0.56,h*0.1,20); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,0.25)'; c.lineWidth=3;
+      for(let i=0;i<2;i++){ c.beginPath(); c.arc(w*(0.39+i*0.22),h*0.68,h*0.035,0,Math.PI*2); c.stroke(); }
+    } else {
+      c.fillStyle = s.bgPreset==='night' ? '#566674' : '#f1e1d5';
+      drawRoundedRect(c,w*0.16,h*0.61,w*0.68,h*0.1,24); c.fill();
+      c.fillStyle = s.bgPreset==='night' ? '#788697' : '#d8b6a0';
+      drawRoundedRect(c,w*0.26,h*0.635,w*0.48,h*0.055,18); c.fill();
+    }
+  }
+
+  function mix(a,b,t){ return `rgb(${Math.round(lerp(a[0],b[0],t))},${Math.round(lerp(a[1],b[1],t))},${Math.round(lerp(a[2],b[2],t))})`; }
+  const colors = {
+    bread:[239,197,111], breadDark:[122,69,27], cream:[255,245,224], pink:[240,170,179], yellow:[250,221,136], brown:[113,72,44], red:[213,97,88], egg:[248,240,176], green:[184,215,157]
+  };
+
+  function drawPlate(c,x,y,w,h){
+    c.save(); c.translate(x,y);
+    c.fillStyle='rgba(255,255,255,0.95)'; c.beginPath(); c.ellipse(0,0,w*0.52,h*0.22,0,0,Math.PI*2); c.fill();
+    c.strokeStyle='rgba(190,170,150,0.7)'; c.lineWidth=3; c.beginPath(); c.ellipse(0,0,w*0.52,h*0.22,0,0,Math.PI*2); c.stroke();
+    c.restore();
+  }
+
+  function drawFoodShape(c, food, x, y, scale, opts={}) {
+    const burn = opts.burn || 0;
+    const bite = clamp(opts.bite || 0);
+    const outline = 'rgba(80,60,40,0.12)';
+    c.save(); c.translate(x,y); c.scale(scale,scale);
+    // bite clipping mask on right side top
+    if (bite > 0) {
+      c.save();
+      c.beginPath();
+      c.rect(-90,-70,180,140);
+      const bx = 35, by = -5, br = 18 + bite*42;
+      c.moveTo(bx+br, by);
+      c.arc(bx, by, br, 0, Math.PI*2, true);
+      c.clip('evenodd');
+    }
+
+    // Hand-drawn vector food details, shared by preview and PNG/GIF rendering.
+    const ink=(hex)=>{
+      const rgb=hex.match(/\w\w/g).map(v=>parseInt(v,16));
+      return mix(rgb,[24,21,20],clamp(burn)*0.94);
+    };
+    const fill=(hex)=>c.fillStyle=ink(hex);
+    const ellipse=(px,py,rx,ry,hex,rot=0)=>{fill(hex);c.beginPath();c.ellipse(px,py,rx,ry,rot,0,Math.PI*2);c.fill();};
+    const path=(d,hex)=>{fill(hex);c.fill(new Path2D(d));};
+    const line=(d,hex,width=1)=>{c.strokeStyle=ink(hex);c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.stroke(new Path2D(d));};
+    const butter=(px,py)=>{
+      path(`M${px-10} ${py-5}l15 -3 7 5 -15 4z`,'fff0ad');
+      path(`M${px-10} ${py-5}v5l7 4v-5z`,'e7b953');
+      path(`M${px-3} ${py-1}l15 -3v5l-15 3z`,'f5d16a');
+    };
+    if (food==='toast') {
+      path('M-35 29Q-42 29 -42 22V-8C-53 -17 -45 -36 -28 -36Q-15 -42 0 -36Q18 -42 32 -34C49 -30 50 -15 40 -8V23Q40 29 32 29Z','bb773c');
+      path('M-32 23V-11C-43 -21 -33 -31 -23 -30Q-10 -35 0 -29Q15 -35 29 -28C39 -25 40 -17 32 -11V23Z','f4d697');
+      path('M-26 18V-8Q-33 -18 -24 -23Q-12 -28 0 -22Q16 -28 26 -21V18Z','e9bd72');
+      for(let i=0;i<40;i++){const px=-27+(i*19%55),py=-21+(i*13%41);ellipse(px,py,0.6+i%3*0.3,0.55,'cf9a55');}
+      path('M-20 -4Q-8 -10 6 -6T26 0Q20 9 3 7T-20 3Z','d9a14c');
+      butter(1,-3);
+      line('M-29 25h57','d09149',1.2);
+    } else if (food==='pancake') {
+      for(let i=2;i>=0;i--){const yy=i*12;
+        ellipse(0,yy+1,46,14,'b77c3e');
+        ellipse(0,yy-3,46,13,'edbe73');
+        line(`M-39 ${yy+3}Q0 ${yy+19} 39 ${yy+3}`,'f8dca1',2);
+      }
+      ellipse(0,-5,42,11,'d89d50');
+      path('M-25 -10Q-7 -17 16 -11T32 -3Q27 1 23 2V17Q19 23 16 17V4L6 5V11Q2 15 0 10V4Q-23 5 -29 -2Z','a86632');
+      ellipse(-9,-9,11,2,'c2843c');butter(0,-12);
+      for(let i=0;i<20;i++)ellipse(-34+i*17%67,-9+i*7%13,0.65,0.45,'bd813b');
+      [[-28,-15],[-20,-18],[-24,-10]].forEach(([px,py])=>{ellipse(px,py,4.3,3.6,'596184');line(`M${px-1} ${py-1}l2 1`,'a4abc1',0.8);});
+    } else if (food==='cake') {
+      path('M-41 -15L12 -29 43 -8V26L-41 30Z','eab999');
+      path('M-41 -15L43 -8V1L-41 1Z','ffe9cf');
+      path('M-41 9L43 9V16L-41 17Z','d77c87');
+      path('M-41 12L43 12V16L-41 19Z','fff1e2');
+      path('M-41 24L43 21V26L-41 30Z','fff0dd');
+      for(let i=0;i<30;i++)ellipse(-36+i*23%74,3+i*17%23,0.7,0.55,'c99374');
+      path('M-43 -16L12 -32 45 -9 39 -4 -38 -9Z','fff5e8');
+      path('M-41 -15L43 -8V0Q37 5 35 -2Q29 -7 26 -1Q21 7 17 -1L-41 -6Z','fff5e8');
+      for(let i=0;i<5;i++){const px=-29+i*13;path(`M${px-5} -17Q${px-6} -24 ${px} -27Q${px+6} -22 ${px+5} -16Z`,'fff8ed');line(`M${px} -25l-2 7`,'ecd9ce',0.7);}
+      path('M-3 -31Q-7 -43 3 -44Q17 -47 16 -34L7 -24Z','df6668');
+      [[0,-37],[6,-40],[11,-36],[5,-32]].forEach(([px,py])=>ellipse(px,py,0.7,1,'ffe1a3'));
+      path('M2 -43l-7 -5 8 1 3 -5 2 6 7 -1 -5 5Z','72976a');
+    } else if (food==='omelet') {
+      path('M-47 10Q-43 -20 -13 -26Q21 -32 45 -4Q52 7 41 17Q4 36 -35 23Z','e9b94d');
+      path('M-44 8Q-32 -18 -11 -21Q21 -27 43 -3Q37 11 13 16Q-19 25 -44 8Z','f8d770');
+      line('M-35 14Q-6 28 32 13','dca83c',1.5);
+      line('M-30 -2Q-14 -13 4 -12M14 -11Q27 -9 33 -3','ffe7a0',2);
+      line('M-27 -2Q-15 -12 -6 -4T12 -5T29 -4','c85f48',4);
+      for(let i=0;i<16;i++){const px=-29+i*19%61,py=4+i*11%12;ellipse(px,py,1.4,0.65,'91a16a',i);}
+      [[-48,17],[-41,23],[-49,24]].forEach(([px,py])=>ellipse(px,py,6,3,'86a176',-0.5));
+      ellipse(43,22,7,5,'dc7160');ellipse(43,21,4,2.5,'f0a078');
+    } else if (food==='steak') {
+      const steak=new Path2D('M-47 3C-49 -16 -27 -31 -7 -26C7 -24 9 -15 24 -19C46 -25 55 -3 43 15C34 31 16 25 4 29C-16 35 -42 22 -47 3Z');
+      fill('80503a');c.fill(steak);c.save();c.translate(0,-4);fill('ac6550');c.fill(steak);
+      c.save();c.clip(steak);
+      line('M-40 3Q-27 -14 -10 -16T23 -9Q40 -6 41 7','d49b7e',3);
+      line('M-27 -20Q-19 -6 -23 10T-8 25M-15 -9Q0 -2 6 14M12 -15Q6 -3 20 1T30 18','c9896e',1.3);
+      for(let i=0;i<5;i++)line(`M${-48+i*18} -26l28 60`,'714735',3);
+      for(let i=0;i<4;i++)line(`M${-52+i*24} 26l42 -48`,'87503b',1.5);
+      for(let i=0;i<25;i++)ellipse(-38+i*23%78,-19+i*17%43,0.65,0.5,'dfb18b');
+      c.restore();c.restore();butter(3,-5);
+      line('M25 24l19 -28','6b8663',1.5);
+      for(let i=0;i<5;i++){const px=28+i*3,py=19-i*5;line(`M${px} ${py}l-6 -4M${px} ${py}l6 1`,'7f9a6c',1.5);}
+    } else if (food==='cookie') {
+      const edge=new Path2D();
+      for(let i=0;i<48;i++){const ang=i/48*Math.PI*2,r=33+Math.sin(i*2.7)*1.3;const px=Math.cos(ang)*r,py=Math.sin(ang)*r*0.83;(i?edge.lineTo(px,py):edge.moveTo(px,py));}edge.closePath();
+      c.save();c.translate(0,4);fill('b17a43');c.fill(edge);c.restore();fill('e1b779');c.fill(edge);
+      ellipse(-2,-2,29,23,'ebc88f');
+      for(let i=0;i<65;i++){const px=-29+i*17%59,py=-23+i*19%47;if(px*px/850+py*py/520<1)ellipse(px,py,0.5+i%3*0.25,0.5,'ca995e');}
+      [[-18,-12],[-2,-17],[16,-12],[-23,3],[-7,-2],[10,2],[22,10],[-9,17],[5,17]].forEach(([px,py],i)=>{
+        path(`M${px-3} ${py-3}l5 -1 3 4 -3 4 -5 -2Z`,'78503b');line(`M${px-2} ${py-2}l3 -1`,'ac7d58',1);
+      });
+      line('M-18 16l3 -4 -1 -5M7 -21l-2 4 2 4M24 -3l-5 1','d4a367',0.8);
+    }
+
+    // burn specks
+    if(burn > 0.5){
+      c.fillStyle = `rgba(20,20,20,${0.15 + burn*0.25})`;
+      const pts=[[-28,-8],[16,11],[-10,15],[18,-7],[-2,-18],[-18,2],[28,4]];
+      pts.forEach(([px,py],i)=>{ c.beginPath(); c.arc(px,py,4 + (i%3)*2 + burn*3,0,Math.PI*2); c.fill(); });
+    }
+
+    if (bite > 0) c.restore();
+    c.restore();
+  }
+
+  function drawSmoke(c, x, y, amount, intensity, t){
+    if(amount<=0) return;
+    c.save();
+    const puffs = Math.round(10 + intensity*22);
+    for(let i=0;i<puffs;i++){
+      const p = ((t*0.4 + i/puffs) % 1);
+      const alpha = (1-p) * 0.18 * amount;
+      const px = x + Math.sin(p*6 + i)*18 + (i%4 - 1.5)*9;
+      const py = y - p*180 - Math.cos(p*7 + i)*8;
+      const size = 16 + p*24 + (i%3)*3;
+      c.fillStyle = `rgba(40,40,40,${alpha})`;
+      c.beginPath(); c.arc(px,py,size,0,Math.PI*2); c.fill();
+      c.beginPath(); c.arc(px+size*0.8, py+size*0.08, size*0.7, 0, Math.PI*2); c.fill();
+      c.beginPath(); c.arc(px-size*0.7, py+size*0.15, size*0.6, 0, Math.PI*2); c.fill();
+    }
+    c.restore();
+  }
+
+  function placeholder(c, x, y, scale, t, tone='#d8b377', ear='dog') {
+    c.save(); c.translate(x,y); c.scale(scale,scale); c.translate(0, Math.sin(t*2*Math.PI)*3);
+    c.fillStyle = tone;
+    c.beginPath(); c.ellipse(0,0,62,78,0,0,Math.PI*2); c.fill();
+    c.beginPath(); c.ellipse(0,94,48,34,0,0,Math.PI*2); c.fill();
+    if(ear==='dog'){
+      c.beginPath(); c.moveTo(-34,-42); c.lineTo(-58,-88); c.lineTo(-8,-70); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(34,-42); c.lineTo(58,-88); c.lineTo(8,-70); c.closePath(); c.fill();
+    }else{
+      c.beginPath(); c.moveTo(-30,-48); c.lineTo(-46,-92); c.lineTo(-4,-72); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(30,-48); c.lineTo(46,-92); c.lineTo(4,-72); c.closePath(); c.fill();
+    }
+    c.fillStyle='#3f2d1f'; c.beginPath(); c.arc(-18,-6,6,0,Math.PI*2); c.fill(); c.beginPath(); c.arc(18,-6,6,0,Math.PI*2); c.fill();
+    c.lineWidth=4; c.strokeStyle='#3f2d1f'; c.beginPath(); c.moveTo(-12,22); c.quadraticCurveTo(0,12,12,22); c.stroke();
+    c.restore();
+  }
+
+  function drawBubble(c, x, y, text, opacity=1, fill='rgba(255,255,255,0.92)', color='#9f583f', w=84, h=34){
+    c.save(); c.globalAlpha=opacity; c.fillStyle=fill; drawRoundedRect(c, x-w/2, y-h/2, w, h, 14); c.fill();
+    c.fillStyle=color; c.font='bold 18px sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(text, x, y-1); c.restore();
+  }
+
+  function drawReaction(c, x, y, progress, type, scene){
+    if(progress<=0) return;
+    c.save();
+    if(type==='panic'){
+      drawBubble(c,x,y,'?!',progress, 'rgba(255,255,255,0.92)', '#a2563d', 70, 40);
+      c.strokeStyle=`rgba(209,106,77,${progress})`; c.lineWidth=4;
+      for(let i=0;i<3;i++){ const ang=-0.9+i*0.6; c.beginPath(); c.moveTo(x+Math.cos(ang)*34,y+Math.sin(ang)*34); c.lineTo(x+Math.cos(ang)*48,y+Math.sin(ang)*48); c.stroke(); }
+    } else if(type==='cry'){
+      c.fillStyle=`rgba(123,183,235,${0.95*progress})`; c.beginPath(); c.ellipse(x,y,10,16,0.2,0,Math.PI*2); c.fill(); c.beginPath(); c.ellipse(x+22,y+6,8,14,0.1,0,Math.PI*2); c.fill();
+    } else if(type==='blank'){
+      drawBubble(c,x,y,'…',progress, 'rgba(255,255,255,0.9)', '#7a685a', 72, 32);
+    } else if(type==='run'){
+      drawBubble(c,x,y,'앗!',progress, 'rgba(255,255,255,0.92)', '#a2563d', 84, 34);
+      c.strokeStyle=`rgba(255,255,255,${progress})`; c.lineWidth=6; c.lineCap='round';
+      for(let i=0;i<4;i++){ c.beginPath(); c.moveTo(x-10-i*16, y+10+i*2); c.lineTo(x-38-i*16, y+10+i*2); c.stroke(); }
+      c.fillStyle=`rgba(120,120,120,${0.18*progress})`;
+      for(let i=0;i<4;i++){ c.beginPath(); c.ellipse(x-18-i*12, y+32+i*2, 10+i*3, 5+i, 0, 0, Math.PI*2); c.fill(); }
+    } else if(type==='angry'){
+      drawBubble(c,x,y,'!',progress,'rgba(255,244,238,0.95)','#b34d34',54,40);
+      c.strokeStyle=`rgba(179,77,52,${progress})`; c.lineWidth=4; c.beginPath(); c.moveTo(x-20,y-26); c.lineTo(x-6,y-36); c.stroke(); c.beginPath(); c.moveTo(x+6,y-36); c.lineTo(x+20,y-26); c.stroke();
+    } else if(type==='sigh'){
+      drawBubble(c,x,y,'휴…',progress,'rgba(255,255,255,0.92)','#7a685a',76,34);
+    } else if(type==='happy'){
+      drawBubble(c,x,y,'♪',progress,'rgba(255,255,255,0.92)','#d36a6a',54,36);
+    } else if(type==='greedy'){
+      drawBubble(c,x,y,'한 입 더',progress,'rgba(255,255,255,0.94)','#9b5d41',90,36);
+    } else if(type==='wink'){
+      drawBubble(c,x,y,'♥',progress,'rgba(255,255,255,0.94)','#d96b6b',54,36);
+    }
+    c.restore();
+  }
+
+  function drawCharacter(c, img, opts) {
+    const {w,h,baseX,baseY,scale,flip,phase,reaction,scene,runProgress,tone,ear} = opts;
+    let drawX = baseX;
+    let drawY = baseY + Math.sin(phase * Math.PI * 2) * 2;
+    let rot = 0;
+    let scaleY = 1;
+    const rp = runProgress || 0;
+    if(reaction==='panic') rot = (-0.06*rp) + Math.sin(phase*40)*0.03*rp;
+    if(reaction==='cry') rot = -0.025*rp;
+    if(reaction==='blank') rot = 0.012*Math.sin(phase*8);
+    if(reaction==='run'){ drawX += rp*(95 + opts.extraRun*55); drawY += -Math.sin(rp*Math.PI)*(10 + opts.extraRun*7); rot = 0.13*rp + Math.sin(phase*35)*0.02*rp; scaleY = 1+0.02*rp; }
+    if(reaction==='angry') rot = -0.03*rp;
+    if(reaction==='sigh') rot = 0.02*Math.sin(phase*7);
+    if(reaction==='greedy') drawX += Math.sin(phase*20)*2;
+
+    c.save(); c.translate(drawX, drawY); c.rotate(rot); c.scale(flip?-1:1, scaleY);
+    const charHeight = h * 0.40 * scale;
+    if(img){ const iw=img.width, ih=img.height, drawH=charHeight, drawW=drawH*(iw/ih); c.drawImage(img,-drawW/2,-drawH*0.88,drawW,drawH); }
+    else placeholder(c,0,20,charHeight/200,phase,tone,ear);
+    c.restore();
+
+    c.save(); c.fillStyle='rgba(60,30,10,0.12)'; c.beginPath(); c.ellipse(drawX - (reaction==='run' ? 16*rp : 0), h*0.71, w*(0.08-0.012*rp), h*0.025, 0, 0, Math.PI*2); c.fill(); c.restore();
+
+    const bubbleX = drawX + w*0.08*(flip?-1:1);
+    const bubbleY = drawY - h*0.19;
+    drawReaction(c, bubbleX, bubbleY, rp, reaction, scene);
+    return {x:drawX,y:drawY};
+  }
+
+  function drawBurnScene(c,w,h,timeSec,s){
+    const duration = BASE_DURATION / s.speed;
+    const t = (timeSec % duration) / duration;
+    const burn = clamp((t - 0.28) / 0.42);
+    const react = clamp((t - 0.70) / 0.12);
+    const reactE = easeOutCubic(react);
+    const intensity = s.intensity;
+    const shakeAmt = react * intensity * 8;
+
+    c.save(); c.translate(Math.sin(timeSec*60)*shakeAmt, Math.cos(timeSec*45)*shakeAmt*0.45);
+    drawBackground(c,w,h,s);
+
+    const panX = w*0.5 + Math.sin(t*10)*intensity*2, panY = h*0.68;
+    drawSmoke(c, panX, panY-h*0.02, burn*(0.45 + intensity*0.9), intensity, timeSec);
+    drawCharacter(c, imageA, {w,h,baseX:w*0.5+s.aX,baseY:h*0.56+s.aY-reactE*6,scale:s.aScale,flip:s.aFlip,phase:t,reaction:s.reactionA,scene:'burn',runProgress:reactE,extraRun:intensity,tone:'#d8b377',ear:'dog'});
+
+    // stovetop accessory
+    c.fillStyle='rgba(255,255,255,0.55)'; drawRoundedRect(c,w*0.72,h*0.58,w*0.12,h*0.11,18); c.fill();
+    c.fillStyle='#f0bb7f'; c.beginPath(); c.arc(w*0.78,h*0.63,h*0.018,0,Math.PI*2); c.fill();
+
+    // pan and food
+    c.save(); c.translate(panX,panY);
+    c.fillStyle='#545f66'; drawRoundedRect(c,-w*0.11,-h*0.021,w*0.22,h*0.042,h*0.019); c.fill();
+    c.fillStyle='#3e474d'; c.fillRect(w*0.092,-h*0.006,w*0.095,h*0.012);
+    c.fillStyle='#23282c'; c.beginPath(); c.ellipse(0,0,w*0.084,h*0.019,0,0,Math.PI*2); c.fill();
+    drawFoodShape(c, s.food, 0, 0, Math.min(w,h)/800 * 1.0, { burn });
+    if (burn > 0.75) {
+      c.fillStyle='rgba(255,80,20,0.85)'; const flames=2+Math.round(intensity*3);
+      for(let i=0;i<flames;i++){
+        const fx=-w*0.04 + i*(w*0.036); c.beginPath(); c.moveTo(fx,h*0.004); c.quadraticCurveTo(fx+w*0.008,-h*(0.03 + 0.025*(0.5 + 0.5*Math.sin(i*19.73 + burn*11))), fx+w*0.016,h*0.004); c.quadraticCurveTo(fx+w*0.008,-h*0.005,fx,h*0.004); c.fill();
+      }
+    }
+    c.restore();
+
+    c.restore();
+  }
+
+  function drawBiteScene(c,w,h,timeSec,s){
+    const duration = BASE_DURATION / s.speed;
+    const t = (timeSec % duration) / duration;
+    const offer = easeInOutSine(clamp((t-0.18)/0.22));
+    const biteMove = easeInOutSine(clamp((t-0.40)/0.18));
+    const bite = clamp((t-0.52)/0.12);
+    const react = clamp((t-0.68)/0.18);
+    const reactE = easeOutCubic(react);
+    const biteAmt = s.biteAmount;
+
+    drawBackground(c,w,h,s);
+
+    const aBaseX = w*0.28 + s.aX;
+    const bBaseX = w*0.72 + s.bX;
+    const baseY = h*0.58;
+
+    // plate/food trajectory
+    const startX = w*0.44;
+    const endX = w*0.56;
+    const foodX = lerp(startX, endX, offer);
+    const foodY = h*0.66 - Math.sin(offer*Math.PI) * h*0.03;
+
+    // characters
+    drawCharacter(c, imageA, {w,h,baseX:aBaseX - offer*8,baseY:baseY+s.aY,scale:s.aScale,flip:s.aFlip,phase:t,reaction:s.reactionA,scene:'bite',runProgress:reactE,extraRun:0.6,tone:'#d8b377',ear:'dog'});
+    drawCharacter(c, imageB, {w,h,baseX:bBaseX - biteMove*22,baseY:baseY+s.bY,scale:s.bScale,flip:s.bFlip,phase:t,reaction:s.reactionB,scene:'bite',runProgress:(s.reactionB==='happy'||s.reactionB==='greedy'||s.reactionB==='wink')? reactE*0.85 : reactE,extraRun:0.55,tone:'#6e7ea7',ear:'cat'});
+
+    drawPlate(c, foodX, h*0.68, w*0.20, h*0.12);
+    drawFoodShape(c, s.food, foodX, foodY, Math.min(w,h)/800 * 1.0, { bite: bite * biteAmt, burn: 0 });
+
+    // crumbs / cream bits
+    if (bite > 0.02) {
+      c.save();
+      const crumbColor = s.food==='cake' ? '#ffd7df' : s.food==='cookie' ? '#c79d6e' : s.food==='omelet' ? '#f6d671' : '#efd18d';
+      c.fillStyle = crumbColor;
+      for (let i=0;i<8;i++) {
+        const p = (i/8 + bite*0.3) % 1;
+        const cx = foodX + 35 + i*3 + Math.sin(i*2.3)*4;
+        const cy = foodY - 6 + p*22;
+        c.beginPath(); c.arc(cx, cy, 2 + (i%3), 0, Math.PI*2); c.fill();
+      }
+      c.restore();
+    }
+
+  }
+
+  function renderFrame(c,w,h,timeSec){
+    const s=getSettings();
+    // Use the same 800px design coordinates for preview and every export size.
+    const ratio=parseRatio(s.ratio);
+    const stageW=ratio.w>=ratio.h ? 800 : Math.round(800*ratio.w/ratio.h);
+    const stageH=ratio.w>=ratio.h ? Math.round(800*ratio.h/ratio.w) : 800;
+    c.save();
+    try {
+      c.setTransform(1,0,0,1,0,0);
+      c.clearRect(0,0,w,h);
+      c.scale(w/stageW,h/stageH);
+      if(s.scene==='burn') drawBurnScene(c,stageW,stageH,timeSec,s);
+      else drawBiteScene(c,stageW,stageH,timeSec,s);
+    } finally { c.restore(); }
+  }
+
+  function loop(now){
+    const delta=(now-lastTime)/1000; lastTime=now; if(playing) playHead += delta; renderFrame(ctx, els.preview.width, els.preview.height, playHead); requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  els.playPause.addEventListener('click', ()=>{ playing=!playing; els.playPause.textContent = playing ? '일시정지' : '재생'; });
+  els.restart.addEventListener('click', ()=>{ playHead=0; renderFrame(ctx, els.preview.width, els.preview.height, playHead); });
+
+  function saveBlob(blob, filename){
+    const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+
+  els.savePng.addEventListener('click', ()=>{ setStatus('PNG 저장 중...'); renderFrame(ctx, els.preview.width, els.preview.height, playHead); els.preview.toBlob(blob=>{ saveBlob(blob,'failed-kitchen.png'); setStatus('PNG 저장 완료.'); }); });
+
+  function create332Palette(){
+    const pal = new Uint8Array(256*3);
+    for(let i=0;i<256;i++){ const r=((i>>5)&7)*255/7, g=((i>>2)&7)*255/7, b=(i&3)*255/3; pal[i*3]=Math.round(r); pal[i*3+1]=Math.round(g); pal[i*3+2]=Math.round(b); }
+    return pal;
+  }
+  // Build one palette from the actual animation, including uploaded artwork.
+  function createColorHistogram(){
+    return {count:new Uint32Array(262144),r:new Float64Array(262144),g:new Float64Array(262144),b:new Float64Array(262144)};
+  }
+  function sampleColors(hist,imageData){
+    const d=imageData.data;
+    for(let i=0;i<d.length;i+=8){
+      const a=d[i+3]/255, r=Math.round(d[i]*a+255*(1-a)),g=Math.round(d[i+1]*a+255*(1-a)),b=Math.round(d[i+2]*a+255*(1-a));
+      const k=((r>>2)<<12)|((g>>2)<<6)|(b>>2);
+      hist.count[k]++;hist.r[k]+=r;hist.g[k]+=g;hist.b[k]+=b;
+    }
+  }
+  function createAdaptivePalette(hist){
+    const points=[];
+    for(let k=0;k<hist.count.length;k++)if(hist.count[k]){
+      const n=hist.count[k];points.push({n,r:hist.r[k]/n,g:hist.g[k]/n,b:hist.b[k]/n});
+    }
+    function box(pts){
+      let n=0,r=0,g=0,b=0,rr=0,gg=0,bb=0;
+      for(const p of pts){n+=p.n;r+=p.r*p.n;g+=p.g*p.n;b+=p.b*p.n;rr+=p.r*p.r*p.n;gg+=p.g*p.g*p.n;bb+=p.b*p.b*p.n;}
+      const variances=[(rr-r*r/n)*0.299,(gg-g*g/n)*0.587,(bb-b*b/n)*0.114];
+      const axis=variances.indexOf(Math.max(...variances));
+      return {pts,n,r:r/n,g:g/n,b:b/n,axis,score:pts.length>1?Math.max(0,...variances):0};
+    }
+    const boxes=[box(points)];
+    while(boxes.length<256){
+      let index=-1,score=0;
+      for(let i=0;i<boxes.length;i++)if(boxes[i].score>score){score=boxes[i].score;index=i;}
+      if(index<0)break;
+      const item=boxes[index],key=['r','g','b'][item.axis];item.pts.sort((a,b)=>a[key]-b[key]);
+      let weight=0,cut=1;
+      for(let i=0;i<item.pts.length-1;i++){weight+=item.pts[i].n;cut=i+1;if(weight>=item.n/2)break;}
+      boxes[index]=box(item.pts.slice(0,cut));boxes.push(box(item.pts.slice(cut)));
+    }
+    const palette=new Uint8Array(768);
+    boxes.forEach((p,i)=>palette.set([Math.round(p.r),Math.round(p.g),Math.round(p.b)],i*3));
+    for(let i=boxes.length;i<256;i++)palette.set(palette.subarray(0,3),i*3);
+    return palette;
+  }
+  function createPaletteMapper(palette){
+    const cache=new Int16Array(262144);cache.fill(-1);
+    return function(imageData){
+      const d=imageData.data,out=new Uint8Array(imageData.width*imageData.height);
+      for(let i=0,p=0;i<d.length;i+=4,p++){
+        const a=d[i+3]/255,r=Math.round(d[i]*a+255*(1-a)),g=Math.round(d[i+1]*a+255*(1-a)),b=Math.round(d[i+2]*a+255*(1-a));
+        const key=((r>>2)<<12)|((g>>2)<<6)|(b>>2);
+        let nearest=cache[key];
+        if(nearest<0){let distance=Infinity;
+          for(let j=0;j<256;j++){
+            const dr=r-palette[j*3],dg=g-palette[j*3+1],db=b-palette[j*3+2];
+            const error=dr*dr*0.299+dg*dg*0.587+db*db*0.114;
+            if(error<distance){distance=error;nearest=j;}
+          }
+          cache[key]=nearest;
+        }
+        out[p]=nearest;
+      }
+      return out;
+    };
+  }
+  function lzwEncode(minCodeSize, indices){
+    const CLEAR=1<<minCodeSize, END=CLEAR+1; let nextCode, codeSize, dict;
+    function resetDict(){ dict=new Map(); for(let i=0;i<CLEAR;i++) dict.set(String.fromCharCode(i),i); nextCode=END+1; codeSize=minCodeSize+1; }
+    const out=[]; let cur=0, curBits=0;
+    const writeCode=(code)=>{ cur |= code<<curBits; curBits += codeSize; while(curBits>=8){ out.push(cur & 255); cur >>= 8; curBits -= 8; } };
+    resetDict(); writeCode(CLEAR); let prefix=String.fromCharCode(indices[0]);
+    for(let i=1;i<indices.length;i++){
+      const k=String.fromCharCode(indices[i]); const key=prefix+k;
+      if(dict.has(key)) prefix=key;
+      else {
+        writeCode(dict.get(prefix));
+        if(nextCode < 4096){ dict.set(key,nextCode++); if(nextCode > (1<<codeSize) && codeSize < 12) codeSize++; }
+        else { writeCode(CLEAR); resetDict(); }
+        prefix=k;
+      }
+    }
+    writeCode(dict.get(prefix));
+    // The decoder adds its final dictionary entry after reading the last prefix.
+    if(nextCode === (1<<codeSize) && codeSize < 12) codeSize++;
+    writeCode(END); if(curBits>0) out.push(cur & 255); return out;
+  }
+  class GifWriter {
+    constructor(width,height,options={}){ this.width=width; this.height=height; this.loop=options.loop??0; this.palette=options.palette||create332Palette(); this.bytes=[]; this.started=false; }
+    pushByte(v){ this.bytes.push(v & 255); }
+    pushWord(v){ this.pushByte(v & 255); this.pushByte((v>>8)&255); }
+    pushString(s){ for(let i=0;i<s.length;i++) this.pushByte(s.charCodeAt(i)); }
+    writeHeader(){ this.pushString('GIF89a'); this.pushWord(this.width); this.pushWord(this.height); this.pushByte(0xF7); this.pushByte(0x00); this.pushByte(0x00); for(let i=0;i<this.palette.length;i++) this.pushByte(this.palette[i]); this.pushByte(0x21); this.pushByte(0xFF); this.pushByte(0x0B); this.pushString('NETSCAPE2.0'); this.pushByte(0x03); this.pushByte(0x01); this.pushWord(this.loop); this.pushByte(0x00); this.started=true; }
+    writeGraphicControl(delayCs){ this.pushByte(0x21); this.pushByte(0xF9); this.pushByte(0x04); this.pushByte(0x00); this.pushWord(delayCs); this.pushByte(0x00); this.pushByte(0x00); }
+    writeImageDescriptor(){ this.pushByte(0x2C); this.pushWord(0); this.pushWord(0); this.pushWord(this.width); this.pushWord(this.height); this.pushByte(0x00); }
+    writeSubBlocks(data){ let i=0; while(i<data.length){ const len=Math.min(255,data.length-i); this.pushByte(len); for(let j=0;j<len;j++) this.pushByte(data[i+j]); i += len; } this.pushByte(0x00); }
+    addFrame(indexedPixels, delayCs=8){ if(!this.started) this.writeHeader(); this.writeGraphicControl(delayCs); this.writeImageDescriptor(); const minCodeSize=8; this.pushByte(minCodeSize); const compressed=lzwEncode(minCodeSize, indexedPixels); this.writeSubBlocks(compressed); }
+    finish(){ this.pushByte(0x3B); return new Blob([Uint8Array.from(this.bytes)], {type:'image/gif'}); }
+  }
+
+  async function exportGif(){
+    els.saveGif.disabled=true; els.savePng.disabled=true; setStatus('GIF 저장 중...');
+    const outSize=parseInt(els.gifSize.value,10), fps=parseInt(els.gifFps.value,10), ratio=parseRatio(els.ratio.value);
+    let outW, outH; if(ratio.w>=ratio.h){ outW=outSize; outH=Math.round(outSize*ratio.h/ratio.w); } else { outH=outSize; outW=Math.round(outSize*ratio.w/ratio.h); }
+    off.width=outW; off.height=outH;
+    const s=getSettings(); const duration=BASE_DURATION / s.speed; const frameCount=Math.max(2,Math.round(duration*fps));
+    const histogram=createColorHistogram();
+    for(let i=0;i<frameCount;i++){
+      renderFrame(offCtx,outW,outH,(i/frameCount)*duration);
+      sampleColors(histogram,offCtx.getImageData(0,0,outW,outH));
+      if(i%2===0){setStatus(`GIF 저장 중... ${Math.round((i+1)/frameCount*30)}%`);await new Promise(r=>setTimeout(r,0));}
+    }
+    const palette=createAdaptivePalette(histogram),quantize=createPaletteMapper(palette);
+    const gif=new GifWriter(outW,outH,{loop:0,palette});
+    for(let i=0;i<frameCount;i++){
+      const t=(i/frameCount)*duration; renderFrame(offCtx,outW,outH,t); const imageData=offCtx.getImageData(0,0,outW,outH); const indexed=quantize(imageData); gif.addFrame(indexed, Math.max(1, Math.round(100/fps)));
+      if(i % 2 === 0){ setStatus(`GIF 저장 중... ${Math.round(30+((i+1)/frameCount)*70)}%`); await new Promise(r=>setTimeout(r,0)); }
+    }
+    saveBlob(gif.finish(),'failed-kitchen.gif'); setStatus('GIF 저장 완료.'); els.saveGif.disabled=false; els.savePng.disabled=false;
+  }
+  els.saveGif.addEventListener('click', async ()=>{ try{ await exportGif(); } catch(err){ console.error(err); setStatus('GIF 저장 실패.'); els.saveGif.disabled=false; els.savePng.disabled=false; } });
+})();
+</script>
+</body>
+</html>
