@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UNDERWORLD ATELIER — 저승의 계약</title><style>
+:root{color-scheme:dark;--ink:#eee6d7;--mute:#aca19d;--line:#443339;--red:#a44053;--gold:#b8a17a}*{box-sizing:border-box}body{margin:0;background:#171216;color:var(--ink);font:14px 'Malgun Gothic',system-ui,sans-serif}header{padding:25px 32px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px}h1{font:23px Georgia,serif;letter-spacing:3px;margin:0}header span{color:var(--gold);font-size:13px}main{display:grid;grid-template-columns:350px 1fr;max-width:1600px;margin:auto}aside{padding:16px 20px;border-right:1px solid var(--line);height:calc(100vh - 80px);overflow:auto}details{border-bottom:1px solid var(--line);padding:14px 0}summary{cursor:pointer;letter-spacing:1px;font-weight:600}label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;color:#d2c4bd;font-size:12px}input,select,button{font:inherit;color:var(--ink);background:#281e25;border:1px solid #544047;border-radius:5px;padding:8px;min-width:0}input[type=range]{width:145px;accent-color:var(--red);padding:0}input[type=number]{width:85px}input[type=color]{width:58px;height:32px;padding:3px}input[type=checkbox]{accent-color:var(--red)}select{max-width:185px}button{cursor:pointer}button:hover{background:#44303c;border-color:var(--gold)}button.primary{background:#793044;border-color:#ad5265}button:disabled{opacity:.5;cursor:wait}.row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.row>*{flex:1}.sub{font-size:12px;color:var(--mute);line-height:1.7}h3{font-size:13px;color:var(--gold);margin:20px 0 6px}.stage{padding:24px;position:sticky;top:0;height:calc(100vh - 80px);display:flex;align-items:center;flex-direction:column;gap:12px}.canvaswrap{min-height:0;flex:1;width:100%;display:flex;align-items:center;justify-content:center;overflow:auto;background-color:#211b22;background-image:linear-gradient(45deg,#282129 25%,transparent 25%,transparent 75%,#282129 75%),linear-gradient(45deg,#282129 25%,transparent 25%,transparent 75%,#282129 75%);background-size:24px 24px;background-position:0 0,12px 12px;border:1px solid var(--line);border-radius:8px}canvas{max-width:100%;max-height:100%;object-fit:contain;touch-action:none;cursor:grab}.bar{width:min(100%,760px)}.bar input[type=range]{width:100%}.status{display:flex;justify-content:space-between;color:var(--mute);font-size:12px}.stages{display:flex;gap:5px;flex-wrap:wrap}.stages button{font-size:11px;flex:1;padding:7px 3px}.exports{display:flex;gap:10px;width:min(100%,760px)}.exports button{flex:1;padding:13px}progress{width:100%;accent-color:var(--red)}#message{min-height:18px;font-size:12px;color:var(--gold)}.badge{font-size:11px;padding:5px 9px;border:1px solid var(--line);border-radius:20px;color:var(--gold)}@media(max-width:800px){header{padding:18px;display:block}h1{font-size:18px;margin-bottom:7px}main{display:flex;flex-direction:column}.stage{order:-1;position:relative;height:auto;padding:12px}.canvaswrap{height: min(95vw,65vh);flex:auto}aside{height:auto;border:0;padding:8px 18px}.stage .row{margin:5px 0}select{max-width:60%}}
+</style><header><h1>UNDERWORLD ATELIER</h1><span>저승의 계약</span></header><main><aside id="options"></aside><section class="stage"><div class="status bar"><span class="badge">석류의 계약</span><span id="seedstatus"></span></div><div class="canvaswrap"><canvas id="preview" width="720" height="720" aria-label="계약 애니메이션 미리보기"></canvas></div><div class="bar"><div class="status"><span id="phase"></span><span id="clock"></span></div><input id="timeline" aria-label="타임라인" type="range" min="0" max="4" step="0.001" value="0"><div class="row"><button id="play">일시정지</button><button id="restart">처음부터</button><select id="layer" aria-label="편집 레이어"><option value="A">캐릭터 A</option><option value="B">캐릭터 B</option><option value="crown">왕관</option><option value="fruit">석류</option></select><button id="resetpos">위치 초기화</button></div><div class="stages" id="stages"></div></div><div class="exports"><button id="png">PNG 저장</button><button class="primary" id="gif">GIF 저장</button></div><div class="bar"><progress id="progress" value="0" max="100" hidden></progress><div id="message" role="status" aria-live="polite">캐릭터 A와 B 이미지를 업로드해 주세요.</div></div></section></main>
+<script>
+'use strict';
+const $=s=>document.getElementById(s),cv=$('preview'),ctx=cv.getContext('2d');
+const S={seeds:6,form:'half',fruitColor:'#871e36',fruitFx:'spark',delivery:'plate',giver:'A',wearer:'B',ending:'rule',gesture:'stay',crown:'laurel',metal:'#29252f',gem:'#b02b45',ornaments:9,crownScale:1,crownX:0,crownY:0,crownRot:0,crownHeight:1,entrance:'assemble',bg:'palace',bgColor:'#1b1723',fog:45,columns:true,throne:false,sigil:true,petals:true,light:45,effect:45,effectTime:'last',effects:{petals:true,fog:true,gold:false,feathers:false,seeds:false,flames:false,sigil:true,shards:false},fruitX:360,fruitY:444,fruitScale:1,duration:4,fps:12,size:480,ratio:'1:1',gifBg:'solid',repeat:'infinite',loop:'fade',pngFrame:'current',pngScale:2,pngTransparent:false,zoom:100};
+const C={A:{img:null,x:205,y:610,h:400,rot:0,flip:false,motion:65,head:.07,mouth:.25},B:{img:null,x:515,y:610,h:400,rot:0,flip:false,motion:65,head:.07,mouth:.25}};
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x)},seg=(u,a,b)=>ease((u-a)/(b-a)),mix=(a,b,t)=>a+(b-a)*t;
+let playing=true,current=0,last=0,busy=false,hits={},drag=null;
+function section(title,open=false){let d=document.createElement('details');d.open=open;let s=document.createElement('summary');s.textContent=title;d.append(s);$('options').append(d);return d}
+function field(p,label,key,type,opts,target=S){let l=document.createElement('label'),t=document.createElement('span');t.textContent=label;let i=document.createElement(type==='select'?'select':'input');if(type==='select'){for(let [value,text] of opts){let o=document.createElement('option');o.value=value;o.textContent=text;i.append(o)}}else {i.type=type;if(opts){i.min=opts[0];i.max=opts[1];i.step=opts[2]??1}}i.value=target[key];if(type==='checkbox')i.checked=target[key];i.oninput=()=>{target[key]=type==='checkbox'?i.checked:['range','number'].includes(type)?Number(i.value):i.value;if(key==='seeds')target[key]=clamp(Math.round(target[key]||1),1,12);if(key==='duration')$('timeline').max=S.duration;
+if(target===S.effects&&key==='flames'&&i.checked&&!playing){let onset={start:0,first:.275,last:.5,crown:.6,end:.8}[S.effectTime];if(current/S.duration<onset+.07)current=(onset+.12)*S.duration}renderPreview()};i.dataset.key=key;if(target===S.effects)i.dataset.scope='effects';l.append(t,i);p.append(l);return i}
+function btn(p,text,fn){let b=document.createElement('button');b.textContent=text;b.onclick=fn;p.append(b);return b}
+function sync(){document.querySelectorAll('[data-key]').forEach(i=>{let t=i.closest('[data-char]');let obj=i.dataset.scope==='effects'?S.effects:t?C[t.dataset.char]:S;if(i.type==='checkbox')i.checked=obj[i.dataset.key];else if(i.dataset.key in obj)i.value=obj[i.dataset.key]})}
+let p=section('01 · 캐릭터 업로드',true);
+for(const id of ['A','B']){let h=document.createElement('h3');h.textContent='캐릭터 '+id;p.append(h);let f=document.createElement('input');f.type='file';f.accept='image/png,image/jpeg,image/webp';f.style.width='100%';f.setAttribute('aria-label','캐릭터 '+id+' 업로드');f.onchange=()=>loadImage(id,f.files[0]);p.append(f);btn(p,'이미지 삭제',()=>{C[id].img=null;f.value='';renderPreview()})}let note=document.createElement('p');note.className='sub';note.textContent='투명 여백을 자동으로 제외합니다. 머리·입 기준점은 이미지 위쪽에서의 비율입니다. 금색 십자는 머리, 붉은 십자는 씨앗 도착점입니다. 원본 픽셀은 수정하지 않습니다.';p.append(note);
+p=section('02 · 캐릭터 배치');for(const id of ['A','B']){let d=document.createElement('div');d.dataset.char=id;p.append(d);let h=document.createElement('h3');h.textContent=id;d.append(h);for(let [label,key,min,max,step] of [['높이','h',80,700,1],['가로 위치','x',-100,820,1],['세로 위치','y',0,850,1],['회전','rot',-45,45,1],['움직임 강도','motion',0,100,1],['머리 기준점','head',0,.7,.01],['씨앗 도착점','mouth',0,.9,.01]])field(d,label,key,'range',[min,max,step],C[id]);field(d,'좌우 반전','flip','checkbox',null,C[id])}
+field(p,'캐릭터 간 거리','distance','range',[100,650],Object.assign(S,{distance:310})).oninput=e=>{S.distance=+e.target.value;let m=(C.A.x+C.B.x)/2;C.A.x=m-S.distance/2;C.B.x=m+S.distance/2;sync();renderPreview()};btn(p,'공통 높이 맞춤',()=>{C.B.h=C.A.h;C.B.y=C.A.y;sync()});btn(p,'머리 높이 맞춤',()=>{C.B.y=C.A.y-C.A.h*(1-C.A.head)+C.B.h*(1-C.B.head);sync()});btn(p,'좌우 위치 교환',()=>{[C.A.x,C.B.x]=[C.B.x,C.A.x];sync()});field(p,'미리보기 확대','zoom','range',[50,150]);
+p=section('03 · 역할 설정');field(p,'석류를 건네는 사람','giver','select',[['A','A'],['B','B']]);field(p,'왕관 착용자','wearer','select',[['A','A'],['B','B']]);btn(p,'역할 교환',()=>{S.giver=S.giver==='A'?'B':'A';S.wearer=S.wearer==='A'?'B':'A';sync()});
+p=section('04 · 석류와 씨앗',true);field(p,'씨앗 개수 (1–12)','seeds','number',[1,12]);field(p,'전달 방식','delivery','select',[['plate','접시를 앞으로 밀기'],['float','석류를 띄워 보내기'],['magic','씨앗을 마법으로 전달'],['place','앞에 내려놓기']]);field(p,'석류 형태','form','select',[['whole','통석류'],['half','반으로 갈라진 석류'],['slice','석류 조각'],['plate','씨앗 접시'],['bowl','은제 그릇']]);let colors=[['#871e36','짙은 적색'],['#d12c42','선홍색'],['#681d59','자주색'],['#3e1327','검붉은색'],['#b28b42','금빛']];let fc=field(p,'색상 프리셋','fruitPreset','select',colors);fc.value=S.fruitColor;fc.onchange=()=>{S.fruitColor=fc.value;sync()};field(p,'석류 색상','fruitColor','color');field(p,'석류 효과','fruitFx','select',[['spark','은은한 반짝임'],['separate','순차 분리'],['last','마지막 씨앗의 빛'],['drops','붉은 물방울'],['none','없음']]);field(p,'소품 크기','fruitScale','range',[.4,1.8,.01]);
+p=section('05 · 왕관 디자인');field(p,'왕관 종류','crown','select',[['laurel','검은 월계관'],['gold','망자의 금관'],['flower','석류 왕관'],['obsidian','흑요석 왕관'],['horn','저승의 뿔 왕관'],['double','이중 왕관 · 공동 통치']]);for(let [l,k,a,b,st] of [['크기','crownScale',.3,2,.01],['X 보정','crownX',-300,300,1],['Y 보정','crownY',-300,300,1],['회전','crownRot',-90,90,1],['높이','crownHeight',.4,2,.01],['장식 개수','ornaments',3,15,1]])field(p,l,k,'range',[a,b,st]);field(p,'보석 색','gem','color');field(p,'금속 색','metal','color');field(p,'등장 방식','entrance','select',[['assemble','장식이 하나씩 연결'],['descend','위에서 내려옴'],['bloom','중앙에서 피어남']]);
+p=section('06 · 저승 배경');field(p,'배경','bg','select',[['palace','저승의 석조 궁전'],['throne','검은 대리석 왕좌'],['garden','석류 정원'],['river','스틱스 강가'],['moon','붉은 달 아래'],['temple','고대 신전'],['flowers','어두운 꽃밭'],['solid','단색'],['transparent','투명']]);field(p,'배경색','bgColor','color');field(p,'안개 밀도','fog','range',[0,100]);for(let [l,k] of [['기둥','columns'],['왕좌','throne'],['바닥 문양','sigil'],['꽃잎','petals']])field(p,l,k,'checkbox');field(p,'광원 강도','light','range',[0,100]);
+p=section('07 · 계약 효과');for(let [k,l] of [['petals','붉은 꽃잎'],['feathers','검은 깃털'],['fog','검은 안개'],['gold','금빛 입자'],['seeds','석류 씨앗'],['flames','작은 불꽃'],['sigil','바닥 마법진'],['shards','깨지는 빛']])field(p,l,k,'checkbox',null,S.effects);const effectPanel=p;btn(p,'효과 모두 끄기',()=>{Object.keys(S.effects).forEach(k=>S.effects[k]=false);effectPanel.querySelectorAll('input[type=checkbox]').forEach(i=>i.checked=false)});field(p,'강도','effect','range',[0,100]);field(p,'효과 시작','effectTime','select',[['start','처음부터'],['first','첫 번째 씨앗'],['last','마지막 씨앗'],['crown','왕관 등장'],['end','계약 성립']]);
+p=section('08 · 결말');field(p,'결말','ending','select',[['rule','저승의 여왕 / 왕'],['joint','공동 통치'],['refuse','거절'],['gate','돌아갈 수 없어'],['spring','봄의 귀환'],['thread','영원의 계약']]);field(p,'마지막 동작','gesture','select',[['stay','왕관 착용자의 곁에 남음'],['bow','건네는 사람이 고개를 숙임'],['near','받는 사람이 가까워짐'],['both','나란히 왕관 착용'],['key','저승의 열쇠 전달'],['shine','두 왕관이 함께 빛남']]);
+p=section('09 · 저장 설정');field(p,'비율','ratio','select',[['1:1','1:1'],['4:3','4:3'],['16:9','16:9'],['9:16','9:16']]);field(p,'길이','duration','select',[[3,'3초'],[4,'4초'],[5,'5초'],[6,'6초']]).onchange=e=>{S.duration=+e.target.value;$('timeline').max=S.duration};field(p,'FPS','fps','select',[[8,'8 fps'],[10,'10 fps'],[12,'12 fps'],[15,'15 fps']]);field(p,'GIF 크기 · 긴 변','size','select',[[320,'320px'],[480,'480px'],[640,'640px'],[800,'800px']]);field(p,'GIF 배경','gifBg','select',[['solid','단색 · 선택 배경색'],['scene','현재 배경 포함'],['transparent','투명']]);field(p,'반복','repeat','select',[['infinite','무한'],['once','1회']]);field(p,'루프 전환','loop','select',[['smooth','자연스러운 복귀'],['fade','짧은 페이드'],['hold','완성 상태 유지']]);field(p,'PNG 장면','pngFrame','select',[['current','현재 프레임'],['0','시작 장면'],['.23','석류 전달'],['.52','마지막 씨앗'],['.68','왕관 생성'],['.81','왕관 착용 완료'],['.9','계약 성립']]);field(p,'PNG 해상도','pngScale','select',[[1,'1배 · 기준 720px'],[2,'2배'],[3,'3배']]);field(p,'PNG 투명 배경','pngTransparent','checkbox');
+async function loadImage(id,file){if(!file)return;let url=URL.createObjectURL(file);try{let img=new Image;img.src=url;await img.decode();if(img.width*img.height>60000000)throw Error('이미지가 너무 큽니다. 6천만 픽셀 이하로 줄여 주세요.');let c=document.createElement('canvas');c.width=img.width;c.height=img.height;let g=c.getContext('2d',{willReadFrequently:true});g.drawImage(img,0,0);let data=g.getImageData(0,0,c.width,c.height).data,x0=c.width,y0=c.height,x1=-1,y1=-1;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(data[(y*c.width+x)*4+3]>8){x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)}if(x1<0)throw Error('보이는 픽셀이 없는 이미지입니다.');C[id].img=img;C[id].crop={x:x0,y:y0,w:x1-x0+1,h:y1-y0+1};$('message').textContent=id+' 업로드 완료 · 머리와 씨앗 도착점을 맞춰 주세요.';renderPreview()}catch(e){$('message').textContent=e.message}finally{URL.revokeObjectURL(url)}}
+function ellipse(g,x,y,rx,ry,color){g.fillStyle=color;g.beginPath();g.ellipse(x,y,Math.max(.01,rx),Math.max(.01,ry),0,0,Math.PI*2);g.fill()}
+function line(g,pts,color,width=1){g.strokeStyle=color;g.lineWidth=width;g.beginPath();pts.forEach((a,i)=>i?g.lineTo(...a):g.moveTo(...a));g.stroke()}
+function poly(g,pts,color){g.fillStyle=color;g.beginPath();pts.forEach((a,i)=>i?g.lineTo(...a):g.moveTo(...a));g.closePath();g.fill()}
+function flower(g,x,y,r,color){for(let i=0;i<5;i++){let a=i*Math.PI*2/5;ellipse(g,x+Math.cos(a)*r*.6,y+Math.sin(a)*r*.6,r*.47,r*.47,color)}ellipse(g,x,y,r*.2,r*.2,'#c7aa6e')}
+function positions(u){let out={};let end=seg(u,.8,.91),offer=Math.sin(seg(u,.125,.28)*Math.PI/2);for(let id of ['A','B']){let c=C[id],other=C[id==='A'?'B':'A'],dir=Math.sign(other.x-c.x)||1,m=c.motion/100;let dx=(id===S.giver?offer*7:seg(u,.27,.49)*9)*dir*m,rot=c.rot+(id===S.giver?offer*2:-Math.sin(seg(u,.27,.5)*Math.PI)*2)*dir*m;if(S.gesture==='near'&&id!==S.giver)dx+=dir*25*end;if(S.gesture==='bow'&&id===S.giver)rot+=dir*8*end;out[id]={...c,x:c.x+dx,y:c.y+Math.sin(u*Math.PI*2)*2*m,rot};}return out}
+function fruitPos(u,ps){let to=ps[S.giver==='A'?'B':'A'];let q=seg(u,.125,.275),tx=to.x+(360-to.x)*.38;return{x:mix(S.fruitX,tx,q),y:S.fruitY+(S.delivery==='float'?-Math.sin(q*Math.PI)*46:S.delivery==='place'?q*38:0),scale:S.fruitScale}}
+function seedState(i,u){let a=.275+i*(.225/S.seeds),b=.275+(i+1)*(.225/S.seeds);return clamp((u-a)/(b-a))}
+function seed(g,x,y,s=1,a=1){g.save();g.globalAlpha*=a;ellipse(g,x,y,5*s,7*s,S.fruitColor);ellipse(g,x-1.3*s,y-2*s,1.1*s,2*s,'#fbb6b8');g.restore()}
+function drawBackground(g,u,mode){if(mode==='transparent'||S.bg==='transparent'&&mode==='scene')return;g.fillStyle=S.bgColor;g.fillRect(0,0,720,720);if(mode==='solid'||S.bg==='solid')return;let bg=S.bg;
+if(['palace','temple','throne'].includes(bg)){g.fillStyle='#262330';g.fillRect(135,65,450,440);g.strokeStyle='#4e424a';g.lineWidth=2;g.beginPath();g.arc(360,260,147,Math.PI,0);g.lineTo(507,505);g.lineTo(213,505);g.closePath();g.stroke();if(S.columns){for(let x of [66,154,566,654]){g.fillStyle='#35303b';g.fillRect(x-15,92,30,450);g.fillStyle='#4a4049';g.fillRect(x-24,86,48,14);g.fillRect(x-24,530,48,14);line(g,[[x-6,110],[x-6,521]],'#51444c')}}}
+if(bg==='river'){for(let j=0;j<18;j++){let y=270+j*19;line(g,Array.from({length:30},(_,i)=>[i*26,y+Math.sin(i*.5+j+u*5)*5]),j%2?'#45404e':'#292d40',2)}}
+if(bg==='moon'){ellipse(g,360,153,77,77,'#732335');ellipse(g,383,133,63,63,S.bgColor)}
+if(['garden','flowers'].includes(bg)){for(let i=0;i<28;i++){let x=(i*127)%720,y=260+(i*57)%360;line(g,[[x,y+80],[x+12,y]],'#394139',2);flower(g,x+12,y,9+(i%4)*3,'#632334')}}
+if(S.throne||bg==='throne'){poly(g,[[275,542],[275,250],[300,211],[360,254],[420,211],[445,250],[445,542]],'#111019');g.strokeStyle='#665646';g.strokeRect(289,280,142,250);g.fillStyle='#3e2939';g.fillRect(300,380,120,140);g.fillStyle='#17121d';g.fillRect(255,488,210,60)}
+if(S.ending==='gate'){let closed=seg(u,.5,.8);g.fillStyle='#14101a';g.fillRect(230,180,130*closed,350);g.fillRect(490-130*closed,180,130*closed,350);line(g,[[360,180],[360,530]],'#806049',closed*2)}
+g.fillStyle='#211b27';g.fillRect(0,550,720,170);for(let y of [581,635,704])line(g,[[0,y],[720,y]],'#332a36');for(let x=0;x<=720;x+=120)line(g,[[360+(x-360)*.55,550],[x,720]],'#332a36');if(S.light){g.save();g.globalAlpha=S.light/600;poly(g,[[294,78],[426,78],[680,650],[40,650]],'#e8cdab');g.restore()}if(S.ending==='spring'){let a=seg(u,.72,.9);g.save();g.globalAlpha=a;for(let i=0;i<24;i++)flower(g,(i*97)%720,525+(i*37)%160,12,'#aa465b');g.restore()}}
+function drawCharacters(g,u,ps){for(let id of ['A','B']){let c=ps[id],w=c.img?c.crop.w/c.crop.h*c.h:c.h*.48;g.save();g.translate(c.x,c.y);g.rotate(c.rot*Math.PI/180);g.scale(c.flip?-1:1,1);if(c.img){let r=c.crop;g.drawImage(c.img,r.x,r.y,r.w,r.h,-w/2,-c.h,w,c.h)}else{g.globalAlpha=.32;g.strokeStyle='#c3b0ab';g.lineWidth=1;g.setLineDash([5,5]);g.strokeRect(-w/2,-c.h,w,c.h);g.setLineDash([]);g.fillStyle='#e5d9ca';g.font='17px Georgia';g.textAlign='center';g.fillText(id+' · 이미지 업로드',0,-c.h/2)}g.restore();hits[id]={x:c.x-w/2,y:c.y-c.h,w,h:c.h}}}
+function drawPomegranate(g,u,ps){let f=fruitPos(u,ps);g.save();g.translate(f.x,f.y);g.scale(f.scale,f.scale);ellipse(g,0,42,66,12,'#8f8793');ellipse(g,0,38,62,10,'#c0b6bd');if(!['plate','bowl'].includes(S.form)){if(S.form==='slice')poly(g,[[-52,8],[50,8],[0,42]],S.fruitColor);else{ellipse(g,0,0,48,S.form==='whole'?48:38,S.fruitColor);if(S.form==='half')ellipse(g,0,-4,40,30,'#d19c94')}poly(g,[[-12,-34],[-17,-51],[-5,-45],[0,-56],[7,-44],[18,-51],[12,-34]],S.fruitColor)}else if(S.form==='bowl'){poly(g,[[-57,4],[57,4],[42,41],[-42,41]],'#aaa2b2');ellipse(g,0,4,57,13,'#615969')}if(S.fruitFx==='spark'){g.globalAlpha=.35+.25*Math.sin(u*20);line(g,[[48,-29],[48,-13]],'#dfbd95',2);line(g,[[40,-21],[56,-21]],'#dfbd95',2)}g.restore();hits.fruit={x:f.x-65*f.scale,y:f.y-55*f.scale,w:130*f.scale,h:112*f.scale}}
+function seedLocal(i){let n=S.seeds,cols=Math.min(4,n),rows=Math.ceil(n/cols);return{x:(i%cols-(cols-1)/2)*15,y:(Math.floor(i/cols)-(rows-1)/2)*15-3}}
+function drawSeeds(g,u,ps){let f=fruitPos(u,ps),r=ps[S.giver==='A'?'B':'A'];let mx=r.x,my=r.y-r.h*(1-r.mouth);for(let i=0;i<S.seeds;i++){let q=seedState(i,u),l=seedLocal(i),x=f.x+l.x*f.scale,y=f.y+l.y*f.scale;let refuse=S.ending==='refuse'&&i===S.seeds-1;if(q===0){seed(g,x,y,f.scale);continue}if(i===S.seeds-1&&q<1&&['last','spark'].includes(S.fruitFx)){g.save();g.globalAlpha=.3*Math.sin(q*Math.PI);ellipse(g,mix(x,mx,ease(q)),mix(y,my,ease(q)),16,16,'#e08877');g.restore()}if(q>=1&&!refuse)continue;let v=ease(q);if(refuse){let ret=seg(u,.5,.7);x=mix(mix(x,mx,v),ps[S.giver].x,ret);y=mix(mix(y,my,v),f.y,ret)-Math.sin(ret*Math.PI)*45;seed(g,x,y,f.scale);continue}let scale=1-.88*seg(q,.65,1);seed(g,mix(x,mx,v),mix(y,my,v)-Math.sin(v*Math.PI)*(S.delivery==='magic'?70:25),f.scale*scale,1-seg(q,.8,1));}if(S.fruitFx==='drops'&&u>.5&&u<.63){for(let i=0;i<5;i++)seed(g,f.x+(i-2)*10,f.y+(u-.5)*260,.4,1-(u-.5)/.13)}}
+function crownShape(g,type,progress){let metal=type==='gold'&&S.metal==='#29252f'?'#b3985f':S.metal,n=Math.round(S.ornaments);g.fillStyle=metal;let count=Math.ceil(n*progress);if(['laurel','flower'].includes(type)){for(let side of [-1,1]){line(g,[[0,8],[side*34,0],[side*54,-18]],metal,3);for(let i=0;i<count;i++){let a=i/(n-1),x=side*(12+40*a),y=6-25*a;g.save();g.translate(x,y);g.rotate(side*(.3-a*.9));if(type==='flower')flower(g,0,-7,9,S.fruitColor);else ellipse(g,0,-7,6,13,metal);g.restore()}}}else if(type==='horn'){g.fillRect(-43,0,86,10);for(let s of [-1,1]){g.beginPath();g.moveTo(s*22,3);g.bezierCurveTo(s*70,-12,s*70,-54,s*43,-59);g.bezierCurveTo(s*62,-26,s*37,-22,s*20,-15);g.closePath();g.fill()}}else{g.fillRect(-52,0,104,12);let peaks=type==='gold'?5:n;for(let i=0;i<Math.ceil(peaks*progress);i++){let x=-50+i*100/(peaks-1),h=type==='obsidian'?26+(i*13%24):i%2===0?34:22;poly(g,[[x-11,2],[x-3,-h],[x+4,-h-5],[x+11,2]],metal);if(type==='obsidian')line(g,[[x+4,-h-5],[x+3,0]],'#605968',1)}}if(progress>.7){poly(g,[[0,-14],[7,-6],[0,3],[-7,-6]],S.gem);line(g,[[-4,-6],[0,-10]],'#dfadb0',1)}}
+function crownInfo(u,ps,id){let c=ps[id],q=seg(u,.6,.8),base={x:c.x+S.crownX,y:c.y-c.h*(1-c.head)+S.crownY-7};let w=c.img?c.crop.w/c.crop.h*c.h:c.h*.48;return {...base,y:base.y-(1-q)*92,scale:S.crownScale*clamp(w/220,.55,2),q}}
+function drawCrown(g,u,ps){if(u<.6)return;let joint=S.ending==='joint'||S.gesture==='both'||S.gesture==='shine'||S.crown==='double';let ids=joint?['A','B']:[S.wearer];for(let id of ids){let f=crownInfo(u,ps,id),q=f.q;if(S.ending==='refuse'&&u>.71)q*=1-seg(u,.71,.84);if(q<=0)continue;g.save();g.translate(f.x,f.y);g.rotate(S.crownRot*Math.PI/180);g.globalAlpha=q;if(S.entrance==='bloom')g.scale(q,q);g.scale(f.scale,f.scale*S.crownHeight);if(S.gesture==='shine'&&u>.8){g.shadowColor='#e6c377';g.shadowBlur=12*seg(u,.8,.9)}crownShape(g,S.crown==='double'?'gold':S.crown,S.entrance==='assemble'?f.q:1);g.restore();if(id===S.wearer)hits.crown={x:f.x-70*f.scale,y:f.y-70*f.scale*S.crownHeight,w:140*f.scale,h:95*f.scale*S.crownHeight};if(S.ending==='refuse'&&u>.71&&u<.88){for(let i=0;i<10;i++){let v=seg(u,.71,.88);poly(g,[[f.x+(i-5)*14*v,f.y+i*5*v],[f.x+(i-5)*14*v+5,f.y+i*5*v+10],[f.x+(i-5)*14*v-4,f.y+i*5*v+6]],'#564552')}}}}
+// Separate flame silhouettes and rising embers, confined below the faces.
+function drawFlames(g,u,ps,activation){
+ if(!S.effects.flames||activation<=0||S.effect<=0)return;
+ const strength=S.effect/100, r=ps[S.wearer];
+ const floor=clamp(r.y+8,490,680), count=5+Math.round(strength*4);
+ const center=clamp(r.x,125,595), spread=88+strength*30;
+ const faceBottom=Math.max(...Object.values(ps).map(c=>c.y-c.h*(1-c.mouth)+38));
+ const opacity=activation*(.66+.28*strength);
+ g.save();g.globalAlpha*=opacity;
+ for(let i=0;i<count;i++){
+  const phase=u*Math.PI*14+i*2.37;
+  const x=center+(i/(count-1)-.5)*spread*2;
+  const y=floor+Math.sin(i*2.1)*10;
+  const h=Math.min((29+strength*24)*(1+.14*Math.sin(phase)),Math.max(14,y-Math.max(430,faceBottom)));
+  const w=9+strength*5, sway=Math.sin(phase*.83)*w*.42;
+  // Restrained, flat colors keep the flame distinct from red petals.
+  g.save();g.translate(x,y);
+  g.fillStyle='#d96a3d';g.beginPath();g.moveTo(0,0);
+  g.bezierCurveTo(-w*1.4,-h*.08,-w,-h*.43,-w*.34,-h*.56);
+  g.bezierCurveTo(-w*.45,-h*.28,sway+w*.5,-h*.64,sway,-h);
+  g.bezierCurveTo(sway+w*1.25,-h*.75,w*1.45,-h*.28,w*.78,-h*.1);
+  g.bezierCurveTo(w*.5,0,w*.18,2,0,0);g.fill();
+  g.fillStyle='#f3bd72';g.beginPath();g.moveTo(0,-1);
+  g.bezierCurveTo(-w*.65,-h*.14,-w*.3,-h*.34,sway*.45,-h*.59);
+  g.bezierCurveTo(w*.65,-h*.32,w*.65,-h*.08,0,-1);g.fill();
+  g.restore();
+  for(let j=0;j<2;j++){
+   const rise=(u*(2+j*.25)+i*.173+j*.41)%1;
+   const ey=y-h*.7-rise*(45+strength*40);
+   if(ey<Math.max(425,faceBottom))continue;
+   g.save();g.globalAlpha*=Math.sin(rise*Math.PI)*.85;
+   ellipse(g,x+Math.sin(phase+j+rise*4)*10,ey,1.4+strength,2.5+strength,'#efac60');
+   g.restore();
+  }
+ }
+ g.restore();
+}
+function drawEffects(g,u,ps,front){let start={start:0,first:.275,last:.5,crown:.6,end:.8}[S.effectTime],a=seg(u,start,start+.07)*S.effect/100,refuse=S.ending==='refuse';let r=ps[S.wearer];if(!front){if(S.sigil&&S.effects.sigil&&a&&!refuse){g.save();g.globalAlpha=a;g.strokeStyle='#a32d48';g.lineWidth=1.4;for(let rad of [48,62,82]){g.beginPath();g.ellipse(r.x,r.y+3,rad,rad*.27,0,0,Math.PI*2);g.stroke()}for(let i=0;i<12;i++){let an=i*Math.PI/6;line(g,[[r.x+Math.cos(an)*62,r.y+Math.sin(an)*17],[r.x+Math.cos(an)*81,r.y+Math.sin(an)*22]],'#a32d48')}g.restore()}if(u>.5&&u<.6&&!refuse){g.fillStyle='rgba(4,0,8,'+(Math.sin((u-.5)*10*Math.PI)*.18)+')';g.fillRect(0,0,720,720)}return}
+if(S.effects.fog&&S.fog){g.save();let density=(.1+a*.35)*S.fog/100;for(let i=0;i<9;i++){let x=((i*131+u*135)%1000)-140,y=650+(i%3)*22;ellipse(g,x,y,145,25,'rgba(8,6,16,'+density+')')}if(u>.5&&!refuse){g.globalAlpha=a*.13;ellipse(g,r.x,r.y-seg(u,.5,.8)*90,100,55,'#0a0510')}g.restore()}
+drawFlames(g,u,ps,seg(u,start,start+.07));
+for(let i=0;i<Math.round(40*a);i++){let x=(i*163+u*(20+i%4*9))%720,y=(i*91+u*(32+i%7*4))%720;if(y<370&&Math.abs(x-r.x)<90)continue;g.save();g.translate(x,y);g.rotate(i+u*3);if(S.effects.petals&&S.petals)ellipse(g,0,0,3,7,'#9d3b51');if(S.effects.feathers)poly(g,[[12,0],[21,-14],[19,5],[13,13]],'#080711');if(S.effects.gold)ellipse(g,30,0,1.5,1.5,'#cfac66');if(S.effects.seeds)seed(g,-20,0,.55);if(S.effects.shards)poly(g,[[10,10],[15,2],[13,17]],'#b19b96');g.restore()}
+let end=seg(u,.8,.9);if(S.ending==='thread'&&end){g.save();g.globalAlpha=end;g.strokeStyle='#a12643';g.lineWidth=2;g.beginPath();g.moveTo(ps.A.x,ps.A.y-ps.A.h*.45);g.bezierCurveTo(300,540,420,540,ps.B.x,ps.B.y-ps.B.h*.45);g.stroke();g.translate((ps.A.x+ps.B.x)/2,110);g.scale(1.5,1.5);crownShape(g,'gold',end);g.restore()}if(S.gesture==='key'&&end){let x=mix(ps[S.giver].x,ps[S.wearer].x,end);g.save();g.translate(x,430);g.strokeStyle='#b7a06c';g.lineWidth=3;g.beginPath();g.arc(0,0,9,0,Math.PI*2);g.stroke();line(g,[[0,9],[0,40],[10,40],[10,32]],'#b7a06c',3);g.restore()}}
+function dimensions(size){let [w,h]=S.ratio.split(':').map(Number);return w>=h?[size,Math.round(size*h/w)]:[Math.round(size*w/h),size]}
+function renderFrame(t,g=ctx,width=cv.width,height=cv.height,mode='scene',editing=false){if(editing)hits={};g.clearRect(0,0,width,height);let u=clamp(t/S.duration,0,.999999),alpha=1;if(S.loop==='fade'){alpha=1-seg(u,.96,1)}else if(S.loop==='smooth'&&u>.94){u=mix(.94,0,seg(u,.94,1))}g.save();let scale=Math.min(width/720,height/720); // extend composition by cropping neither character nor crown
+// Background fills extended aspect area; composition stays inside safe square.
+if(mode!=='transparent'&&!(mode==='scene'&&S.bg==='transparent')){g.fillStyle=S.bgColor;g.fillRect(0,0,width,height)}g.globalAlpha=alpha;g.translate((width-720*scale)/2,(height-720*scale)/2);g.scale(scale,scale);let ps=positions(u);drawBackground(g,u,mode);drawEffects(g,u,ps,false);drawCharacters(g,u,ps);drawPomegranate(g,u,ps);drawSeeds(g,u,ps);drawCrown(g,u,ps);drawEffects(g,u,ps,true);if(editing){let h=hits[$('layer').value];if(h){g.save();g.strokeStyle='#d6bb8b';g.lineWidth=1.2;g.setLineDash([6,4]);g.strokeRect(h.x,h.y,h.w,h.h);g.setLineDash([]);if(C[$('layer').value]){let c=ps[$('layer').value];for(let [v,col] of [[c.head,'#c5ac72'],[c.mouth,'#c45c74']]){let y=c.y-c.h*(1-v);line(g,[[c.x-9,y],[c.x+9,y]],col,1.5);line(g,[[c.x,y-9],[c.x,y+9]],col,1.5)}}for(let x of [h.x,h.x+h.w])for(let y of [h.y,h.y+h.h])g.fillRect(x-3,y-3,6,6);g.restore()}}g.restore()}
+function phaseAt(u){return u<.125?'대기':u<.275?'석류 전달':u<.5?'씨앗 먹기':u<.6?'마지막 씨앗 · 계약':u<.8?'왕관 형성':u<.94?'계약 성립':'루프 전환'}
+function renderPreview(){let [w,h]=dimensions(720);if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}cv.style.width=S.zoom+'%';renderFrame(current,ctx,cv.width,cv.height,'scene',true);$('timeline').value=current;$('clock').textContent=current.toFixed(2)+' / '+S.duration+'초';$('phase').textContent=phaseAt(current/S.duration);let consumed=Array.from({length:S.seeds},(_,i)=>seedState(i,current/S.duration)>=1&&!(S.ending==='refuse'&&i===S.seeds-1)).filter(Boolean).length;$('seedstatus').textContent='씨앗 '+consumed+' / '+S.seeds}
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'일시정지':'재생'};$('restart').onclick=()=>{current=0;playing=true;$('play').textContent='일시정지'};$('timeline').oninput=e=>{playing=false;current=+e.target.value;$('play').textContent='재생';renderPreview()};$('layer').onchange=()=>{if($('layer').value==='crown'&&current/S.duration<.8){current=.85*S.duration;playing=false;$('play').textContent='재생'}renderPreview()};
+for(let [text,u] of [['대기',0],['전달',.23],['씨앗',.4],['계약',.55],['왕관',.74],['완성',.9]])btn($('stages'),text,()=>{playing=false;current=u*S.duration;$('play').textContent='재생';renderPreview()});
+function point(e){let r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*cv.width/r.width,y=(e.clientY-r.top)*cv.height/r.height,s=Math.min(cv.width,cv.height)/720;return{x:(x-(cv.width-720*s)/2)/s,y:(y-(cv.height-720*s)/2)/s}}
+cv.onpointerdown=e=>{let pt=point(e),selected=$('layer').value,ordered=[selected,...['crown','fruit','B','A'].filter(k=>k!==selected)],key=ordered.find(k=>{let h=hits[k];return h&&pt.x>=h.x&&pt.x<=h.x+h.w&&pt.y>=h.y&&pt.y<=h.y+h.h});if(!key)return;$('layer').value=key;playing=false;$('play').textContent='재생';drag={key,pt};cv.setPointerCapture(e.pointerId);renderPreview()};cv.onpointermove=e=>{if(!drag)return;let pt=point(e),dx=pt.x-drag.pt.x,dy=pt.y-drag.pt.y,k=drag.key;if(C[k]){C[k].x+=dx;C[k].y+=dy}else if(k==='crown'){S.crownX+=dx;S.crownY+=dy}else{S.fruitX+=dx;S.fruitY+=dy}drag.pt=pt;sync();renderPreview()};cv.onpointerup=cv.onpointercancel=()=>drag=null;$('resetpos').onclick=()=>{let k=$('layer').value;if(C[k])Object.assign(C[k],{x:k==='A'?205:515,y:610,h:400,rot:0});else if(k==='crown')Object.assign(S,{crownX:0,crownY:0,crownScale:1,crownRot:0});else Object.assign(S,{fruitX:360,fruitY:444,fruitScale:1});sync();renderPreview()};
+function download(blob,name){let a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
+async function exportPNG(){try{let c=document.createElement('canvas');[c.width,c.height]=dimensions(720*Number(S.pngScale));let t=S.pngFrame==='current'?current:Number(S.pngFrame)*S.duration;renderFrame(t,c.getContext('2d'),c.width,c.height,S.pngTransparent?'transparent':'scene');let blob=await new Promise(r=>c.toBlob(r,'image/png'));if(!blob)throw Error('PNG 생성에 실패했습니다.');download(blob,'UNDERWORLD_'+Math.round(t*1000)+'.png');$('message').textContent='PNG 저장 완료'}catch(e){$('message').textContent=e.message}}
+// GIF color revision 3: independent full-frame palettes, exact small palettes.
+// Each image block stores its own 255 opaque colors plus transparency.
+function histogramAdd(data,hist,step=4,offset=0){
+ for(let i=(offset%step)*4;i<data.length;i+=4*step){
+  if(data[i+3]<128)continue;
+  const r=data[i],g=data[i+1],b=data[i+2],key=(r>>2)<<12|(g>>2)<<6|(b>>2);
+  let e=hist.get(key);
+  if(e){e.n++;e.r+=r;e.g+=g;e.b+=b}
+  else hist.set(key,{n:1,r,g,b});
+ }
+}
+function frameHistogram(data){
+ const exact=new Map();let limited=false;
+ for(let i=0;i<data.length;i+=4){if(data[i+3]<128)continue;
+  const r=data[i],g=data[i+1],b=data[i+2],key=(r<<16)|(g<<8)|b;
+  const e=exact.get(key);if(e){e.n++;e.r+=r;e.g+=g;e.b+=b}else exact.set(key,{n:1,r,g,b});
+  if(exact.size>255){limited=true;break}
+ }
+ if(!limited)return exact;
+ const hist=new Map();histogramAdd(data,hist,1);return hist;
+}
+function paletteFromHistogram(hist){
+ const entries=[];
+ for(const e of hist.values())entries.push({r:e.r/e.n,g:e.g/e.n,b:e.b/e.n,n:e.n});
+ if(!entries.length)return Array.from({length:256},()=>[0,0,0]);
+ function box(values){
+  let lo=[255,255,255],hi=[0,0,0],n=0;
+  for(const e of values){n+=e.n;for(let k=0;k<3;k++){const v=e[['r','g','b'][k]];lo[k]=Math.min(lo[k],v);hi[k]=Math.max(hi[k],v)}}
+  const ranges=hi.map((v,i)=>v-lo[i]),axis=ranges.indexOf(Math.max(...ranges));
+  return {values,n,axis,score:Math.max(...ranges)*Math.sqrt(n)};
+ }
+ const boxes=[box(entries)];
+ while(boxes.length<255){
+  let best=-1;
+  for(let i=0;i<boxes.length;i++)if(boxes[i].values.length>1&&(best<0||boxes[i].score>boxes[best].score))best=i;
+  if(best<0)break;
+  const item=boxes[best],key=['r','g','b'][item.axis];
+  item.values.sort((a,b)=>a[key]-b[key]);
+  let sum=0,split=1;
+  // A dominant final color must never produce an empty right-hand box.
+  for(let i=0;i<item.values.length-1;i++){sum+=item.values[i].n;split=i+1;if(sum>=item.n/2)break}
+  boxes.splice(best,1,box(item.values.slice(0,split)),box(item.values.slice(split)));
+ }
+ const pal=[[0,0,0]];
+ for(const item of boxes){let rgb=[0,0,0];for(const e of item.values){rgb[0]+=e.r*e.n;rgb[1]+=e.g*e.n;rgb[2]+=e.b*e.n}pal.push(rgb.map(v=>Math.round(v/item.n)))}
+ while(pal.length<256)pal.push(pal[pal.length-1].slice());
+ return pal;
+}
+function makeLUT(pal){
+ // Four candidates per cell; choose using the actual pixel, not a rounded bin center.
+ const lut=new Uint8Array(32768*4);
+ for(let k=0;k<32768;k++){
+  const r=((k>>10)&31)*8+3.5,g=((k>>5)&31)*8+3.5,b=(k&31)*8+3.5;
+  const dist=[Infinity,Infinity,Infinity,Infinity],ids=[1,1,1,1];
+  for(let j=1;j<256;j++){
+   const p=pal[j],d=2*(r-p[0])**2+3*(g-p[1])**2+(b-p[2])**2;
+   if(d>=dist[3])continue;
+   let pos=3;while(pos>0&&d<dist[pos-1]){dist[pos]=dist[pos-1];ids[pos]=ids[pos-1];pos--}dist[pos]=d;ids[pos]=j;
+  }
+  lut.set(ids,k*4);
+ }
+ lut.palette=pal;lut.exact=new Map();for(let i=1;i<256;i++){const p=pal[i];lut.exact.set((p[0]<<16)|(p[1]<<8)|p[2],i)}return lut;
+}
+function indexPixels(data,lut){
+ const out=new Uint8Array(data.length/4),pal=lut.palette;
+ for(let i=0,j=0;i<data.length;i+=4,j++){
+  if(data[i+3]<128){out[j]=0;continue}
+  const r=data[i],g=data[i+1],b=data[i+2],k=((r>>3)<<10|(g>>3)<<5|(b>>3))*4;
+  const exact=lut.exact.get((r<<16)|(g<<8)|b);if(exact!==undefined){out[j]=exact;continue}
+  let best=Infinity,idx=1;
+  for(let c=0;c<4;c++){const v=lut[k+c],p=pal[v],d=2*(r-p[0])**2+3*(g-p[1])**2+(b-p[2])**2;if(d<best){best=d;idx=v}}
+  out[j]=idx;
+ }
+ return out;
+}
+// GIF LZW: emit early dictionary clears at 9-bit width. This is genuine dictionary
+// compression, avoids ambiguous code-width transitions, and remains GIF89a compliant.
+function lzw(indices){const clear=256,end=257;let next=258,dict=new Map(),bytes=[],bits=0,nb=0;function emit(code){bits|=code<<nb;nb+=9;while(nb>=8){bytes.push(bits&255);bits>>>=8;nb-=8}}emit(clear);let prefix=indices[0];for(let i=1;i<indices.length;i++){let k=indices[i],key=prefix*256+k,found=dict.get(key);if(found!==undefined){prefix=found;continue}emit(prefix);if(next<500)dict.set(key,next++);else{emit(clear);dict.clear();next=258}prefix=k}emit(prefix);emit(end);if(nb)bytes.push(bits&255);return new Uint8Array(bytes)}
+class GIFWriter{
+ constructor(w,h,pal,loop){
+  this.parts=[];this.w=w;this.h=h;
+  this.push([...new TextEncoder().encode('GIF89a'),w&255,w>>8,h&255,h>>8,0xf7,0,0,...pal.flat()]);
+  if(loop)this.push([0x21,0xff,11,...new TextEncoder().encode('NETSCAPE2.0'),3,1,0,0,0]);
+ }
+ push(a){this.parts.push(new Uint8Array(a))}
+ frame(indices,delay,palette=null){
+  if(palette&&(palette.length!==256||palette.some(c=>c.length!==3||c.some(v=>!Number.isFinite(v)||v<0||v>255))))throw Error('색상표 생성 오류');
+  this.push([0x21,0xf9,4,9,delay&255,delay>>8,0,0,0x2c,0,0,0,0,this.w&255,this.w>>8,this.h&255,this.h>>8,palette?0x87:0]);
+  if(palette)this.push(palette.flat());
+  this.push([8]);let z=lzw(indices);
+  for(let p=0;p<z.length;p+=255){let block=z.subarray(p,p+255);this.push([block.length]);this.parts.push(block)}this.push([0]);
+ }
+ finish(){this.push([0x3b]);return new Blob(this.parts,{type:'image/gif'})}
+}
+const tick=()=>new Promise(r=>setTimeout(r,0));
+async function exportGIF(){
+ if(busy)return;busy=true;const was=playing;playing=false;
+ ['gif','png'].forEach(k=>$(k).disabled=true);$('options').inert=true;document.querySelector('.stage').inert=true;$('progress').hidden=false;
+ try{
+  const c=document.createElement('canvas');[c.width,c.height]=dimensions(+S.size);
+  const g=c.getContext('2d',{willReadFrequently:true}),n=Math.round(S.duration*S.fps);
+  const mode=S.gifBg==='transparent'?'transparent':S.gifBg==='solid'?'solid':'scene';let gif=null;
+  for(let i=0;i<n;i++){
+   $('message').textContent='원본 색 보존 · '+(i+1)+' / '+n;$('progress').value=i/n*100;await tick();
+   renderFrame(i/S.fps,g,c.width,c.height,mode);
+   const data=g.getImageData(0,0,c.width,c.height).data,hist=frameHistogram(data),pal=paletteFromHistogram(hist);
+   const unique=new Set(pal.slice(1).map(c=>c.join(','))).size;
+   if(hist.size>255&&unique<16)throw Error('색상 수가 비정상적으로 줄어 저장을 중단했습니다.');
+   const lut=makeLUT(pal),indices=indexPixels(data,lut);
+   if(!gif)gif=new GIFWriter(c.width,c.height,pal,S.repeat==='infinite');
+   const delay=Math.round((i+1)*100/S.fps)-Math.round(i*100/S.fps);
+   gif.frame(indices,delay,pal);
+  }
+  const blob=gif.finish();download(blob,'UNDERWORLD_COLOR_FIXED.gif');$('progress').value=100;
+  $('message').textContent='색상 보존 GIF 저장 완료 · '+n+'프레임 · '+(blob.size/1048576).toFixed(1)+' MB';
+ }catch(e){$('message').textContent='GIF 저장 실패: '+e.message}
+ finally{busy=false;playing=was;$('options').inert=false;document.querySelector('.stage').inert=false;['gif','png'].forEach(k=>$(k).disabled=false);$('progress').hidden=true}
+}
+$('png').onclick=exportPNG;$('gif').onclick=exportGIF;function animate(now){if(last&&playing&&!busy)current=(current+Math.min((now-last)/1000,.08))%S.duration;last=now;if(!busy)renderPreview();requestAnimationFrame(animate)}requestAnimationFrame(animate);
+</script></html>
