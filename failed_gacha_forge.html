@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FAILED GACHA & FORGE</title>
+<style>
+  :root {
+    --bg: #17141f;
+    --bg2: #221c30;
+    --panel: #241f33;
+    --panel-inner: #1b1726;
+    --line: #3c3354;
+    --text: #f3eefc;
+    --sub: #a99ec2;
+    --accent: #e06d53;
+    --accent-gold: #f4b942;
+    --accent-purple: #9b6dff;
+    --accent-soft: #352b4d;
+    --shadow: rgba(0, 0, 0, 0.38);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at 20% 0%, #2d2344 0%, #15111d 70%);
+    color: var(--text);
+    font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .panel, .preview-wrap {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 14px 32px var(--shadow);
+  }
+  .panel {
+    padding: 16px;
+    max-height: 94vh;
+    overflow-y: auto;
+  }
+  .panel::-webkit-scrollbar { width: 6px; }
+  .panel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .preview-wrap {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: sticky;
+    top: 18px;
+  }
+  .title-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 21px;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #ffdf85, #ff8b6b, #c59bff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-gold);
+    border: 1px solid rgba(244,185,66,0.3);
+    font-weight: 700;
+  }
+  .section {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+  }
+  .section h2 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .control { margin-bottom: 10px; }
+  .control:last-child { margin-bottom: 0; }
+  .control label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--sub);
+    margin-bottom: 5px;
+  }
+  .value { color: var(--accent-gold); font-weight: 700; font-size: 12px; }
+  input[type="file"], input[type="range"], input[type="text"], select, button {
+    width: 100%;
+    font: inherit;
+    font-size: 13px;
+  }
+  input[type="file"], input[type="text"], select, button {
+    background: var(--panel-inner);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  input[type="text"]:focus, select:focus {
+    outline: 1px solid var(--accent-purple);
+    border-color: var(--accent-purple);
+  }
+  input[type="range"] {
+    accent-color: var(--accent-purple);
+    cursor: pointer;
+  }
+  button {
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform .12s ease, background .15s ease;
+  }
+  button:hover:not(:disabled) { transform: translateY(-1px); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .accent {
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: #fff;
+    border: none;
+  }
+  .soft {
+    background: var(--accent-soft);
+    border-color: #4f4270;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .btn-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .preview-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .preview-title { font-size: 14px; font-weight: 700; color: var(--text); }
+  .canvas-shell {
+    background: #120f1a;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  canvas {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 76vh;
+    margin: 0 auto;
+    object-fit: contain;
+    background: #1a1625;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--sub);
+    min-height: 20px;
+  }
+  .hide { display: none !important; }
+  .char-card {
+    background: rgba(0, 0, 0, 0.18);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .char-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .mini-btn {
+    width: auto;
+    padding: 3px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  @media (max-width: 920px) {
+    .app { grid-template-columns: 1fr; }
+    .panel { order: 2; max-height: none; }
+    .preview-wrap { order: 1; position: static; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <div class="title-box">
+      <h1>FAILED GACHA & FORGE</h1>
+    </div>
+
+    <div class="section">
+      <h2>1. 장면 및 세계관 설정</h2>
+      <div class="control">
+        <label>상황극 장면</label>
+        <select id="scene">
+          <option value="forge" selected>🔨 운명의 장비 강화 (모루)</option>
+          <option value="gacha">✨ 캐릭터/성유물 가챠 소환 (마법진)</option>
+          <option value="alchemy">🧪 수상한 연금술·굿즈 연성 (마법솥)</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>결말 분기</label>
+          <select id="outcome">
+            <option value="fail" selected>💥 대폭망 (★1 증발/폭사)</option>
+            <option value="curse">😈 픽뚫/저주 (★3 기묘함)</option>
+            <option value="ssr">🌈 전설 대성공 (★5 SSR)</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>세계관 배경</label>
+          <select id="bgPreset">
+            <option value="forge">🔥 판타지 대장간</option>
+            <option value="sanctuary">🌙 별빛 소환 신전</option>
+            <option value="cyber">⚡ 네온 SF 연구소</option>
+            <option value="room">🖥️ 현대 덕질/자캐 방</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>대상 아이템</label>
+          <select id="itemType">
+            <option value="sword">⚔️ 전설의 마검/성검</option>
+            <option value="staff">🪄 별빛 마법 지팡이</option>
+            <option value="gun">🔫 마공학 네온 권총</option>
+            <option value="ring">💍 운명의 보석 반지</option>
+            <option value="grimoire">📖 고대 금서(마도서)</option>
+            <option value="crystal">💎 무지개 가챠 성정석</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>인물 구성</label>
+          <select id="castMode">
+            <option value="dual" selected>👥 2인 (A & B 함께)</option>
+            <option value="solo">👤 1인 (캐릭터 A 단독)</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>화면 비율</label>
+          <select id="ratio">
+            <option value="1:1" selected>1:1 (정방형)</option>
+            <option value="4:3">4:3 (가로형)</option>
+            <option value="16:9">16:9 (와이드)</option>
+            <option value="9:16">9:16 (쇼츠/세로)</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>재생 속도</label>
+          <select id="speed">
+            <option value="0.8">느리게 (0.8x)</option>
+            <option value="1" selected>보통 (1.0x)</option>
+            <option value="1.25">빠르게 (1.25x)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>2. 자캐 이미지 및 배치</h2>
+
+      <!-- 캐릭터 A -->
+      <div class="char-card">
+        <div class="char-card-head">
+          <span style="color:#ff9e7d;">캐릭터 A (강화사 / 소환사)</span>
+          <button id="clearA" class="mini-btn soft" type="button">초기화</button>
+        </div>
+        <div class="control">
+          <input id="uploadA" type="file" accept="image/png,image/webp,image/jpeg,image/gif" />
+        </div>
+        <div class="row">
+          <div class="control">
+            <label>표시 형태</label>
+            <select id="aFrame">
+              <option value="full" selected>그대로 (전신/반신)</option>
+              <option value="circle">원형 인장 (두상용)</option>
+              <option value="card">가챠 카드 프레임</option>
+            </select>
+          </div>
+          <div class="control">
+            <label>좌우 반전</label>
+            <select id="aFlip">
+              <option value="0">원본 방향</option>
+              <option value="1">좌우 반전</option>
+            </select>
+          </div>
+        </div>
+        <div class="row-3">
+          <div class="control">
+            <label>크기 <span class="value" id="aScaleVal">100%</span></label>
+            <input id="aScale" type="range" min="45" max="190" value="100" />
+          </div>
+          <div class="control">
+            <label>X <span class="value" id="aXVal">0</span></label>
+            <input id="aX" type="range" min="-260" max="260" value="0" />
+          </div>
+          <div class="control">
+            <label>Y <span class="value" id="aYVal">0</span></label>
+            <input id="aY" type="range" min="-180" max="180" value="0" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 캐릭터 B -->
+      <div class="char-card" id="charBSection">
+        <div class="char-card-head">
+          <span style="color:#b794f4;">캐릭터 B (의뢰인 / 소환된 자캐)</span>
+          <button id="clearB" class="mini-btn soft" type="button">초기화</button>
+        </div>
+        <div class="control">
+          <input id="uploadB" type="file" accept="image/png,image/webp,image/jpeg,image/gif" />
+        </div>
+        <div class="row">
+          <div class="control">
+            <label>표시 형태</label>
+            <select id="bFrame">
+              <option value="full" selected>그대로 (전신/반신)</option>
+              <option value="circle">원형 인장 (두상용)</option>
+              <option value="card">가챠 카드 프레임</option>
+            </select>
+          </div>
+          <div class="control">
+            <label>좌우 반전</label>
+            <select id="bFlip">
+              <option value="0">원본 방향</option>
+              <option value="1">좌우 반전</option>
+            </select>
+          </div>
+        </div>
+        <div class="row-3">
+          <div class="control">
+            <label>크기 <span class="value" id="bScaleVal">100%</span></label>
+            <input id="bScale" type="range" min="45" max="190" value="100" />
+          </div>
+          <div class="control">
+            <label>X <span class="value" id="bXVal">0</span></label>
+            <input id="bX" type="range" min="-260" max="260" value="0" />
+          </div>
+          <div class="control">
+            <label>Y <span class="value" id="bYVal">0</span></label>
+            <input id="bY" type="range" min="-180" max="180" value="0" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>3. 감정 반응 & 대사 커스텀</h2>
+      <div class="row">
+        <div class="control">
+          <label>A의 결과 반응</label>
+          <select id="reactionA">
+            <option value="despair" selected>😱 절망/멘붕</option>
+            <option value="cry">😭 폭풍 오열</option>
+            <option value="soul">👻 영혼 가출(멍함)</option>
+            <option value="run">🏃 황급히 도주</option>
+            <option value="angry">💢 극대노</option>
+            <option value="pray">🙏 감격/경배</option>
+            <option value="smug">😎 득의양양</option>
+          </select>
+        </div>
+        <div class="control" id="reactBBox">
+          <label>B의 결과 반응</label>
+          <select id="reactionB">
+            <option value="angry" selected>💢 극대노 (내 무기가!)</option>
+            <option value="smug">😎 능글/짠~ 등장</option>
+            <option value="happy">🎵 해맑음 (아무생각없음)</option>
+            <option value="soul">👻 영혼 가출</option>
+            <option value="cry">😭 같이 오열</option>
+            <option value="despair">😱 경악/당황</option>
+            <option value="run">🏃 도망치기</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>A 커스텀 말풍선 (비우면 자동)</label>
+          <input id="textA" type="text" placeholder="예: 99%였는데...?!" maxlength="14" />
+        </div>
+        <div class="control" id="textBBox">
+          <label>B 커스텀 말풍선 (비우면 자동)</label>
+          <input id="textB" type="text" placeholder="예: 내 마검 돌려내!!" maxlength="14" />
+        </div>
+      </div>
+      <div class="control">
+        <label>하단 시스템 알림창 문구 (비우면 자동 생성)</label>
+        <input id="sysText" type="text" placeholder="예: [알림] +12 마검이 차원의 가루가 되었습니다." maxlength="38" />
+      </div>
+      <div class="row">
+        <div class="control">
+          <label>이펙트/폭발 강도 <span class="value" id="intensityVal">75%</span></label>
+          <input id="intensity" type="range" min="10" max="100" value="75" />
+        </div>
+        <div class="control">
+          <label>만화 연출 옵션</label>
+          <select id="fxOption">
+            <option value="all" selected>집중선 + 검댕이 모두</option>
+            <option value="lines">만화 집중선만</option>
+            <option value="none">깔끔하게 (이펙트 최소화)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>4. 추출 및 저장</h2>
+      <div class="row">
+        <div class="control">
+          <label>GIF 해상도</label>
+          <select id="gifSize">
+            <option value="360">360px (가벼움)</option>
+            <option value="480" selected>480px (권장)</option>
+            <option value="640">640px (고화질)</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>초당 프레임 (FPS)</label>
+          <select id="gifFps">
+            <option value="10">10 FPS</option>
+            <option value="12" selected>12 FPS</option>
+            <option value="15">15 FPS</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="savePng" class="soft" type="button">📸 현재 프레임 PNG</button>
+        <button id="saveGif" class="accent" type="button">🎞️ 움짤 GIF 저장</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="preview-wrap">
+    <div class="preview-head">
+      <div class="preview-title">✨ 실시간 캔버스 미리보기</div>
+      <div class="btn-row" style="width:min(380px,100%);">
+        <button id="playPause" class="soft" type="button">⏸ 일시정지</button>
+        <button id="restart" class="soft" type="button">⏮ 처음부터 보기</button>
+      </div>
+    </div>
+    <div class="canvas-shell">
+      <canvas id="preview" width="800" height="800"></canvas>
+    </div>
+    <div class="status-bar">
+      <span id="status">준비 완료. 자캐 이미지를 넣거나 옵션을 바꿔보세요!</span>
+      <span id="timeIndicator">0.0s / 3.2s</span>
+    </div>
+  </main>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    scene: $('scene'), outcome: $('outcome'), bgPreset: $('bgPreset'),
+    itemType: $('itemType'), castMode: $('castMode'), ratio: $('ratio'), speed: $('speed'),
+    uploadA: $('uploadA'), clearA: $('clearA'), aFrame: $('aFrame'), aFlip: $('aFlip'),
+    aScale: $('aScale'), aScaleVal: $('aScaleVal'), aX: $('aX'), aXVal: $('aXVal'), aY: $('aY'), aYVal: $('aYVal'),
+    uploadB: $('uploadB'), clearB: $('clearB'), bFrame: $('bFrame'), bFlip: $('bFlip'),
+    bScale: $('bScale'), bScaleVal: $('bScaleVal'), bX: $('bX'), bXVal: $('bXVal'), bY: $('bY'), bYVal: $('bYVal'),
+    charBSection: $('charBSection'), reactBBox: $('reactBBox'), textBBox: $('textBBox'),
+    reactionA: $('reactionA'), reactionB: $('reactionB'),
+    textA: $('textA'), textB: $('textB'), sysText: $('sysText'),
+    intensity: $('intensity'), intensityVal: $('intensityVal'), fxOption: $('fxOption'),
+    gifSize: $('gifSize'), gifFps: $('gifFps'), savePng: $('savePng'), saveGif: $('saveGif'),
+    preview: $('preview'), status: $('status'), timeIndicator: $('timeIndicator'),
+    playPause: $('playPause'), restart: $('restart')
+  };
+
+  const ctx = els.preview.getContext('2d');
+  const off = document.createElement('canvas');
+  const offCtx = off.getContext('2d');
+
+  let imageA = null, imageB = null;
+  let playing = true;
+  let lastTime = performance.now();
+  let playHead = 0;
+  const BASE_DURATION = 3.2;
+
+  function setStatus(msg) { els.status.textContent = msg; }
+  function clamp(v, a = 0, b = 1) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+  function easeOutBack(x) { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+  function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
+  function parseRatio(ratio) { const [w, h] = ratio.split(':').map(Number); return { w, h }; }
+
+  // When scene or outcome changes, smartly adjust default reactions if user hasn't customized heavily
+  els.outcome.addEventListener('change', () => {
+    const out = els.outcome.value;
+    if (out === 'fail') {
+      els.reactionA.value = 'despair';
+      els.reactionB.value = els.scene.value === 'gacha' ? 'happy' : 'angry';
+    } else if (out === 'curse') {
+      els.reactionA.value = 'soul';
+      els.reactionB.value = 'smug';
+    } else if (out === 'ssr') {
+      els.reactionA.value = 'pray';
+      els.reactionB.value = 'smug';
+    }
+  });
+
+  els.scene.addEventListener('change', () => {
+    if (els.scene.value === 'gacha') {
+      els.castMode.value = 'dual';
+      if (els.bFrame.value === 'full' && !imageB) els.bFrame.value = 'card';
+    }
+    uiSync();
+  });
+
+  function uiSync() {
+    els.aScaleVal.textContent = `${els.aScale.value}%`;
+    els.aXVal.textContent = els.aX.value;
+    els.aYVal.textContent = els.aY.value;
+    els.bScaleVal.textContent = `${els.bScale.value}%`;
+    els.bXVal.textContent = els.bX.value;
+    els.bYVal.textContent = els.bY.value;
+    els.intensityVal.textContent = `${els.intensity.value}%`;
+
+    const dual = els.castMode.value === 'dual';
+    els.charBSection.classList.toggle('hide', !dual);
+    els.reactBBox.classList.toggle('hide', !dual);
+    els.textBBox.classList.toggle('hide', !dual);
+  }
+
+  function getLogicSize(ratioStr) {
+    const { w, h } = parseRatio(ratioStr);
+    const base = 800;
+    if (w >= h) return { lw: base, lh: Math.round((base * h) / w) };
+    return { lw: Math.round((base * w) / h), lh: base };
+  }
+
+  function resizePreviewCanvas() {
+    const { lw, lh } = getLogicSize(els.ratio.value);
+    els.preview.width = lw;
+    els.preview.height = lh;
+  }
+
+  ['input', 'change'].forEach(evt => {
+    Object.values(els).forEach(el => {
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'SELECT')) {
+        el.addEventListener(evt, uiSync);
+      }
+    });
+    els.ratio.addEventListener(evt, resizePreviewCanvas);
+  });
+  uiSync();
+  resizePreviewCanvas();
+
+  function bindUpload(input, clearBtn, setter, label) {
+    input.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => { setter(img); setStatus(`${label} 이미지 적용 완료!`); };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      setter(null);
+      setStatus(`${label} 기본 캐릭터로 초기화됨.`);
+    });
+  }
+  bindUpload(els.uploadA, els.clearA, (img) => imageA = img, '캐릭터 A');
+  bindUpload(els.uploadB, els.clearB, (img) => imageB = img, '캐릭터 B');
+
+  function getSettings() {
+    return {
+      scene: els.scene.value,
+      outcome: els.outcome.value,
+      bgPreset: els.bgPreset.value,
+      item: els.itemType.value,
+      castMode: els.castMode.value,
+      ratio: els.ratio.value,
+      speed: +els.speed.value,
+      aFrame: els.aFrame.value,
+      aScale: +els.aScale.value / 100,
+      aX: +els.aX.value,
+      aY: +els.aY.value,
+      aFlip: els.aFlip.value === '1',
+      bFrame: els.bFrame.value,
+      bScale: +els.bScale.value / 100,
+      bX: +els.bX.value,
+      bY: +els.bY.value,
+      bFlip: els.bFlip.value === '1',
+      reactionA: els.reactionA.value,
+      reactionB: els.reactionB.value,
+      textA: els.textA.value.trim(),
+      textB: els.textB.value.trim(),
+      sysText: els.sysText.value.trim(),
+      intensity: +els.intensity.value / 100,
+      fxOption: els.fxOption.value
+    };
+  }
+
+  function drawRoundedRect(c, x, y, w, h, r) {
+    const rr = Math.min(r, w / 2, h / 2);
+    c.beginPath();
+    c.moveTo(x + rr, y);
+    c.arcTo(x + w, y, x + w, y + h, rr);
+    c.arcTo(x + w, y + h, x, y + h, rr);
+    c.arcTo(x, y + h, x, y, rr);
+    c.arcTo(x, y, x + w, y, rr);
+    c.closePath();
+  }
+
+  function drawStar(c, cx, cy, spikes, outerR, innerR, color, rot = 0) {
+    c.save();
+    c.translate(cx, cy);
+    c.rotate(rot);
+    c.beginPath();
+    for (let i = 0; i < spikes * 2; i++) {
+      const r = i % 2 === 0 ? outerR : innerR;
+      const a = (i * Math.PI) / spikes - Math.PI / 2;
+      if (i === 0) c.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+      else c.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    c.closePath();
+    c.fillStyle = color;
+    c.fill();
+    c.restore();
+  }
+
+  // 1. Background Renderer
+  function drawBackground(c, w, h, s, timeSec) {
+    c.save();
+    if (s.bgPreset === 'forge') {
+      const grad = c.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#23161c');
+      grad.addColorStop(0.65, '#3b2123');
+      grad.addColorStop(1, '#1d1215');
+      c.fillStyle = grad;
+      c.fillRect(0, 0, w, h);
+
+      // Stone wall bricks
+      c.strokeStyle = 'rgba(255,180,140,0.06)';
+      c.lineWidth = 2;
+      for (let row = 1; row < 6; row++) {
+        const y = h * 0.12 * row;
+        c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke();
+        for (let col = 0; col < 6; col++) {
+          const x = ((col + (row % 2) * 0.5) * w) / 5;
+          c.beginPath(); c.moveTo(x, y - h * 0.12); c.lineTo(x, y); c.stroke();
+        }
+      }
+
+      // Glowing furnace arch in background
+      const furnaceGlow = 0.7 + 0.3 * Math.sin(timeSec * 5);
+      const fGrad = c.createRadialGradient(w * 0.18, h * 0.52, 10, w * 0.18, h * 0.52, w * 0.22);
+      fGrad.addColorStop(0, `rgba(255,130,40,${0.45 * furnaceGlow})`);
+      fGrad.addColorStop(1, 'rgba(255,80,20,0)');
+      c.fillStyle = fGrad;
+      c.fillRect(0, 0, w, h);
+
+      c.fillStyle = '#2d1c20';
+      drawRoundedRect(c, w * 0.08, h * 0.34, w * 0.20, h * 0.38, 40);
+      c.fill();
+      c.fillStyle = `rgba(255,110,30,${0.75 * furnaceGlow})`;
+      drawRoundedRect(c, w * 0.11, h * 0.42, w * 0.14, h * 0.30, 28);
+      c.fill();
+
+      // Weapon rack on right wall
+      c.fillStyle = '#472d2b';
+      drawRoundedRect(c, w * 0.68, h * 0.22, w * 0.22, h * 0.025, 6);
+      c.fill();
+      c.strokeStyle = '#8b9bb4';
+      c.lineWidth = 4;
+      c.beginPath(); c.moveTo(w * 0.74, h * 0.23); c.lineTo(w * 0.74, h * 0.38); c.stroke();
+      c.beginPath(); c.moveTo(w * 0.83, h * 0.23); c.lineTo(w * 0.83, h * 0.36); c.stroke();
+
+      // Floor counter
+      c.fillStyle = '#2a1b1e';
+      c.fillRect(0, h * 0.72, w, h * 0.28);
+      c.fillStyle = '#472e31';
+      c.fillRect(0, h * 0.72, w, h * 0.025);
+
+    } else if (s.bgPreset === 'sanctuary') {
+      const grad = c.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#0f1026');
+      grad.addColorStop(0.7, '#231d47');
+      grad.addColorStop(1, '#171330');
+      c.fillStyle = grad;
+      c.fillRect(0, 0, w, h);
+
+      // Twinkling stars & constellation lines
+      c.strokeStyle = 'rgba(200,190,255,0.12)';
+      c.lineWidth = 1.5;
+      c.beginPath();
+      c.moveTo(w * 0.15, h * 0.18); c.lineTo(w * 0.28, h * 0.12); c.lineTo(w * 0.38, h * 0.22);
+      c.moveTo(w * 0.65, h * 0.14); c.lineTo(w * 0.78, h * 0.20); c.lineTo(w * 0.86, h * 0.11);
+      c.stroke();
+      for (let i = 0; i < 24; i++) {
+        const sx = ((i * 73) % 94 + 3) * 0.01 * w;
+        const sy = ((i * 41) % 55 + 5) * 0.01 * h;
+        const alpha = 0.3 + 0.6 * Math.abs(Math.sin(timeSec * 2 + i));
+        c.fillStyle = `rgba(255,245,200,${alpha})`;
+        c.beginPath(); c.arc(sx, sy, (i % 3) + 1, 0, Math.PI * 2); c.fill();
+      }
+
+      // Sanctuary pillars
+      c.fillStyle = 'rgba(255,255,255,0.06)';
+      c.fillRect(w * 0.08, h * 0.1, w * 0.07, h * 0.62);
+      c.fillRect(w * 0.85, h * 0.1, w * 0.07, h * 0.62);
+
+      // Floor
+      c.fillStyle = '#1c1836';
+      c.fillRect(0, h * 0.72, w, h * 0.28);
+      c.fillStyle = '#3b336b';
+      c.fillRect(0, h * 0.72, w, h * 0.025);
+
+    } else if (s.bgPreset === 'cyber') {
+      const grad = c.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#09131c');
+      grad.addColorStop(0.7, '#102536');
+      grad.addColorStop(1, '#0b1824');
+      c.fillStyle = grad;
+      c.fillRect(0, 0, w, h);
+
+      // Cyber grid
+      c.strokeStyle = 'rgba(0, 240, 255, 0.1)';
+      c.lineWidth = 1;
+      for (let x = 0; x < w; x += w * 0.08) {
+        c.beginPath(); c.moveTo(x, 0); c.lineTo(x, h * 0.72); c.stroke();
+      }
+      for (let y = 0; y < h * 0.72; y += h * 0.08) {
+        c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke();
+      }
+
+      // Neon tubes
+      c.strokeStyle = 'rgba(255, 0, 160, 0.45)';
+      c.lineWidth = 4;
+      c.beginPath(); c.moveTo(w * 0.1, h * 0.16); c.lineTo(w * 0.35, h * 0.16); c.stroke();
+      c.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+      c.beginPath(); c.moveTo(w * 0.65, h * 0.16); c.lineTo(w * 0.9, h * 0.16); c.stroke();
+
+      c.fillStyle = '#0e1d2a';
+      c.fillRect(0, h * 0.72, w, h * 0.28);
+      c.fillStyle = '#00d8ff';
+      c.fillRect(0, h * 0.72, w, h * 0.012);
+
+    } else {
+      // Modern Otaku / OC Room
+      const grad = c.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#2b2438');
+      grad.addColorStop(1, '#3d324f');
+      c.fillStyle = grad;
+      c.fillRect(0, 0, w, h);
+
+      // Posters on wall
+      c.fillStyle = '#4e4166';
+      drawRoundedRect(c, w * 0.12, h * 0.14, w * 0.16, h * 0.22, 8); c.fill();
+      c.fillStyle = '#f6ad55';
+      drawStar(c, w * 0.20, h * 0.25, 5, 18, 8, '#fbd38d');
+
+      c.fillStyle = '#4e4166';
+      drawRoundedRect(c, w * 0.72, h * 0.16, w * 0.15, h * 0.20, 8); c.fill();
+
+      // Desk
+      c.fillStyle = '#4a3832';
+      c.fillRect(0, h * 0.72, w, h * 0.28);
+      c.fillStyle = '#695047';
+      c.fillRect(0, h * 0.72, w, h * 0.028);
+    }
+    c.restore();
+  }
+
+  // 2. Item / Artifact Vector Renderer
+  function drawArtifact(c, item, x, y, scale, opts = {}) {
+    const shatter = clamp(opts.shatter || 0);
+    const glow = opts.glow || 0;
+    const outcome = opts.outcome || 'fail';
+
+    c.save();
+    c.translate(x, y);
+    c.scale(scale, scale);
+
+    // Aura behind item
+    if (glow > 0.05) {
+      const rad = 55 + glow * 35;
+      const g = c.createRadialGradient(0, 0, 4, 0, 0, rad);
+      if (outcome === 'ssr') {
+        g.addColorStop(0, `rgba(255,245,160,${0.9 * glow})`);
+        g.addColorStop(0.5, `rgba(255,120,220,${0.55 * glow})`);
+        g.addColorStop(1, 'rgba(120,220,255,0)');
+      } else if (outcome === 'curse') {
+        g.addColorStop(0, `rgba(180,60,255,${0.85 * glow})`);
+        g.addColorStop(1, 'rgba(40,0,80,0)');
+      } else {
+        g.addColorStop(0, `rgba(255,180,70,${0.8 * glow})`);
+        g.addColorStop(1, 'rgba(255,90,20,0)');
+      }
+      c.fillStyle = g;
+      c.beginPath(); c.arc(0, 0, rad, 0, Math.PI * 2); c.fill();
+    }
+
+    // If shattered in fail mode, draw flying shards & ash pile!
+    if (shatter > 0.25 && outcome === 'fail') {
+      const p = clamp((shatter - 0.25) / 0.75);
+      // Ash pile on anvil/pedestal
+      c.fillStyle = `rgba(55, 50, 58, ${0.95})`;
+      c.beginPath();
+      c.moveTo(-36, 18);
+      c.quadraticCurveTo(0, -14 * p - 4, 36, 18);
+      c.closePath();
+      c.fill();
+
+      // Flying weapon shards
+      const shardColors = ['#7c8594', '#484d57', '#d97757', '#332f38'];
+      for (let i = 0; i < 12; i++) {
+        const ang = -Math.PI * 0.15 - (i / 11) * Math.PI * 0.7;
+        const dist = p * (45 + (i % 4) * 28);
+        const sx = Math.cos(ang) * dist;
+        const sy = Math.sin(ang) * dist + p * p * 55;
+        c.save();
+        c.translate(sx, sy);
+        c.rotate(p * 6 * (i % 2 ? 1 : -1) + i);
+        c.fillStyle = shardColors[i % shardColors.length];
+        c.globalAlpha = 1 - p * 0.75;
+        c.beginPath();
+        c.moveTo(-7, -5); c.lineTo(8, -2); c.lineTo(2, 7); c.closePath();
+        c.fill();
+        c.restore();
+      }
+      c.restore();
+      return;
+    }
+
+    // If cursed mutation, tint dark purple & add weird eyeball/tentacle
+    const isCurseDone = shatter > 0.25 && outcome === 'curse';
+
+    if (item === 'sword') {
+      c.save();
+      c.rotate(-0.35);
+      // Blade
+      c.fillStyle = isCurseDone ? '#7f3fbf' : '#dce7f5';
+      c.beginPath();
+      c.moveTo(0, -56); c.lineTo(11, -36); c.lineTo(9, 18); c.lineTo(-9, 18); c.lineTo(-11, -36);
+      c.closePath(); c.fill();
+      c.fillStyle = isCurseDone ? '#582391' : '#9ab2cf';
+      c.beginPath();
+      c.moveTo(0, -56); c.lineTo(11, -36); c.lineTo(9, 18); c.lineTo(0, 18);
+      c.closePath(); c.fill();
+      // Guard
+      c.fillStyle = '#f4b942';
+      drawRoundedRect(c, -24, 15, 48, 9, 4); c.fill();
+      // Hilt & Pommel
+      c.fillStyle = '#7c2d12';
+      c.fillRect(-5, 24, 10, 18);
+      c.fillStyle = '#f4b942';
+      c.beginPath(); c.arc(0, 45, 7, 0, Math.PI * 2); c.fill();
+      // Core gem
+      c.fillStyle = isCurseDone ? '#ff0055' : '#38bdf8';
+      c.beginPath(); c.arc(0, 19, 4.5, 0, Math.PI * 2); c.fill();
+      c.restore();
+
+    } else if (item === 'staff') {
+      c.save();
+      c.rotate(0.3);
+      // Rod
+      c.fillStyle = '#854d0e';
+      drawRoundedRect(c, -4, -30, 8, 78, 4); c.fill();
+      // Golden wings/crescent
+      c.fillStyle = '#facc15';
+      c.beginPath(); c.arc(0, -34, 18, 0.2, Math.PI - 0.2); c.lineWidth = 5; c.strokeStyle = '#facc15'; c.stroke();
+      // Magic orb
+      c.fillStyle = isCurseDone ? '#9333ea' : '#f472b6';
+      c.beginPath(); c.arc(0, -36, 13, 0, Math.PI * 2); c.fill();
+      drawStar(c, 0, -36, 4, 9, 3, '#fff');
+      c.restore();
+
+    } else if (item === 'gun') {
+      c.save();
+      // Sci-fi barrel
+      c.fillStyle = isCurseDone ? '#4c1d95' : '#334155';
+      drawRoundedRect(c, -34, -18, 62, 20, 5); c.fill();
+      c.fillStyle = '#1e293b';
+      drawRoundedRect(c, 8, -2, 16, 28, 4); c.fill();
+      // Neon stripe
+      c.fillStyle = isCurseDone ? '#f43f5e' : '#22d3ee';
+      drawRoundedRect(c, -28, -12, 42, 6, 3); c.fill();
+      c.restore();
+
+    } else if (item === 'ring') {
+      c.strokeStyle = '#fbbf24';
+      c.lineWidth = 8;
+      c.beginPath(); c.ellipse(0, 6, 22, 16, 0, 0, Math.PI * 2); c.stroke();
+      // Diamond
+      c.fillStyle = isCurseDone ? '#a855f7' : '#38bdf8';
+      c.beginPath();
+      c.moveTo(0, -26); c.lineTo(16, -12); c.lineTo(0, 2); c.lineTo(-16, -12);
+      c.closePath(); c.fill();
+      c.fillStyle = 'rgba(255,255,255,0.6)';
+      c.beginPath();
+      c.moveTo(0, -26); c.lineTo(8, -12); c.lineTo(0, -6); c.lineTo(-8, -12);
+      c.closePath(); c.fill();
+
+    } else if (item === 'grimoire') {
+      c.fillStyle = isCurseDone ? '#3b0764' : '#7f1d1d';
+      drawRoundedRect(c, -32, -26, 64, 52, 6); c.fill();
+      c.fillStyle = '#fef3c7';
+      drawRoundedRect(c, -26, -20, 52, 42, 3); c.fill();
+      c.fillStyle = isCurseDone ? '#581c87' : '#991b1b';
+      drawRoundedRect(c, -28, -24, 54, 44, 4); c.fill();
+      drawStar(c, 0, -2, 5, 14, 6, '#fbbf24');
+
+    } else {
+      // Rainbow Gacha Crystal (성정석)
+      const colors = ['#f472b6', '#60a5fa', '#fbbf24', '#c084fc'];
+      c.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI) / 3 - Math.PI / 2;
+        const r = 32;
+        if (i === 0) c.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+        else c.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+      }
+      c.closePath();
+      c.fillStyle = isCurseDone ? '#6b21a8' : '#a78bfa';
+      c.fill();
+      c.lineWidth = 3;
+      c.strokeStyle = '#fff';
+      c.stroke();
+      drawStar(c, 0, 0, 4, 22, 8, '#fef08a');
+    }
+
+    // Curse creepy eye overlay
+    if (isCurseDone) {
+      c.fillStyle = '#fef08a';
+      c.beginPath(); c.ellipse(0, -4, 12, 8, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#dc2626';
+      c.beginPath(); c.ellipse(0, -4, 4, 7, 0, 0, Math.PI * 2); c.fill();
+    }
+
+    c.restore();
+  }
+
+  // 3. Default Placeholder Characters (Cute Chibi Adventurer / Mage)
+  function drawPlaceholderChar(c, x, y, scale, phase, role = 'A', reaction = 'despair', activeReact = 0) {
+    c.save();
+    c.translate(x, y);
+    c.scale(scale, scale);
+
+    const tone = role === 'A' ? '#ffdcc2' : '#fce7f3';
+    const hair = role === 'A' ? '#f97316' : '#8b5cf6';
+    const outfit = role === 'A' ? '#3b82f6' : '#ec4899';
+
+    // Body
+    c.fillStyle = outfit;
+    c.beginPath(); c.ellipse(0, 78, 46, 38, 0, 0, Math.PI * 2); c.fill();
+    // Cape collar
+    c.fillStyle = '#fbbf24';
+    c.beginPath(); c.ellipse(0, 50, 32, 10, 0, 0, Math.PI * 2); c.fill();
+
+    // Head
+    c.fillStyle = tone;
+    c.beginPath(); c.ellipse(0, 0, 58, 54, 0, 0, Math.PI * 2); c.fill();
+
+    // Hair / Ears
+    c.fillStyle = hair;
+    c.beginPath(); c.arc(0, -14, 60, Math.PI, Math.PI * 2); c.fill();
+    // Side bangs
+    c.beginPath(); c.ellipse(-52, 4, 12, 28, 0.2, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(52, 4, 12, 28, -0.2, 0, Math.PI * 2); c.fill();
+    // Cute animal ears
+    c.beginPath(); c.moveTo(-42, -38); c.lineTo(-58, -82); c.lineTo(-14, -56); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(42, -38); c.lineTo(58, -82); c.lineTo(14, -56); c.closePath(); c.fill();
+
+    // Facial expressions change dynamically during reaction!
+    c.fillStyle = '#271c19';
+    c.strokeStyle = '#271c19';
+    c.lineWidth = 4;
+
+    if (activeReact > 0.3 && (reaction === 'despair' || reaction === 'soul')) {
+      // Blank white eyes + open mouth
+      c.fillStyle = '#fff';
+      c.beginPath(); c.arc(-20, 2, 9, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.beginPath(); c.arc(20, 2, 9, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#3b2820';
+      c.beginPath(); c.ellipse(0, 24, 10, 13, 0, 0, Math.PI * 2); c.fill();
+    } else if (activeReact > 0.3 && reaction === 'angry') {
+      // Angry eyes
+      c.beginPath(); c.moveTo(-32, -8); c.lineTo(-10, 2); c.stroke();
+      c.beginPath(); c.moveTo(32, -8); c.lineTo(10, 2); c.stroke();
+      c.fillStyle = '#ef4444';
+      c.beginPath(); c.arc(-20, 4, 6, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.arc(20, 4, 6, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.moveTo(-12, 26); c.quadraticCurveTo(0, 14, 12, 26); c.stroke();
+    } else if (activeReact > 0.3 && (reaction === 'smug' || reaction === 'happy' || reaction === 'pray')) {
+      // Happy / Sparkling eyes
+      c.beginPath(); c.arc(-20, 2, 8, Math.PI, Math.PI * 2); c.stroke();
+      c.beginPath(); c.arc(20, 2, 8, Math.PI, Math.PI * 2); c.stroke();
+      c.beginPath(); c.moveTo(-12, 18); c.quadraticCurveTo(0, 30, 12, 18); c.stroke();
+    } else {
+      // Normal cute face
+      c.beginPath(); c.arc(-20, 2, 6.5, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.arc(20, 2, 6.5, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.moveTo(-9, 20); c.quadraticCurveTo(0, 26, 9, 20); c.stroke();
+    }
+    c.restore();
+  }
+
+  // 4. Character Renderer (supports Full, Circle Token, and Gacha Card Frame!)
+  function drawCharacter(c, img, opts) {
+    const {
+      w, h, baseX, baseY, scale, flip, frameMode, phase,
+      reaction, customText, activeReact, extraInt, role, soot, rarity
+    } = opts;
+
+    let drawX = baseX;
+    let drawY = baseY + Math.sin(phase * Math.PI * 2) * 3;
+    let rot = 0;
+    let scaleX = 1, scaleY = 1;
+    const rp = activeReact || 0;
+
+    if (rp > 0) {
+      if (reaction === 'despair') {
+        rot = -0.07 * rp + Math.sin(phase * 45) * 0.04 * rp;
+        drawY += rp * 10;
+      } else if (reaction === 'cry') {
+        drawY += Math.sin(phase * 30) * 4 * rp;
+        rot = -0.04 * rp;
+      } else if (reaction === 'soul') {
+        drawY -= Math.sin(phase * 10) * 6 * rp;
+        rot = 0.08 * rp;
+      } else if (reaction === 'run') {
+        const dir = role === 'A' ? -1 : 1;
+        drawX += dir * rp * (105 + extraInt * 55);
+        drawY -= Math.abs(Math.sin(rp * Math.PI * 3)) * 18;
+        rot = dir * 0.16 * rp;
+      } else if (reaction === 'angry') {
+        drawX += Math.sin(phase * 60) * 5 * rp;
+        scaleX = 1 + 0.06 * rp;
+        scaleY = 1 + 0.06 * rp;
+      } else if (reaction === 'pray' || reaction === 'happy') {
+        drawY -= Math.abs(Math.sin(phase * Math.PI * 4)) * 14 * rp;
+      } else if (reaction === 'smug') {
+        rot = Math.sin(phase * Math.PI * 2) * 0.05 * rp;
+      }
+    }
+
+    const charHeight = h * 0.42 * scale;
+
+    // Ground shadow (follows character feet naturally)
+    c.save();
+    c.fillStyle = 'rgba(0,0,0,0.22)';
+    c.beginPath();
+    c.ellipse(drawX, drawY + charHeight * 0.09, w * 0.075 * scale, h * 0.018 * scale, 0, 0, Math.PI * 2);
+    c.fill();
+    c.restore();
+
+    c.save();
+    c.translate(drawX, drawY);
+    c.rotate(rot);
+    c.scale((flip ? -1 : 1) * scaleX, scaleY);
+
+    if (frameMode === 'circle') {
+      const rad = charHeight * 0.42;
+      c.save();
+      c.beginPath();
+      c.arc(0, -rad * 0.85, rad, 0, Math.PI * 2);
+      c.clip();
+      c.fillStyle = '#2d243b';
+      c.fillRect(-rad, -rad * 1.85, rad * 2, rad * 2);
+      if (img) {
+        const aspect = img.width / img.height;
+        const dw = aspect >= 1 ? rad * 2 * aspect : rad * 2;
+        const dh = aspect >= 1 ? rad * 2 : (rad * 2) / aspect;
+        c.drawImage(img, -dw / 2, -rad * 0.85 - dh / 2, dw, dh);
+      } else {
+        drawPlaceholderChar(c, 0, -rad * 0.75, charHeight / 210, phase, role, reaction, rp);
+      }
+      c.restore();
+      // Ornate border
+      c.strokeStyle = rarity === 'ssr' ? '#facc15' : rarity === 'curse' ? '#a855f7' : '#94a3b8';
+      c.lineWidth = 6;
+      c.beginPath(); c.arc(0, -rad * 0.85, rad, 0, Math.PI * 2); c.stroke();
+
+    } else if (frameMode === 'card') {
+      const cw = charHeight * 0.68;
+      const ch = charHeight * 0.96;
+      const cy = -ch * 0.88;
+      c.save();
+      drawRoundedRect(c, -cw / 2, cy, cw, ch, 14);
+      c.clip();
+      const bgGrad = c.createLinearGradient(0, cy, 0, cy + ch);
+      if (rarity === 'ssr') { bgGrad.addColorStop(0, '#fde047'); bgGrad.addColorStop(0.5, '#f472b6'); bgGrad.addColorStop(1, '#60a5fa'); }
+      else if (rarity === 'curse') { bgGrad.addColorStop(0, '#581c87'); bgGrad.addColorStop(1, '#1e1b4b'); }
+      else { bgGrad.addColorStop(0, '#475569'); bgGrad.addColorStop(1, '#1e293b'); }
+      c.fillStyle = bgGrad;
+      c.fillRect(-cw / 2, cy, cw, ch);
+
+      if (img) {
+        const aspect = img.width / img.height;
+        const cardAspect = cw / ch;
+        let dw, dh;
+        if (aspect > cardAspect) { dh = ch; dw = ch * aspect; }
+        else { dw = cw; dh = cw / aspect; }
+        c.drawImage(img, -dw / 2, cy + (ch - dh) / 2, dw, dh);
+      } else {
+        drawPlaceholderChar(c, 0, cy + ch * 0.55, charHeight / 220, phase, role, reaction, rp);
+      }
+      c.restore();
+
+      // Card outer border & stars
+      c.strokeStyle = rarity === 'ssr' ? '#fef08a' : rarity === 'curse' ? '#c084fc' : '#cbd5e1';
+      c.lineWidth = 5;
+      drawRoundedRect(c, -cw / 2, cy, cw, ch, 14);
+      c.stroke();
+
+      const starCount = rarity === 'ssr' ? 5 : rarity === 'curse' ? 3 : 1;
+      for (let i = 0; i < starCount; i++) {
+        const sx = -(starCount - 1) * 9 + i * 18;
+        drawStar(c, sx, cy + ch - 14, 5, 8, 3.5, rarity === 'curse' ? '#e879f9' : '#facc15');
+      }
+
+    } else {
+      // Full / Standing
+      if (img) {
+        const iw = img.width, ih = img.height;
+        const drawH = charHeight;
+        const drawW = drawH * (iw / ih);
+        c.drawImage(img, -drawW / 2, -drawH * 0.88, drawW, drawH);
+      } else {
+        drawPlaceholderChar(c, 0, -charHeight * 0.36, charHeight / 195, phase, role, reaction, rp);
+      }
+    }
+
+    // Soot / explosion smudge marks on character
+    if (soot > 0.1) {
+      c.fillStyle = `rgba(20, 18, 22, ${0.42 * soot})`;
+      c.beginPath(); c.ellipse(-18, -charHeight * 0.48, 16, 11, 0.3, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.ellipse(22, -charHeight * 0.36, 14, 9, -0.4, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.ellipse(-6, -charHeight * 0.25, 18, 10, 0.1, 0, Math.PI * 2); c.fill();
+    }
+
+    c.restore();
+
+    // Floating soul effect when reaction === 'soul'
+    if (rp > 0.1 && reaction === 'soul') {
+      c.save();
+      const sx = drawX + (role === 'A' ? -25 : 25);
+      const sy = drawY - charHeight * 0.72 - rp * 35;
+      c.globalAlpha = 0.75 * rp;
+      c.fillStyle = '#e2e8f0';
+      c.beginPath();
+      c.arc(sx, sy, 18, Math.PI, 0);
+      c.quadraticCurveTo(sx + 22, sy + 28, sx + 6, sy + 36);
+      c.quadraticCurveTo(sx - 8, sy + 24, sx - 18, sy);
+      c.fill();
+      c.fillStyle = '#475569';
+      c.beginPath(); c.arc(sx - 5, sy - 2, 2.5, 0, Math.PI * 2); c.arc(sx + 5, sy - 2, 2.5, 0, Math.PI * 2); c.fill();
+      c.restore();
+    }
+
+    // Tears effect when reaction === 'cry'
+    if (rp > 0.1 && reaction === 'cry') {
+      c.save();
+      c.fillStyle = `rgba(96, 165, 250, ${0.9 * rp})`;
+      const ty = drawY - charHeight * 0.45 + ((phase * 120) % 24);
+      c.beginPath(); c.ellipse(drawX - 24, ty, 6, 12, 0.2, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.ellipse(drawX + 24, ty + 4, 6, 12, -0.2, 0, Math.PI * 2); c.fill();
+      c.restore();
+    }
+
+    // Speech Bubble & Emotion Emote
+    if (rp > 0.05) {
+      const defaultLabels = {
+        despair: '거짓말이지?!',
+        cry: '내 전재산이..😭',
+        soul: '…(영혼 가출)',
+        run: '튀어엇!!',
+        angry: '확률 주작이야!!',
+        pray: '빛이시여 감사합니다!',
+        smug: '훗, 식은 죽 먹기♪',
+        happy: '짠~ 나 왔어♪'
+      };
+      const label = customText || defaultLabels[reaction] || '?!';
+      const bx = clamp(drawX + (role === 'A' ? -w * 0.04 : w * 0.04), w * 0.14, w * 0.86);
+      const by = Math.max(h * 0.08, drawY - charHeight * 0.86);
+      drawSpeechBubble(c, bx, by, label, rp, reaction);
+    }
+  }
+
+  function drawSpeechBubble(c, x, y, text, alpha, reaction) {
+    c.save();
+    c.globalAlpha = clamp(alpha);
+    c.font = 'bold 16px "Pretendard", "Noto Sans KR", sans-serif';
+    const textW = c.measureText(text).width;
+    const bw = Math.max(82, textW + 28);
+    const bh = 38;
+
+    const isAngry = reaction === 'angry';
+    c.fillStyle = isAngry ? '#fef2f2' : 'rgba(255,255,255,0.95)';
+    c.strokeStyle = isAngry ? '#ef4444' : reaction === 'pray' ? '#f59e0b' : '#475569';
+    c.lineWidth = 2.5;
+
+    drawRoundedRect(c, x - bw / 2, y - bh / 2, bw, bh, 14);
+    c.fill();
+    c.stroke();
+
+    c.fillStyle = isAngry ? '#b91c1c' : '#1e1b4b';
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillText(text, x, y + 1);
+    c.restore();
+  }
+
+  // 5. Special Effects: Magic Circle, Smoke, Sparks, Speed Lines, System Banner
+  function drawMagicCircle(c, x, y, rx, ry, rot, outcome, glow = 1) {
+    c.save();
+    c.translate(x, y);
+    c.scale(1, ry / rx);
+    c.rotate(rot);
+
+    const color = outcome === 'ssr' ? `rgba(250, 204, 21, ${0.85 * glow})`
+      : outcome === 'curse' ? `rgba(192, 132, 252, ${0.85 * glow})`
+      : `rgba(96, 165, 250, ${0.8 * glow})`;
+
+    c.strokeStyle = color;
+    c.lineWidth = 3.5;
+    c.beginPath(); c.arc(0, 0, rx, 0, Math.PI * 2); c.stroke();
+    c.lineWidth = 2;
+    c.beginPath(); c.arc(0, 0, rx * 0.82, 0, Math.PI * 2); c.stroke();
+
+    // Hexagram inside magic circle
+    for (let t = 0; t < 2; t++) {
+      c.beginPath();
+      for (let i = 0; i < 3; i++) {
+        const a = (i * Math.PI * 2) / 3 + (t * Math.PI) / 3;
+        const px = Math.cos(a) * rx * 0.82;
+        const py = Math.sin(a) * rx * 0.82;
+        if (i === 0) c.moveTo(px, py);
+        else c.lineTo(px, py);
+      }
+      c.closePath();
+      c.stroke();
+    }
+    c.restore();
+  }
+
+  function drawExplosionSmoke(c, x, y, amount, intensity, timeSec, outcome) {
+    if (amount <= 0) return;
+    c.save();
+    const count = Math.round(12 + intensity * 20);
+    for (let i = 0; i < count; i++) {
+      const p = ((timeSec * 0.55 + i / count) % 1);
+      const alpha = (1 - p) * 0.32 * amount;
+      const spread = (i % 5 - 2) * (16 + intensity * 20);
+      const px = x + Math.sin(p * 6 + i) * 24 + spread * p;
+      const py = y - p * 210;
+      const rad = 18 + p * 32 + (i % 3) * 5;
+
+      if (outcome === 'ssr') {
+        drawStar(c, px, py, 4, rad * 0.45, rad * 0.16, `rgba(254, 240, 138, ${alpha * 2.2})`, timeSec * 3 + i);
+      } else {
+        c.fillStyle = outcome === 'curse'
+          ? `rgba(88, 28, 135, ${alpha * 1.3})`
+          : `rgba(30, 27, 34, ${alpha * 1.4})`;
+        c.beginPath(); c.arc(px, py, rad, 0, Math.PI * 2); c.fill();
+      }
+    }
+    c.restore();
+  }
+
+  function drawSpeedLines(c, w, h, progress, outcome) {
+    if (progress <= 0.05) return;
+    c.save();
+    const cx = w / 2, cy = h * 0.52;
+    const maxR = Math.hypot(w, h) * 0.75;
+    const lines = 36;
+    c.strokeStyle = outcome === 'ssr'
+      ? `rgba(253, 224, 71, ${0.35 * progress})`
+      : outcome === 'curse'
+      ? `rgba(192, 132, 252, ${0.32 * progress})`
+      : `rgba(255, 255, 255, ${0.28 * progress})`;
+
+    for (let i = 0; i < lines; i++) {
+      const a = (i / lines) * Math.PI * 2;
+      const inner = maxR * (0.48 + (i % 3) * 0.06);
+      c.lineWidth = (i % 2 === 0 ? 3 : 1.5);
+      c.beginPath();
+      c.moveTo(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner);
+      c.lineTo(cx + Math.cos(a) * maxR, cy + Math.sin(a) * maxR);
+      c.stroke();
+    }
+    c.restore();
+  }
+
+  function drawSystemNotice(c, w, h, s, progress) {
+    if (progress <= 0.05) return;
+    c.save();
+    c.globalAlpha = clamp(progress * 1.3);
+
+    const itemNames = {
+      sword: '+12 전설의 마검',
+      staff: '+10 별빛 지팡이',
+      gun: '+9 마공학 권총',
+      ring: '운명의 보석 반지',
+      grimoire: '고대 금서',
+      crystal: '10연차 성정석'
+    };
+    const itemName = itemNames[s.item] || '아이템';
+
+    let autoMsg = '';
+    if (s.scene === 'forge') {
+      if (s.outcome === 'fail') autoMsg = `[강화 실패] ${itemName}이(가) 차원의 가루가 되어 증발했습니다.`;
+      else if (s.outcome === 'curse') autoMsg = `[기묘한 변이] ${itemName}에 심연의 저주가 깃들었습니다!`;
+      else autoMsg = `[대성공] ★SSR★ ${itemName} 강화에 성공했습니다!`;
+    } else if (s.scene === 'gacha') {
+      if (s.outcome === 'fail') autoMsg = `[소환 결과] ★1 꽝! 마법진이 잿더미가 되었습니다.`;
+      else if (s.outcome === 'curse') autoMsg = `[픽뚫 발생!] 원하던 픽업 대신 기묘한 존재가 강림했습니다!`;
+      else autoMsg = `[SSR 강림!] ★★★★★ 0.001% 확률을 뚫고 대성공!`;
+    } else {
+      if (s.outcome === 'fail') autoMsg = `[연성 대참사] 마법솥이 폭주하여 공방이 초토화되었습니다!`;
+      else if (s.outcome === 'curse') autoMsg = `[연성 결과] 보라색 독기와 함께 수상한 괴생물체가 탄생했습니다.`;
+      else autoMsg = `[연성 대성공] 전설 등급의 완벽한 연성물이 탄생했습니다!`;
+    }
+
+    const msg = s.sysText || autoMsg;
+    const boxW = Math.min(w * 0.9, 640);
+    const boxH = 42;
+    const bx = (w - boxW) / 2;
+    const by = h - boxH - 18;
+
+    c.fillStyle = 'rgba(15, 12, 24, 0.88)';
+    c.strokeStyle = s.outcome === 'ssr' ? '#facc15' : s.outcome === 'curse' ? '#c084fc' : '#ef4444';
+    c.lineWidth = 2;
+    drawRoundedRect(c, bx, by, boxW, boxH, 10);
+    c.fill();
+    c.stroke();
+
+    c.fillStyle = s.outcome === 'ssr' ? '#fef08a' : s.outcome === 'curse' ? '#e9d5ff' : '#fca5a5';
+    c.font = 'bold 15px "Pretendard", "Noto Sans KR", sans-serif';
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillText(msg, w / 2, by + boxH / 2 + 1);
+    c.restore();
+  }
+
+  // 6. Scene 1: Weapon Forge (운명의 장비 강화)
+  function drawForgeScene(c, w, h, timeSec, s) {
+    const duration = BASE_DURATION / s.speed;
+    const t = (timeSec % duration) / duration;
+
+    const hammerPhase = clamp(t / 0.42);
+    const climax = clamp((t - 0.42) / 0.14);
+    const afterMath = clamp((t - 0.52) / 0.48);
+    const reactE = easeOutCubic(clamp((t - 0.54) / 0.22));
+
+    const shake = (t > 0.46 && t < 0.68) ? s.intensity * 11 * (1 - (t - 0.46) / 0.22) : 0;
+    c.save();
+    c.translate(Math.sin(timeSec * 65) * shake, Math.cos(timeSec * 50) * shake * 0.6);
+
+    drawBackground(c, w, h, s, timeSec);
+
+    const dual = s.castMode === 'dual';
+    const aBaseX = (dual ? w * 0.30 : w * 0.48) + s.aX;
+    const bBaseX = w * 0.73 + s.bX;
+    const charY = h * 0.59;
+    const sootAmt = (s.outcome === 'fail' && s.fxOption === 'all') ? afterMath * s.intensity : 0;
+
+    // Characters
+    drawCharacter(c, imageA, {
+      w, h, baseX: aBaseX, baseY: charY + s.aY, scale: s.aScale, flip: s.aFlip,
+      frameMode: s.aFrame, phase: t, reaction: s.reactionA, customText: s.textA,
+      activeReact: reactE, extraInt: s.intensity, role: 'A', soot: sootAmt, rarity: s.outcome
+    });
+
+    if (dual) {
+      drawCharacter(c, imageB, {
+        w, h, baseX: bBaseX, baseY: charY + s.bY, scale: s.bScale, flip: s.bFlip,
+        frameMode: s.bFrame, phase: t, reaction: s.reactionB, customText: s.textB,
+        activeReact: reactE, extraInt: s.intensity, role: 'B', soot: sootAmt * 0.7, rarity: s.outcome
+      });
+    }
+
+    // Center Anvil
+    const anvilX = w * 0.5;
+    const anvilY = h * 0.69;
+    drawExplosionSmoke(c, anvilX, anvilY - 25, afterMath, s.intensity, timeSec, s.outcome);
+
+    c.save();
+    c.translate(anvilX, anvilY);
+    c.fillStyle = '#334155';
+    drawRoundedRect(c, -64, 0, 128, 28, 6); c.fill();
+    c.fillStyle = '#475569';
+    c.beginPath();
+    c.moveTo(-82, -22); c.lineTo(82, -22); c.lineTo(54, 4); c.lineTo(-54, 4);
+    c.closePath(); c.fill();
+    c.restore();
+
+    // Artifact on Anvil
+    const itemScale = (Math.min(w, h) / 800) * 1.15;
+    drawArtifact(c, s.item, anvilX, anvilY - 46, itemScale, {
+      shatter: afterMath,
+      glow: hammerPhase * 0.7 + (s.outcome === 'ssr' ? afterMath : 0),
+      outcome: s.outcome
+    });
+
+    // Hammer strike animation during phase 1
+    if (t < 0.45) {
+      const strike = Math.abs(Math.sin(hammerPhase * Math.PI * 3));
+      c.save();
+      c.translate(anvilX - 42, anvilY - 82);
+      c.rotate(-0.6 + strike * 0.85);
+      c.fillStyle = '#78350f';
+      c.fillRect(-4, -5, 48, 8);
+      c.fillStyle = '#94a3b8';
+      drawRoundedRect(c, 32, -20, 22, 38, 4); c.fill();
+      c.restore();
+
+      // Gauge bar "[강화 중... 99%]"
+      const gw = 160, gh = 18;
+      c.fillStyle = 'rgba(0,0,0,0.65)';
+      drawRoundedRect(c, anvilX - gw / 2, anvilY - 125, gw, gh, 9); c.fill();
+      c.fillStyle = '#facc15';
+      drawRoundedRect(c, anvilX - gw / 2 + 3, anvilY - 122, (gw - 6) * hammerPhase, gh - 6, 6); c.fill();
+    }
+
+    // Flash on climax
+    if (climax > 0 && t < 0.56) {
+      c.fillStyle = `rgba(255,255,255,${Math.sin(climax * Math.PI) * 0.65})`;
+      c.fillRect(0, 0, w, h);
+    }
+
+    if (s.fxOption !== 'none') drawSpeedLines(c, w, h, reactE * s.intensity, s.outcome);
+    drawSystemNotice(c, w, h, s, reactE);
+    c.restore();
+  }
+
+  // 7. Scene 2: Gacha Summon Altar (운명의 가챠 소환)
+  function drawGachaScene(c, w, h, timeSec, s) {
+    const duration = BASE_DURATION / s.speed;
+    const t = (timeSec % duration) / duration;
+
+    const charge = clamp(t / 0.44);
+    const reveal = clamp((t - 0.44) / 0.40);
+    const reactE = easeOutCubic(clamp((t - 0.52) / 0.25));
+
+    drawBackground(c, w, h, s, timeSec);
+
+    const aBaseX = w * 0.25 + s.aX;
+    const bBaseX = w * 0.66 + s.bX;
+    const charY = h * 0.59;
+    const sootAmt = (s.outcome === 'fail' && s.fxOption === 'all') ? reactE * s.intensity * 0.8 : 0;
+
+    // Summoner A on left
+    drawCharacter(c, imageA, {
+      w, h, baseX: aBaseX, baseY: charY + s.aY, scale: s.aScale, flip: s.aFlip,
+      frameMode: s.aFrame, phase: t, reaction: s.reactionA, customText: s.textA,
+      activeReact: reactE, extraInt: s.intensity, role: 'A', soot: sootAmt, rarity: s.outcome
+    });
+
+    // Magic Circle Pedestal on right
+    const altarX = s.castMode === 'dual' ? bBaseX : w * 0.64;
+    const altarY = h * 0.70;
+    drawMagicCircle(c, altarX, altarY, w * 0.17, h * 0.055, timeSec * 2.5, s.outcome, 0.5 + charge * 0.5);
+
+    // Beam of light during summon
+    if (t > 0.25 && t < 0.62) {
+      const beamAlpha = Math.sin(((t - 0.25) / 0.37) * Math.PI) * 0.65;
+      const bGrad = c.createLinearGradient(altarX - 75, 0, altarX + 75, 0);
+      bGrad.addColorStop(0, 'rgba(255,255,255,0)');
+      bGrad.addColorStop(0.5, s.outcome === 'ssr' ? `rgba(254,240,138,${beamAlpha})` : `rgba(192,132,252,${beamAlpha})`);
+      bGrad.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = bGrad;
+      c.fillRect(altarX - 85, 0, 170, altarY);
+    }
+
+    drawExplosionSmoke(c, altarX, altarY - 20, reveal, s.intensity, timeSec, s.outcome);
+
+    // Summoned Character B or Artifact
+    if (t < 0.44) {
+      // Descending crystal before pop
+      const orbY = lerp(h * 0.18, altarY - 60, easeOutCubic(charge));
+      drawArtifact(c, s.item, altarX, orbY, (Math.min(w, h) / 800) * 1.1, {
+        glow: charge,
+        outcome: s.outcome
+      });
+    } else {
+      const popScale = easeOutBack(clamp((t - 0.44) / 0.18));
+      if (s.castMode === 'dual') {
+        drawCharacter(c, imageB, {
+          w, h, baseX: altarX, baseY: charY + s.bY, scale: s.bScale * popScale, flip: s.bFlip,
+          frameMode: s.bFrame, phase: t, reaction: s.reactionB, customText: s.textB,
+          activeReact: reactE, extraInt: s.intensity, role: 'B', soot: 0, rarity: s.outcome
+        });
+      } else {
+        drawArtifact(c, s.item, altarX, altarY - 65, (Math.min(w, h) / 800) * 1.35 * popScale, {
+          shatter: reveal,
+          glow: 1,
+          outcome: s.outcome
+        });
+      }
+    }
+
+    if (s.fxOption !== 'none') drawSpeedLines(c, w, h, reactE * s.intensity, s.outcome);
+    drawSystemNotice(c, w, h, s, reactE);
+  }
+
+  // 8. Scene 3: Alchemy Cauldron (수상한 연금술·굿즈 연성)
+  function drawAlchemyScene(c, w, h, timeSec, s) {
+    const duration = BASE_DURATION / s.speed;
+    const t = (timeSec % duration) / duration;
+
+    const brew = clamp(t / 0.45);
+    const boom = clamp((t - 0.45) / 0.45);
+    const reactE = easeOutCubic(clamp((t - 0.50) / 0.24));
+
+    const shake = (t > 0.45 && t < 0.68) ? s.intensity * 10 * (1 - (t - 0.45) / 0.23) : 0;
+    c.save();
+    c.translate(Math.sin(timeSec * 60) * shake, Math.cos(timeSec * 50) * shake * 0.5);
+
+    drawBackground(c, w, h, s, timeSec);
+
+    const dual = s.castMode === 'dual';
+    const aBaseX = (dual ? w * 0.27 : w * 0.46) + s.aX;
+    const bBaseX = w * 0.73 + s.bX;
+    const charY = h * 0.59;
+    const sootAmt = (s.outcome === 'fail' && s.fxOption === 'all') ? boom * s.intensity : 0;
+
+    drawCharacter(c, imageA, {
+      w, h, baseX: aBaseX, baseY: charY + s.aY, scale: s.aScale, flip: s.aFlip,
+      frameMode: s.aFrame, phase: t, reaction: s.reactionA, customText: s.textA,
+      activeReact: reactE, extraInt: s.intensity, role: 'A', soot: sootAmt, rarity: s.outcome
+    });
+
+    if (dual) {
+      drawCharacter(c, imageB, {
+        w, h, baseX: bBaseX, baseY: charY + s.bY, scale: s.bScale, flip: s.bFlip,
+        frameMode: s.bFrame, phase: t, reaction: s.reactionB, customText: s.textB,
+        activeReact: reactE, extraInt: s.intensity, role: 'B', soot: sootAmt, rarity: s.outcome
+      });
+    }
+
+    const potX = w * 0.5;
+    const potY = h * 0.67;
+
+    drawExplosionSmoke(c, potX, potY - 35, boom, s.intensity, timeSec, s.outcome);
+
+    // Cauldron
+    c.save();
+    c.translate(potX + Math.sin(timeSec * 30) * brew * 3, potY);
+    c.fillStyle = '#1e293b';
+    c.beginPath(); c.arc(0, 0, 56, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#334155';
+    drawRoundedRect(c, -62, -42, 124, 16, 8); c.fill();
+
+    // Bubbling liquid
+    const liqColor = s.outcome === 'ssr' ? '#fde047' : s.outcome === 'curse' ? '#a855f7' : '#4ade80';
+    c.fillStyle = liqColor;
+    c.beginPath(); c.ellipse(0, -34, 50, 10, 0, 0, Math.PI * 2); c.fill();
+    for (let i = 0; i < 6; i++) {
+      const bx = -32 + i * 13;
+      const by = -38 - Math.abs(Math.sin(timeSec * 6 + i)) * 18;
+      c.beginPath(); c.arc(bx, by, 5 + (i % 3) * 2, 0, Math.PI * 2); c.fill();
+    }
+    c.restore();
+
+    // Item dropping in or popping out
+    const itemY = t < 0.45
+      ? lerp(potY - 125, potY - 35, easeInOutSine(brew))
+      : lerp(potY - 35, potY - 110, easeOutCubic(boom));
+    drawArtifact(c, s.item, potX, itemY, (Math.min(w, h) / 800) * 1.05, {
+      shatter: boom,
+      glow: boom,
+      outcome: s.outcome
+    });
+
+    if (s.fxOption !== 'none') drawSpeedLines(c, w, h, reactE * s.intensity, s.outcome);
+    drawSystemNotice(c, w, h, s, reactE);
+    c.restore();
+  }
+
+  function renderFrame(c, w, h, timeSec) {
+    const s = getSettings();
+    const { lw, lh } = getLogicSize(s.ratio);
+    c.save();
+    c.clearRect(0, 0, w, h);
+    c.scale(w / lw, h / lh);
+    if (s.scene === 'forge') drawForgeScene(c, lw, lh, timeSec, s);
+    else if (s.scene === 'gacha') drawGachaScene(c, lw, lh, timeSec, s);
+    else drawAlchemyScene(c, lw, lh, timeSec, s);
+    c.restore();
+  }
+
+  function loop(now) {
+    const delta = (now - lastTime) / 1000;
+    lastTime = now;
+    const s = getSettings();
+    const duration = BASE_DURATION / s.speed;
+    if (playing) playHead = (playHead + delta) % duration;
+    renderFrame(ctx, els.preview.width, els.preview.height, playHead);
+    els.timeIndicator.textContent = `${playHead.toFixed(1)}s / ${duration.toFixed(1)}s`;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  els.playPause.addEventListener('click', () => {
+    playing = !playing;
+    els.playPause.textContent = playing ? '⏸ 일시정지' : '▶️ 재생';
+  });
+  els.restart.addEventListener('click', () => {
+    playHead = 0;
+    renderFrame(ctx, els.preview.width, els.preview.height, playHead);
+  });
+
+  function saveBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  els.savePng.addEventListener('click', () => {
+    setStatus('PNG 이미지 저장 중...');
+    renderFrame(ctx, els.preview.width, els.preview.height, playHead);
+    els.preview.toBlob(blob => {
+      saveBlob(blob, `gacha-forge-${Date.now()}.png`);
+      setStatus('PNG 저장 완료!');
+    });
+  });
+
+  // Built-in Adaptive Palette + LZW GIF Encoder
+  function createColorHistogram() {
+    return {
+      count: new Uint32Array(262144),
+      r: new Float64Array(262144),
+      g: new Float64Array(262144),
+      b: new Float64Array(262144)
+    };
+  }
+  function sampleColors(hist, imageData) {
+    const d = imageData.data;
+    for (let i = 0; i < d.length; i += 8) {
+      const a = d[i + 3] / 255;
+      const r = Math.round(d[i] * a + 24 * (1 - a));
+      const g = Math.round(d[i + 1] * a + 20 * (1 - a));
+      const b = Math.round(d[i + 2] * a + 34 * (1 - a));
+      const k = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);
+      hist.count[k]++; hist.r[k] += r; hist.g[k] += g; hist.b[k] += b;
+    }
+  }
+  function createAdaptivePalette(hist) {
+    const points = [];
+    for (let k = 0; k < hist.count.length; k++) {
+      if (hist.count[k]) {
+        const n = hist.count[k];
+        points.push({ n, r: hist.r[k] / n, g: hist.g[k] / n, b: hist.b[k] / n });
+      }
+    }
+    function box(pts) {
+      let n = 0, r = 0, g = 0, b = 0, rr = 0, gg = 0, bb = 0;
+      for (const p of pts) {
+        n += p.n; r += p.r * p.n; g += p.g * p.n; b += p.b * p.n;
+        rr += p.r * p.r * p.n; gg += p.g * p.g * p.n; bb += p.b * p.b * p.n;
+      }
+      const variances = [(rr - r * r / n) * 0.299, (gg - g * g / n) * 0.587, (bb - b * b / n) * 0.114];
+      const axis = variances.indexOf(Math.max(...variances));
+      return { pts, n, r: r / n, g: g / n, b: b / n, axis, score: pts.length > 1 ? Math.max(0, ...variances) : 0 };
+    }
+    const boxes = [box(points)];
+    while (boxes.length < 256) {
+      let index = -1, score = 0;
+      for (let i = 0; i < boxes.length; i++) if (boxes[i].score > score) { score = boxes[i].score; index = i; }
+      if (index < 0) break;
+      const item = boxes[index], key = ['r', 'g', 'b'][item.axis];
+      item.pts.sort((a, b) => a[key] - b[key]);
+      let weight = 0, cut = 1;
+      for (let i = 0; i < item.pts.length - 1; i++) {
+        weight += item.pts[i].n; cut = i + 1;
+        if (weight >= item.n / 2) break;
+      }
+      boxes[index] = box(item.pts.slice(0, cut));
+      boxes.push(box(item.pts.slice(cut)));
+    }
+    const palette = new Uint8Array(768);
+    boxes.forEach((p, i) => palette.set([Math.round(p.r), Math.round(p.g), Math.round(p.b)], i * 3));
+    for (let i = boxes.length; i < 256; i++) palette.set(palette.subarray(0, 3), i * 3);
+    return palette;
+  }
+  function createPaletteMapper(palette) {
+    const cache = new Int16Array(262144);
+    cache.fill(-1);
+    return function (imageData) {
+      const d = imageData.data, out = new Uint8Array(imageData.width * imageData.height);
+      for (let i = 0, p = 0; i < d.length; i += 4, p++) {
+        const a = d[i + 3] / 255;
+        const r = Math.round(d[i] * a + 24 * (1 - a));
+        const g = Math.round(d[i + 1] * a + 20 * (1 - a));
+        const b = Math.round(d[i + 2] * a + 34 * (1 - a));
+        const key = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);
+        let nearest = cache[key];
+        if (nearest < 0) {
+          let distance = Infinity;
+          for (let j = 0; j < 256; j++) {
+            const dr = r - palette[j * 3], dg = g - palette[j * 3 + 1], db = b - palette[j * 3 + 2];
+            const error = dr * dr * 0.299 + dg * dg * 0.587 + db * db * 0.114;
+            if (error < distance) { distance = error; nearest = j; }
+          }
+          cache[key] = nearest;
+        }
+        out[p] = nearest;
+      }
+      return out;
+    };
+  }
+  function lzwEncode(minCodeSize, indices) {
+    const CLEAR = 1 << minCodeSize, END = CLEAR + 1;
+    let nextCode, codeSize, dict;
+    function resetDict() {
+      dict = new Map();
+      for (let i = 0; i < CLEAR; i++) dict.set(String.fromCharCode(i), i);
+      nextCode = END + 1; codeSize = minCodeSize + 1;
+    }
+    const out = []; let cur = 0, curBits = 0;
+    const writeCode = (code) => {
+      cur |= code << curBits; curBits += codeSize;
+      while (curBits >= 8) { out.push(cur & 255); cur >>= 8; curBits -= 8; }
+    };
+    resetDict(); writeCode(CLEAR);
+    let prefix = String.fromCharCode(indices[0]);
+    for (let i = 1; i < indices.length; i++) {
+      const k = String.fromCharCode(indices[i]);
+      const key = prefix + k;
+      if (dict.has(key)) prefix = key;
+      else {
+        writeCode(dict.get(prefix));
+        if (nextCode < 4096) {
+          dict.set(key, nextCode++);
+          if (nextCode > (1 << codeSize) && codeSize < 12) codeSize++;
+        } else {
+          writeCode(CLEAR); resetDict();
+        }
+        prefix = k;
+      }
+    }
+    writeCode(dict.get(prefix));
+    if (nextCode === (1 << codeSize) && codeSize < 12) codeSize++;
+    writeCode(END);
+    if (curBits > 0) out.push(cur & 255);
+    return out;
+  }
+  class GifWriter {
+    constructor(width, height, options = {}) {
+      this.width = width; this.height = height;
+      this.loop = options.loop ?? 0;
+      this.palette = options.palette;
+      this.bytes = []; this.started = false;
+    }
+    pushByte(v) { this.bytes.push(v & 255); }
+    pushWord(v) { this.pushByte(v & 255); this.pushByte((v >> 8) & 255); }
+    pushString(s) { for (let i = 0; i < s.length; i++) this.pushByte(s.charCodeAt(i)); }
+    writeHeader() {
+      this.pushString('GIF89a'); this.pushWord(this.width); this.pushWord(this.height);
+      this.pushByte(0xF7); this.pushByte(0x00); this.pushByte(0x00);
+      for (let i = 0; i < this.palette.length; i++) this.pushByte(this.palette[i]);
+      this.pushByte(0x21); this.pushByte(0xFF); this.pushByte(0x0B);
+      this.pushString('NETSCAPE2.0'); this.pushByte(0x03); this.pushByte(0x01);
+      this.pushWord(this.loop); this.pushByte(0x00); this.started = true;
+    }
+    writeGraphicControl(delayCs) {
+      this.pushByte(0x21); this.pushByte(0xF9); this.pushByte(0x04);
+      this.pushByte(0x00); this.pushWord(delayCs); this.pushByte(0x00); this.pushByte(0x00);
+    }
+    writeImageDescriptor() {
+      this.pushByte(0x2C); this.pushWord(0); this.pushWord(0);
+      this.pushWord(this.width); this.pushWord(this.height); this.pushByte(0x00);
+    }
+    writeSubBlocks(data) {
+      let i = 0;
+      while (i < data.length) {
+        const len = Math.min(255, data.length - i);
+        this.pushByte(len);
+        for (let j = 0; j < len; j++) this.pushByte(data[i + j]);
+        i += len;
+      }
+      this.pushByte(0x00);
+    }
+    addFrame(indexedPixels, delayCs = 8) {
+      if (!this.started) this.writeHeader();
+      this.writeGraphicControl(delayCs);
+      this.writeImageDescriptor();
+      const minCodeSize = 8;
+      this.pushByte(minCodeSize);
+      const compressed = lzwEncode(minCodeSize, indexedPixels);
+      this.writeSubBlocks(compressed);
+    }
+    finish() {
+      this.pushByte(0x3B);
+      return new Blob([Uint8Array.from(this.bytes)], { type: 'image/gif' });
+    }
+  }
+
+  async function exportGif() {
+    els.saveGif.disabled = true;
+    els.savePng.disabled = true;
+    setStatus('GIF 팔레트 분석 중...');
+    const outSize = parseInt(els.gifSize.value, 10);
+    const fps = parseInt(els.gifFps.value, 10);
+    const ratio = parseRatio(els.ratio.value);
+    let outW, outH;
+    if (ratio.w >= ratio.h) {
+      outW = outSize; outH = Math.round(outSize * ratio.h / ratio.w);
+    } else {
+      outH = outSize; outW = Math.round(outSize * ratio.w / ratio.h);
+    }
+    off.width = outW; off.height = outH;
+    const s = getSettings();
+    const duration = BASE_DURATION / s.speed;
+    const frameCount = Math.max(2, Math.round(duration * fps));
+    const histogram = createColorHistogram();
+
+    for (let i = 0; i < frameCount; i++) {
+      renderFrame(offCtx, outW, outH, (i / frameCount) * duration);
+      sampleColors(histogram, offCtx.getImageData(0, 0, outW, outH));
+      if (i % 2 === 0) {
+        setStatus(`GIF 색상 샘플링... ${Math.round(((i + 1) / frameCount) * 30)}%`);
+        await new Promise(r => setTimeout(r, 0));
+      }
+    }
+    const palette = createAdaptivePalette(histogram);
+    const quantize = createPaletteMapper(palette);
+    const gif = new GifWriter(outW, outH, { loop: 0, palette });
+
+    for (let i = 0; i < frameCount; i++) {
+      const t = (i / frameCount) * duration;
+      renderFrame(offCtx, outW, outH, t);
+      const imageData = offCtx.getImageData(0, 0, outW, outH);
+      const indexed = quantize(imageData);
+      gif.addFrame(indexed, Math.max(1, Math.round(100 / fps)));
+      if (i % 2 === 0) {
+        setStatus(`GIF 렌더링 중... ${Math.round(30 + ((i + 1) / frameCount) * 70)}%`);
+        await new Promise(r => setTimeout(r, 0));
+      }
+    }
+    saveBlob(gif.finish(), `failed-gacha-forge-${Date.now()}.gif`);
+    setStatus('🎉 GIF 저장이 완료되었습니다!');
+    els.saveGif.disabled = false;
+    els.savePng.disabled = false;
+  }
+
+  els.saveGif.addEventListener('click', async () => {
+    try { await exportGif(); }
+    catch (err) {
+      console.error(err);
+      setStatus('GIF 저장 중 오류가 발생했습니다.');
+      els.saveGif.disabled = false;
+      els.savePng.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
