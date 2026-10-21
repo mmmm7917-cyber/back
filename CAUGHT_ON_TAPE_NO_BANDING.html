@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CAUGHT ON TAPE</title>
+<style>
+:root{font-family:system-ui,-apple-system,'Noto Sans KR',sans-serif;color:#302f30;background:#e9e6df}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}header{padding:22px 30px;background:#f5f2eb;border-bottom:1px solid #d4d0c8;display:flex;justify-content:space-between;align-items:center}h1{font-size:23px;letter-spacing:.075em;margin:0}header small{font-size:11px;color:#858077;letter-spacing:.16em}.layout{display:grid;grid-template-columns:minmax(300px,385px) minmax(0,1fr);gap:22px;padding:22px;max-width:1540px;margin:auto}.panel{background:#f8f6f1;border:1px solid #d9d4cb;border-radius:14px;overflow:hidden;align-self:start}.panelhead{padding:19px 20px;border-bottom:1px solid #ded9d1;font-size:13px;font-weight:750;letter-spacing:.05em}details{border-bottom:1px solid #e3ded6}summary{cursor:pointer;padding:15px 20px;font-weight:700;font-size:13px;list-style:none;display:flex;justify-content:space-between}summary:after{content:'＋';font-weight:400;color:#888}details[open] summary:after{content:'−'}.section{padding:0 19px 19px;display:grid;gap:13px}.field{display:grid;gap:6px}.field>label,.minilabel{font-size:11px;color:#666158;font-weight:650}.field input[type=text],.field input[type=datetime-local],select{width:100%;background:#fff;border:1px solid #d7d1c7;padding:10px;border-radius:8px;color:#393630;font-size:12px}.field input[type=range]{width:100%;accent-color:#ac635c}.value{font-size:11px;color:#a05c55;float:right}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.chiprow{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid #d2ccc3;background:#fff;color:#514e4a;border-radius:7px;padding:9px 11px;font-size:11px}.chip.active{background:#383a3b;color:white;border-color:#383a3b}.upload{display:block;border:1px dashed #bbb2a8;background:#fff;border-radius:9px;padding:10px;text-align:center;font-size:12px;cursor:pointer}.upload input{display:none}.check{display:flex;gap:7px;align-items:center;font-size:12px}.check input{accent-color:#ae655e}.previewSide{position:sticky;top:14px;align-self:start;display:grid;gap:14px}.screenbox{border-radius:17px;background:#25282b;padding:26px 24px 19px;box-shadow:0 12px 35px #25232119}.screenTop{display:flex;justify-content:space-between;color:#9c9e9e;font-size:10px;letter-spacing:.18em;margin-bottom:13px}.stage{display:flex;justify-content:center;align-items:center;min-height:310px}.stage canvas{display:block;max-width:100%;max-height:66vh;object-fit:contain;box-shadow:0 4px 20px #0007;background:#181a1b}.controls{display:flex;gap:9px;align-items:center;justify-content:center;margin-top:18px;flex-wrap:wrap}.controls button,.export button{border:1px solid #5b5d5d;color:#f0efed;background:#393c3f;border-radius:8px;padding:10px 16px;font-size:12px}.controls .primary{background:#a9635c;border-color:#a9635c}.timeline{width:100%;accent-color:#bb7971}.time{color:#d6d2ce;font-size:11px;text-align:right;font-variant-numeric:tabular-nums}.export{padding:18px;background:#f8f6f1;border-radius:12px;border:1px solid #d9d4cb}.export h3{margin:0 0 14px;font-size:13px}.export .buttons{display:flex;flex-wrap:wrap;gap:8px}.export button{background:#303335;flex:1}.export button:disabled{opacity:.5;cursor:wait}.status{font-size:11px;color:#807a71;margin-top:9px;min-height:16px}.progress{width:100%;height:6px;margin-top:10px;accent-color:#a9655f}.hint{color:#868078;font-size:10px;line-height:1.6}.hide{display:none!important}@media(max-width:830px){header{padding:16px}h1{font-size:18px}.layout{display:flex;flex-direction:column-reverse;padding:12px;gap:13px}.previewSide{position:static;width:100%}.screenbox{padding:14px}.stage{min-height:210px}.panel{width:100%}}
+</style></head><body>
+<header><div><h1>CAUGHT ON TAPE</h1></div></header>
+<main class="layout"><aside class="panel"><div class="panelhead">촬영 설정</div>
+<details open><summary>01 · 캐릭터</summary><div class="section">
+<div class="two"><label class="upload">캐릭터 A 업로드<input id="fileA" type="file" accept="image/*"></label><label class="upload">캐릭터 B 업로드<input id="fileB" type="file" accept="image/*"></label></div>
+<div class="field"><label>인원</label><select id="people"><option value="2">2인</option><option value="1">1인</option></select></div>
+<div class="field"><label>배치 편집 대상</label><select id="editChar"><option value="A">캐릭터 A</option><option value="B">캐릭터 B</option></select></div>
+<div class="field"><label>크기 <span class="value" id="sizeVal"></span></label><input type="range" id="size" min="20" max="180" value="85"></div>
+<div class="two"><div class="field"><label>가로 <span id="xVal" class="value"></span></label><input type="range" id="posX" min="-100" max="100"></div><div class="field"><label>세로 <span id="yVal" class="value"></span></label><input type="range" id="posY" min="-100" max="100"></div></div>
+<div class="field"><label>회전 <span class="value" id="rotVal"></span></label><input type="range" id="rot" min="-45" max="45"></div>
+<div class="two"><button class="chip" id="swap">A/B 이미지 교체</button><button class="chip" id="layer">앞뒤 순서 바꾸기</button></div>
+<div class="hint">이미지는 변형하지 않으며, 프레임 바깥쪽만 잘려 보여요. 업로드 전에는 배치 확인용 실루엣이 표시됩니다.</div>
+</div></details>
+<details open><summary>02 · 촬영 상황</summary><div class="section"><div class="chiprow" id="scenes"></div></div></details>
+<details open><summary>03 · 접근과 카메라</summary><div class="section">
+<div class="field"><label>접근 거리 <span class="value" id="distanceVal"></span></label><input id="distance" type="range" min="0" max="100" value="75"></div>
+<div class="two"><div class="field"><label>접근 속도</label><select id="speed"><option value="slow">느리게</option><option value="normal" selected>보통</option><option value="fast">빠르게</option></select></div><div class="field"><label>접근 방향</label><select id="approach"><option value="left">왼쪽</option><option value="center" selected>중앙</option><option value="right">오른쪽</option></select></div></div>
+<div class="field"><label>카메라 반응</label><select id="reaction"><option value="stable">안정적</option><option value="hand">손떨림</option><option value="surprise" selected>깜짝 놀람</option><option value="back">뒷걸음질</option><option value="follow">따라가기</option><option value="tilt">넘어질 뻔</option></select></div>
+<div class="two"><label class="check"><input id="pauseNear" type="checkbox"> 접근 중 멈춤</label><label class="check"><input id="stepBack" type="checkbox" checked> 카메라 뒷걸음질</label></div>
+</div></details>
+<details id="lensSection"><summary>04 · 렌즈 가리기</summary><div class="section"><div class="field"><label>가림 방식</label><select id="cover"><option value="dark">완전 암전</option><option value="none">가림 없음</option></select></div></div></details>
+<details><summary>05 · 캠코더 화면</summary><div class="section">
+<div class="field"><label>화면 비율</label><div id="ratios" class="chiprow"></div></div>
+<div class="field"><label>캠코더 스타일</label><select id="filter"><option>Mini DV</option><option>VHS</option><option>Digital</option><option>Night Vision</option><option>Soft Film</option><option>No Filter</option></select></div>
+<div class="two"><label class="check"><input id="preserve" type="checkbox" checked> 캐릭터 색상 보존</label><label class="check"><input id="noise" type="checkbox"> 필름 입자</label></div>
+<div class="field"><label>배경 색상</label><input type="color" id="bgColor" value="#8b8885"></div>
+<div class="two"><label class="check"><input id="rec" type="checkbox" checked> REC</label><label class="check"><input id="tc" type="checkbox" checked> 타임코드</label><label class="check"><input id="dateOn" type="checkbox" checked> 날짜·시간</label><label class="check"><input id="battery" type="checkbox" checked> 배터리</label><label class="check"><input id="focus" type="checkbox" checked> 초점 표시</label><label class="check"><input id="zoom" type="checkbox"> 줌</label><label class="check"><input id="warning" type="checkbox"> 녹화 경고</label></div>
+<div class="field"><label>촬영 날짜·시간</label><input id="datetime" type="datetime-local" value="2026-10-20T20:08"></div><div class="field"><label>영상 문구 (선택)</label><input id="caption" type="text" maxlength="45" placeholder=""></div>
+</div></details>
+<details><summary>06 · 애니메이션</summary><div class="section"><div class="two"><div class="field"><label>길이</label><select id="duration"><option value="3">3초</option><option value="3.6" selected>3.6초</option><option value="4">4초</option><option value="5">5초</option><option value="6">6초</option></select></div><div class="field"><label>반복 방식</label><select id="loop"><option value="natural">자연스럽게 반복</option><option value="hold">마지막 장면 정지</option><option value="stop">녹화 종료 후 복귀</option></select></div></div>
+<div class="field"><label>마지막 장면</label><select id="ending"><option value="near">그대로 촬영</option><option value="dark">화면 암전</option><option value="off">촬영 종료</option><option value="both">둘이 함께</option><option value="fall">카메라 추락</option><option value="blur">초점 이탈</option></select></div>
+<div class="field"><label>마지막 장면 유지 시간 <span id="holdVal" class="value"></span></label><input id="hold" type="range" min="0" max="35" value="12"></div>
+</div></details>
+</aside><section class="previewSide"><div class="screenbox"><div class="screenTop"><span>LIVE CAMCORDER PREVIEW</span><span>● STANDBY</span></div><div class="stage"><canvas id="view" width="960" height="540"></canvas></div><input id="seek" class="timeline" type="range" min="0" max="1000" value="0"><div class="time" id="clock">00:00 / 00:03.6</div><div class="controls"><button id="restart">↺ 처음부터</button><button id="play" class="primary">❚❚ 일시정지</button></div></div>
+<div class="export"><h3>저장</h3><div class="two"><div class="field"><label>PNG 프레임</label><select id="pngFrame"><option value="current">현재 프레임</option><option value="first">첫 번째 프레임</option><option value="last">마지막 프레임</option></select></div><div class="field"><label>GIF 프레임 속도</label><select id="fps"><option value="10">10 FPS</option><option value="12" selected>12 FPS</option></select></div></div><div class="check" style="margin:13px 0"><input type="checkbox" id="transparent"><label for="transparent">PNG 투명 배경 (필터 배경 제외)</label></div><div class="buttons"><button id="savePng">PNG 저장</button><button id="saveGif">GIF 저장</button></div><progress id="progress" class="progress hide" max="100" value="0"></progress><div class="status" id="status">이미지를 업로드하면 바로 미리볼 수 있어요.</div></div></section></main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),cv=$('view'),ctx=cv.getContext('2d',{willReadFrequently:true}),sceneNames=['촬영 들킴','렌즈 가리기','카메라 빼앗기','황급히 도망','너무 가까워!','둘이 찍기','녹화 중단','몰래 구경'];
+const chars={A:{img:null,x:-31,y:13,size:85,rot:0},B:{img:null,x:34,y:12,size:79,rot:0}};let scene=0,ratio='16:9',front='B',playing=true,elapsed=0,lastStamp=0,saving=false;
+const num=id=>+$ (id).value,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,smooth=t=>{t=clamp(t);return t*t*(3-2*t)},ease=t=>1-Math.pow(1-clamp(t),3),seg=(t,a,b)=>smooth((t-a)/(b-a));
+function duration(){return num('duration')}function isTwo(){return $('people').value==='2'}
+function chips(id,labels,get,set){const root=$(id);root.innerHTML='';labels.forEach((s,i)=>{let b=document.createElement('button');b.className='chip'+(get()===i?' active':'');b.textContent=s;b.onclick=()=>{set(i);[...root.children].forEach((c,j)=>c.classList.toggle('active',i===j));render()};root.append(b)})}
+chips('scenes',sceneNames,()=>scene,i=>{scene=i;const ends=['near','dark','fall','near','blur','both','off','near'];$('ending').value=ends[i];$('lensSection').open=i===1;elapsed=0});chips('ratios',['16:9','4:3','1:1','9:16'],()=>0,i=>{ratio=['16:9','4:3','1:1','9:16'][i];resize()});
+function loadChar(){let c=chars[$('editChar').value];for(const [input,k] of [['size','size'],['posX','x'],['posY','y'],['rot','rot']]){$(input).value=c[k];$(input==='posX'?'xVal':input==='posY'?'yVal':input+'Val').textContent=c[k]+(k==='size'?'%':k==='rot'?'°':'')}}
+loadChar();for(const [input,k] of [['size','size'],['posX','x'],['posY','y'],['rot','rot']])$(input).oninput=()=>{chars[$('editChar').value][k]=num(input);loadChar();render()};$('editChar').onchange=loadChar;
+for(let who of ['A','B'])$('file'+who).onchange=e=>{const file=e.target.files[0];if(!file)return;let url=URL.createObjectURL(file),img=new Image();img.onload=()=>{chars[who].img=img;URL.revokeObjectURL(url);$('status').textContent=`캐릭터 ${who} 불러오기 완료`;render()};img.src=url};
+$('swap').onclick=()=>{[chars.A.img,chars.B.img]=[chars.B.img,chars.A.img];render()};$('layer').onclick=()=>{front=front==='A'?'B':'A';render()};
+for(let id of ['people','distance','speed','approach','reaction','pauseNear','stepBack','cover','filter','preserve','noise','bgColor','rec','tc','dateOn','battery','focus','zoom','warning','datetime','caption','duration','loop','ending','hold'])$(id).addEventListener('input',()=>{if(id==='distance')$('distanceVal').textContent=$(id).value+'%';if(id==='hold')$('holdVal').textContent=$(id).value+'%';resize();render()});$('distanceVal').textContent=$('distance').value+'%';$('holdVal').textContent=$('hold').value+'%';
+function resize(){let [w,h]=ratio.split(':').map(Number);if(ratio==='9:16'){cv.width=540;cv.height=960}else if(ratio==='1:1'){cv.width=720;cv.height=720}else if(ratio==='4:3'){cv.width=960;cv.height=720}else{cv.width=960;cv.height=540}render()}
+function characterPose(who,p){const c=chars[who],t=p.t;let x=c.x/100,y=c.y/100,scale=c.size/100,rot=c.rot*Math.PI/180,alpha=1,lead=who===(isTwo()?'B':'A');const distance=num('distance')/100,speed=$('speed').value;let a=speed==='fast'?.23:speed==='slow'?.48:.36,b=speed==='fast'?.64:speed==='slow'?.82:.73;
+let advance=seg(t,a,b);if($('pauseNear').checked){advance=t<.54?seg(t,a,.52)*.57:.57+seg(t,.63,b)*.43}
+let side=$('approach').value==='left'?-.26:$('approach').value==='right'?.26:0;
+if(lead){
+if([0,1,2,4,6].includes(scene)){let pow=scene===4?2.3:scene===2?1.6:1.35;scale*=1+advance*distance*pow;x=lerp(x,side,advance*.82);y+=advance*.12}
+if(scene===3){let flee=seg(t,.28,.66);x+=flee*1.55;y-=flee*.04;rot+=flee*.2;scale*=1-.4*flee}
+if(scene===5){let pop=seg(t,.14,.37),settle=seg(t,.46,.78);scale*=1+pop*1.9-settle*1.65;x=lerp(x,.7,pop);x=lerp(x,.3,settle);y+=pop*.13-settle*.12}
+if(scene===7){let peek=seg(t,.12,.24)*(1-seg(t,.34,.43)),peek2=seg(t,.57,.66)*(1-seg(t,.82,.93));x=lerp(1.05,.45,peek)-peek2*1.35;y+=.03;scale*=.82;alpha=clamp(peek+peek2)}
+if(scene===0&&t>.86)scale*=1-.12*seg(t,.86,1);
+if(scene===4&&t>.76){let retreat=seg(t,.76,.98);scale*=1-retreat*.4;y-=retreat*.05}
+}else if(scene===5){x=lerp(x,-.27,seg(t,.4,.75))}
+if($('ending').value==='both'&&isTwo()){let settle=seg(t,.79,.98);x=lerp(x,who==='A'?-.29:.29,settle);y=lerp(y,.05,settle);scale=lerp(scale,c.size/100*.92,settle);alpha=lerp(alpha,1,settle)}
+if(!isTwo()&&who==='B')alpha=0;
+return {x,y,scale,rot,alpha};}
+function cameraPose(t){let x=0,y=0,rot=0,z=1;const impact=seg(t,.54,.67)*(1-seg(t,.8,.93)),wave=Math.sin(t*87)*Math.sin(t*37);const r=$('reaction').value;if(r==='hand'){x=wave*.009;y=Math.cos(t*69)*.007;rot=wave*.008}if(r==='surprise'){x=impact*wave*.045;y=impact*Math.cos(t*71)*.035;rot=impact*wave*.037}if(r==='back'||$('stepBack').checked&&[0,4].includes(scene)){z-=impact*.12;y-=impact*.03}if(r==='follow'||scene===3){x-=seg(t,.43,.8)*(scene===3?.32:.13)}if(r==='tilt'){rot+=impact*.33;y+=impact*.075}
+if(scene===2){let q=seg(t,.56,.68);rot+=q*.55;x+=q*.18;y+=q*.12;z+=q*.12;let recover=seg(t,.78,.96);rot-=recover*.38;x-=recover*.12}
+if(scene===6){x+=impact*wave*.025}if($('ending').value==='fall'){let f=seg(t,.8,.97);rot+=f*.76;y+=f*.24;x+=f*.18}return {x,y,rot,z};}
+function drawPlaceholder(c,w,h){c.fillStyle='#dad0c4';c.beginPath();c.ellipse(0,-h*.17,w*.19,h*.22,0,0,Math.PI*2);c.fill();c.beginPath();c.moveTo(-w*.32,h*.44);c.quadraticCurveTo(-w*.35,-h*.02,-w*.16,0);c.quadraticCurveTo(0,h*.1,w*.16,0);c.quadraticCurveTo(w*.35,-h*.02,w*.32,h*.44);c.closePath();c.fill();c.fillStyle='#5a5652';c.font=`${Math.max(16,w*.09)}px sans-serif`;c.textAlign='center';c.fillText('PNG',0,h*.32)}
+function drawChar(who,t,W,H){let c=chars[who],p=characterPose(who,{t});if(p.alpha<=0)return;ctx.save();ctx.globalAlpha=p.alpha;ctx.translate(W*(.5+p.x*.5),H*(.53+p.y*.5));ctx.rotate(p.rot);let iw=c.img?.naturalWidth||500,ih=c.img?.naturalHeight||700,fit=Math.min(W*.46/iw,H*.78/ih),dw=iw*fit*p.scale,dh=ih*fit*p.scale;if(c.img)ctx.drawImage(c.img,-dw/2,-dh/2,dw,dh);else drawPlaceholder(ctx,dw,dh);ctx.restore()}
+function coverLayer(t,W,H){if(scene!==1&&scene!==0||$('cover').value==='none')return 0;let k=seg(t,.62,.81)*(1-seg(t,.88,.99));if(scene===0)k*=.3;return k}
+function text(s,x,y,size=17,align='left'){ctx.fillStyle='#f7f6f2';ctx.font=`600 ${size}px monospace`;ctx.textAlign=align;ctx.fillText(s,x,y)}
+function overlay(t,W,H,turnedOff){const pad=Math.min(W,H)*.045,unit=Math.min(W,H)/540;ctx.save();ctx.shadowColor='#0009';ctx.shadowBlur=2;let red=t>.35&&t<.76&&scene===6||turnedOff;if($('rec').checked&&!red){ctx.fillStyle='#e8524f';ctx.beginPath();ctx.arc(pad+7*unit,pad+4*unit,7*unit,0,7);ctx.fill();text('REC',pad+22*unit,pad+10*unit,17*unit)}if($('battery').checked){ctx.strokeStyle='#fff';ctx.lineWidth=2*unit;ctx.strokeRect(W-pad-45*unit,pad-8*unit,36*unit,16*unit);ctx.fillStyle='#fff';ctx.fillRect(W-pad-7*unit,pad-3*unit,4*unit,7*unit);ctx.fillRect(W-pad-41*unit,pad-4*unit,24*unit,9*unit)}if($('focus').checked){let fw=W*.19,fh=H*.27,x=W/2,y=H/2,l=14*unit;ctx.strokeStyle='#ffffffae';ctx.lineWidth=1.5*unit;ctx.beginPath();for(let sx of [-1,1])for(let sy of [-1,1]){let a=x+sx*fw/2,b=y+sy*fh/2;ctx.moveTo(a-sx*l,b);ctx.lineTo(a,b);ctx.lineTo(a,b-sy*l)}ctx.stroke()}if($('zoom').checked)text('ZOOM '+Math.round(100+num('distance')*seg(t,.35,.74))+'%',pad,H-pad-56*unit,14*unit);if($('warning').checked&&t>.56&&t<.8)text('! CAMERA SHAKE',W/2,H*.13,15*unit,'center');let d=$('datetime').value.replace('T',' ');if($('dateOn').checked)text(d,pad,H-pad-8*unit,14*unit);if($('tc').checked)text('00:00:'+String(Math.floor(t*duration())).padStart(2,'0')+':'+String(Math.floor(t*duration()%1*12)).padStart(2,'0'),W-pad,H-pad-8*unit,16*unit,'right');if($('caption').value)text($('caption').value,W/2,H-pad-39*unit,15*unit,'center');ctx.restore()}
+function drawFilm(t,W,H){const filter=$('filter').value,keep=$('preserve').checked;if(!keep){ctx.save();if(filter==='Night Vision'){ctx.fillStyle='rgba(25,104,43,.53)';ctx.fillRect(0,0,W,H)}else if(filter==='Soft Film'){ctx.fillStyle='rgba(242,201,167,.13)';ctx.fillRect(0,0,W,H)}else if(filter==='VHS'){ctx.fillStyle='rgba(47,35,58,.07)';ctx.fillRect(0,0,W,H)}ctx.restore()}
+if(filter==='Digital'){ctx.save();const u=Math.min(W,H)/540;const m=Math.min(W,H)*.075;ctx.strokeStyle='rgba(104,218,255,.72)';ctx.lineWidth=Math.max(1,1.35*u);const l=19*u;ctx.beginPath();for(const sx of [-1,1])for(const sy of [-1,1]){const x=sx<0?m:W-m,y=sy<0?m:H-m;ctx.moveTo(x,y+sy*l);ctx.lineTo(x,y);ctx.lineTo(x+sx*l,y)}ctx.stroke();ctx.fillStyle='rgba(105,217,255,.8)';ctx.fillRect(W*.5-16*u,H*.5-1*u,32*u,2*u);ctx.fillRect(W*.5-1*u,H*.5-16*u,2*u,32*u);ctx.fillStyle='rgba(15,47,65,.16)';ctx.fillRect(0,0,W,H*.045);ctx.fillRect(0,H*.955,W,H*.045);if(!keep){ctx.fillStyle='rgba(55,160,215,.055)';ctx.fillRect(0,0,W,H)}ctx.restore()}
+if(filter==='VHS'){
+// Analog tape tracking: deterministic by timestamp so preview and GIF encode identically.
+ctx.save();const phase=Math.floor(t*12),u=Math.max(1,Math.min(W,H)/540);
+const bandY=((phase*73+49)%Math.max(1,H)),bandH=Math.max(9,Math.round(H*.033));
+// Displace a narrow strip of the recorded image, not the character asset.
+const cache=document.createElement('canvas');cache.width=W;cache.height=H;
+cache.getContext('2d').drawImage(cv,0,0);
+ctx.beginPath();ctx.rect(0,bandY,W,Math.min(bandH,H-bandY));ctx.clip();
+ctx.drawImage(cache,Math.round((phase%3-1)*4*u),0);
+ctx.restore();ctx.save();
+// Persistent phosphor/chroma shadows and traveling tracking band.
+ctx.fillStyle='rgba(26,71,130,.035)';ctx.fillRect(0,0,W,H);
+ctx.fillStyle='rgba(222,58,115,.06)';ctx.fillRect(0,0,Math.max(3,5*u),H);
+ctx.fillStyle='rgba(61,215,233,.07)';ctx.fillRect(W-Math.max(3,5*u),0,Math.max(3,5*u),H);
+// No full-frame gradient: avoids visible palette contouring in GIF exports.
+ctx.fillStyle='rgba(237,241,247,.09)';ctx.fillRect(0,bandY,W,Math.max(2,3*u));
+ctx.fillStyle='rgba(0,0,0,.09)';ctx.fillRect(0,Math.min(H-1,bandY+3*u),W,Math.max(5,8*u));
+// Thin intermittent horizontal analog dropout fragments.
+for(let i=0;i<5;i++){const y=(i*173+phase*37)%H,x=(i*131+phase*19)%W,len=Math.min(W-x,(22+(i*17)%105)*u);ctx.fillStyle=i%3?'rgba(255,255,255,.09)':'rgba(2,8,14,.10)';ctx.fillRect(x,y,len,Math.max(1,u));}
+ctx.restore();}
+if(filter==='VHS'||filter==='Mini DV'){ctx.fillStyle=filter==='VHS'?'rgba(0,0,0,.045)':'rgba(0,0,0,.035)';for(let i=0;i<H;i+=filter==='VHS'?5:7)ctx.fillRect(0,i,W,1)}if($('noise').checked||filter==='VHS'){let n=filter==='VHS'?45:80;for(let i=0;i<n;i++){let a=(i*173+Math.floor(t*12)*37)%W,b=(i*349+Math.floor(t*12)*91)%H;ctx.fillStyle=i%2?'#ffffff0b':'#0000000c';ctx.fillRect(a,b,2,2)}}}
+function renderAt(time,target=ctx,transparent=false){const W=cv.width,H=cv.height,t=clamp(time/duration());if(target!==ctx)throw Error('공통 캔버스 렌더러만 사용');ctx.clearRect(0,0,W,H);if(!transparent){ctx.fillStyle=$('bgColor').value;ctx.fillRect(0,0,W,H);/* GIF-safe flat background: remove diagonal alpha gradient across all styles. */}
+const cam=cameraPose(t);ctx.save();ctx.translate(W/2+cam.x*W,H/2+cam.y*H);ctx.rotate(cam.rot);ctx.scale(cam.z,cam.z);ctx.translate(-W/2,-H/2);let order=front==='B'?['A','B']:['B','A'];order.forEach(who=>drawChar(who,t,W,H));ctx.restore();
+let occlusion=coverLayer(t,W,H),blur=0;const end=$('ending').value,endStart=.82+num('hold')/100*.25,final=seg(t,endStart,.98);if(scene===4)blur=seg(t,.56,.7)*(1-seg(t,.82,.98))*.42;if(end==='blur')blur=Math.max(blur,final*.65);if(blur){ctx.fillStyle=`rgba(210,207,201,${blur*.45})`;ctx.fillRect(0,0,W,H)}if(!transparent)drawFilm(t,W,H);
+if(!transparent&&(scene===1||scene===0)){let shade=clamp(occlusion);if(shade){ctx.fillStyle=`rgba(5,7,9,${shade})`;ctx.fillRect(0,0,W,H)}}let off=(scene===6&&t>.35&&t<.76)||end==='off'&&final>.2;if((end==='dark'||end==='off')&&final>0){ctx.fillStyle=`rgba(4,5,6,${final})`;ctx.fillRect(0,0,W,H)}if(!off)overlay(t,W,H,false);if(off&&scene===6&&t>.42&&t<.71){ctx.fillStyle='#07090b';ctx.fillRect(0,0,W,H)}if($('loop').value==='stop'&&t>.97){ctx.fillStyle='#080a0b';ctx.fillRect(0,0,W,H)}}
+function render(){renderAt(elapsed);$('clock').textContent=`00:${String(Math.floor(elapsed)).padStart(2,'0')}.${Math.floor(elapsed%1*10)} / 00:${duration().toFixed(1).padStart(4,'0')}`;$('seek').value=Math.round(elapsed/duration()*1000)}
+function tick(stamp){if(lastStamp&&playing&&!saving){elapsed+=(stamp-lastStamp)/1000;if(elapsed>duration())elapsed%=duration();render()}lastStamp=stamp;requestAnimationFrame(tick)}requestAnimationFrame(tick);
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'❚❚ 일시정지':'▶ 재생'};$('restart').onclick=()=>{elapsed=0;playing=true;$('play').textContent='❚❚ 일시정지';render()};$('seek').oninput=()=>{elapsed=num('seek')/1000*duration();render()};
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),20000)}
+$('savePng').onclick=()=>{let old=elapsed,choice=$('pngFrame').value;elapsed=choice==='first'?0:choice==='last'?duration():elapsed;renderAt(elapsed,ctx,$('transparent').checked);cv.toBlob(blob=>{if(blob)download(blob,'CAUGHT_ON_TAPE.png');else $('status').textContent='PNG 저장 실패';elapsed=old;render()},'image/png')};
+// GIF89a encoder. One stable, image-aware palette across all frames prevents colour pumping.
+// No external libraries, no network use. RGBA frames are composited by the common Canvas renderer.
+function colorHistogramFrame(data, hist) {
+  const bins = new Uint16Array(data.length/4);
+  for (let i=0,j=0; i<data.length; i+=4,j++) {
+    // The source Canvas is opaque, including the camera background.
+    // GIF has a one-bit transparency channel; always composite to opaque instead.
+    const a=data[i+3]/255;
+    const r=a===1?data[i]:Math.round(data[i]*a+255*(1-a));
+    const g=a===1?data[i+1]:Math.round(data[i+1]*a+255*(1-a));
+    const b=a===1?data[i+2]:Math.round(data[i+2]*a+255*(1-a));
+    const code=((r>>3)<<10)|((g>>3)<<5)|(b>>3);
+    bins[j]=code;
+    // IMPORTANT: count EVERY pixel. Previous every-fourth sampling left
+    // unseen RGB555 bins mapped to palette index zero (large colour bands).
+    hist[code]++;
+  }
+  return bins;
+}
+function paletteFromHistogram(hist) {
+  const colors=[];
+  for (let code=0;code<32768;code++) if(hist[code]) {
+    colors.push({code,r:code>>10,g:(code>>5)&31,b:code&31,n:hist[code]});
+  }
+  if (!colors.length) colors.push({code:0,r:0,g:0,b:0,n:1});
+  function describe(items){
+    let rmin=32,gmin=32,bmin=32,rmax=-1,gmax=-1,bmax=-1,total=0;
+    for (const c of items){if(c.r<rmin)rmin=c.r;if(c.r>rmax)rmax=c.r;if(c.g<gmin)gmin=c.g;if(c.g>gmax)gmax=c.g;if(c.b<bmin)bmin=c.b;if(c.b>bmax)bmax=c.b;total+=c.n}
+    const ranges=[rmax-rmin,gmax-gmin,bmax-bmin];
+    const width=Math.max(...ranges);
+    return {items,total,ranges,score:items.length<2?0:width*Math.sqrt(total)};
+  }
+  const boxes=[describe(colors)];
+  while(boxes.length<256){
+    let bi=-1,score=0;
+    for(let i=0;i<boxes.length;i++)if(boxes[i].score>score){bi=i;score=boxes[i].score}
+    if(bi<0)break;
+    const box=boxes[bi];
+    const channel=box.ranges[0]>=box.ranges[1]&&box.ranges[0]>=box.ranges[2]?'r':box.ranges[1]>=box.ranges[2]?'g':'b';
+    box.items.sort((a,b)=>a[channel]-b[channel]);
+    let k=0,count=0;
+    while(k<box.items.length-1 && count<box.total/2) count+=box.items[k++].n;
+    k=Math.max(1,Math.min(box.items.length-1,k));
+    boxes.splice(bi,1,describe(box.items.slice(0,k)),describe(box.items.slice(k)));
+  }
+  const palette=new Uint8Array(768),mapping=new Uint8Array(32768);
+  // Every quantized bin seen in ANY frame maps to a real palette colour.
+  // We counted every pixel, so no rendered bin can silently map to zero.
+  boxes.forEach((box,i)=>{
+    let r=0,g=0,b=0,n=0;
+    for(const c of box.items){r+=(c.r*8+4)*c.n;g+=(c.g*8+4)*c.n;b+=(c.b*8+4)*c.n;n+=c.n;mapping[c.code]=i}
+    palette[i*3]=Math.min(255,Math.round(r/n));
+    palette[i*3+1]=Math.min(255,Math.round(g/n));
+    palette[i*3+2]=Math.min(255,Math.round(b/n));
+  });
+  // Defensive nearest-colour fallback for any unexpectedly absent bin.
+  // This also makes future histogram sampling changes safe.
+  for(let code=0;code<32768;code++){
+    if(hist[code])continue;
+    const r=((code>>10)&31)*8+4,g=((code>>5)&31)*8+4,b=(code&31)*8+4;
+    let best=0,bestDist=Infinity;
+    for(let i=0;i<boxes.length;i++){
+      const dr=r-palette[i*3],dg=g-palette[i*3+1],db=b-palette[i*3+2];
+      const dist=2*dr*dr+4*dg*dg+3*db*db;
+      if(dist<bestDist){best=i;bestDist=dist}
+    }
+    mapping[code]=best;
+  }
+  return {palette,mapping};
+}
+// Conservative GIF LZW: fixed 9-bit codes, with an early clear before
+// the dictionary reaches the 10-bit boundary. Avoids decoder bit-width
+// desynchronization which previously produced damaged GIF frames.
+function lzw(index) {
+  const CLEAR=256, END=257;
+  const out=[];let bits=0,bitCount=0,next=258,dict=new Map();
+  function emit(code){bits|=code<<bitCount;bitCount+=9;while(bitCount>=8){out.push(bits&255);bits>>>=8;bitCount-=8}}
+  emit(CLEAR);
+  if(!index.length){emit(END);if(bitCount)out.push(bits&255);return out}
+  let prefix=index[0];
+  for(let i=1;i<index.length;i++){
+    const v=index[i],key=prefix*256+v,found=dict.get(key);
+    if(found!==undefined){prefix=found;continue}
+    emit(prefix);
+    if(next>=510){emit(CLEAR);dict.clear();next=258}
+    else dict.set(key,next++);
+    prefix=v;
+  }
+  emit(prefix);emit(END);
+  if(bitCount)out.push(bits&255);
+  return out;
+}
+function createGIF(frames,W,H,fps,palette) {
+  const chunks=[];
+  const head=new Uint8Array(13+768+19),dv=new DataView(head.buffer);
+  const putWord=(pos,n)=>dv.setUint16(pos,n,true);
+  for(let i=0;i<6;i++)head[i]='GIF89a'.charCodeAt(i);
+  putWord(6,W);putWord(8,H);head[10]=0xf7;head[11]=0;head[12]=0;
+  head.set(palette,13);
+  let p=13+768;head.set([0x21,0xff,11],p);p+=3;
+  for(let c of 'NETSCAPE2.0')head[p++]=c.charCodeAt(0);
+  head.set([3,1,0,0,0],p);
+  chunks.push(head);
+  // GIF frame delays use centiseconds. Alternate 8/9cs at 12fps to
+  // preserve the requested full animation duration (not 8cs every frame).
+  for (let frameNumber=0;frameNumber<frames.length;frameNumber++) {
+    const frame=frames[frameNumber];
+    const delay=Math.max(1,Math.round((frameNumber+1)*100/fps)-Math.round(frameNumber*100/fps));
+    const compressed=lzw(frame);
+    // Disposal=2 replaces the entire previous frame; do not use transparency.
+    const prefix=new Uint8Array(8+10);
+    prefix.set([0x21,0xf9,4,0x08,delay&255,delay>>8,0,0],0);
+    prefix[8]=0x2c;
+    const view=new DataView(prefix.buffer);
+    view.setUint16(9,0,true);view.setUint16(11,0,true);
+    view.setUint16(13,W,true);view.setUint16(15,H,true);
+    prefix[17]=0;chunks.push(prefix,new Uint8Array([8]));
+    for(let i=0;i<compressed.length;i+=255){
+      const len=Math.min(255,compressed.length-i),chunk=new Uint8Array(len+1);
+      chunk[0]=len;
+      for(let j=0;j<len;j++)chunk[j+1]=compressed[i+j];
+      chunks.push(chunk);
+    }
+    chunks.push(new Uint8Array([0]));
+  }
+  chunks.push(new Uint8Array([0x3b]));
+  return new Blob(chunks,{type:'image/gif'});
+}
+$('saveGif').onclick=async()=>{
+  if(saving)return;
+  saving=true;
+  const btn=$('saveGif'),progress=$('progress'),status=$('status'),old=elapsed,wasPlaying=playing;
+  btn.disabled=true;playing=false;progress.classList.remove('hide');progress.value=0;
+  const fps=num('fps'),count=Math.max(1,Math.round(duration()*fps));
+  try{
+    const W=cv.width,H=cv.height;
+    const scale=Math.min(1,600/Math.max(W,H));
+    const ow=Math.max(2,Math.round(W*scale)),oh=Math.max(2,Math.round(H*scale));
+    const off=document.createElement('canvas');off.width=ow;off.height=oh;
+    const ox=off.getContext('2d',{willReadFrequently:true,alpha:false});
+    const hist=new Uint32Array(32768),bins=[];
+    for(let i=0;i<count;i++){
+      renderAt(i/fps);
+      ox.drawImage(cv,0,0,ow,oh);
+      bins.push(colorHistogramFrame(ox.getImageData(0,0,ow,oh).data,hist));
+      progress.value=Math.round((i+1)/count*58);
+      status.textContent=`GIF 프레임 생성 중 · ${i+1}/${count}`;
+      if(i%2===0)await new Promise(r=>setTimeout(r,0));
+    }
+    status.textContent='GIF 공통 색상표 생성 중...';
+    await new Promise(r=>setTimeout(r,0));
+    const {palette,mapping}=paletteFromHistogram(hist);
+    progress.value=69;
+    const frames=[];
+    for(let i=0;i<bins.length;i++){
+      const src=bins[i],dst=new Uint8Array(src.length);
+      for(let j=0;j<src.length;j++)dst[j]=mapping[src[j]];
+      frames.push(dst);bins[i]=null;
+      if(i%4===0)await new Promise(r=>setTimeout(r,0));
+    }
+    status.textContent='GIF 인코딩 중...';progress.value=77;
+    await new Promise(r=>setTimeout(r,0));
+    const blob=createGIF(frames,ow,oh,fps,palette);
+    if(blob.size<100)throw Error('GIF 파일 생성 결과가 비정상적입니다.');
+    progress.value=100;
+    download(blob,'CAUGHT_ON_TAPE.gif');
+    status.textContent=`GIF 저장 완료 · ${(blob.size/1024/1024).toFixed(2)} MB · ${count}프레임`;
+  }catch(e){status.textContent='GIF 생성 실패: '+e.message;console.error(e)}
+  finally{elapsed=old;playing=wasPlaying;render();btn.disabled=false;saving=false;setTimeout(()=>progress.classList.add('hide'),1600)}
+};
+resize();})();
+</script></body></html>
