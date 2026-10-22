@@ -1,0 +1,1746 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>겨울 스노우볼 & 눈사람 메이커</title>
+<style>
+  :root {
+    --bg-page: #f2f4f7;
+    --bg-card: #ffffff;
+    --border: #dde2ea;
+    --text: #3b4252;
+    --muted: #7b8496;
+    --accent: #5e81ac;
+    --accent-hover: #4c6f99;
+  }
+  body[data-mood="sunset"] {
+    --bg-page: #f9f1ee;
+    --bg-card: #fffaf8;
+    --border: #ead8d1;
+    --text: #4e3b38;
+    --muted: #967a74;
+    --accent: #c97b63;
+  }
+  body[data-mood="night"] {
+    --bg-page: #181e29;
+    --bg-card: #222b3a;
+    --border: #323f54;
+    --text: #e5e9f0;
+    --muted: #94a1b8;
+    --accent: #689d99;
+  }
+  body[data-mood="warm"] {
+    --bg-page: #261e1b;
+    --bg-card: #332824;
+    --border: #483832;
+    --text: #f2e5dc;
+    --muted: #b0988c;
+    --accent: #d08770;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg-page);
+    color: var(--text);
+    font: 14px/1.45 system-ui, -apple-system, sans-serif;
+    transition: background .35s, color .35s;
+  }
+  header {
+    padding: 20px 5%;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .title-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+  }
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .mood-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .mood-btn {
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .mood-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 24px;
+    max-width: 1280px;
+    margin: auto;
+    padding: 24px;
+  }
+  .view {
+    align-self: start;
+    position: sticky;
+    top: 20px;
+  }
+  canvas {
+    width: 100%;
+    aspect-ratio: 1;
+    display: block;
+    border-radius: 22px;
+    background: repeating-conic-gradient(#e9edf2 0 25%, #f7f9fb 0 50%) 0/20px 20px;
+    touch-action: none;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.12);
+  }
+  aside {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 14px;
+    transition: background .35s, border-color .35s;
+  }
+  h2 {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .grid3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    margin-top: 10px;
+    color: var(--muted);
+  }
+  select, input[type=color], input[type=range] {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 8px;
+    background: var(--bg-page);
+    color: var(--text);
+    font: inherit;
+  }
+  input[type=color] {
+    height: 34px;
+    padding: 3px;
+    cursor: pointer;
+  }
+  input[type=range] {
+    padding: 0;
+    accent-color: var(--accent);
+    background: transparent;
+    border: 0;
+  }
+  button {
+    font: inherit;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform .1s, background .2s;
+  }
+  button:active {
+    transform: scale(0.98);
+  }
+  .row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .row > * {
+    flex: 1;
+  }
+  .primary-btn {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .save {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: 0;
+    padding: 13px;
+    font-size: 14px;
+  }
+  .hint, #status {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+  .checks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .check {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 0;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .check input {
+    width: auto;
+    margin: 0;
+    accent-color: var(--accent);
+  }
+  @media (max-width: 820px) {
+    main { grid-template-columns: 1fr; padding: 14px; }
+    .view { position: static; }
+  }
+</style>
+</head>
+<body data-mood="day">
+<header>
+  <div class="title-wrap">
+    <h1>겨울 스노우볼 & 눈사람 메이커</h1>
+  </div>
+  <div class="mood-bar" role="group" aria-label="조명 무드 선택">
+    <button class="mood-btn active" data-mood="day">☀️ 포근한 겨울 낮</button>
+    <button class="mood-btn" data-mood="sunset">🌅 노을빛 눈밭</button>
+    <button class="mood-btn" data-mood="night">🌌 오로라 겨울밤</button>
+    <button class="mood-btn" data-mood="warm">🕯️ 벽난로 무드등</button>
+  </div>
+</header>
+
+<main>
+  <div class="view">
+    <canvas id="canvas" width="1000" height="1000" aria-label="겨울 스노우볼과 눈사람 3D"></canvas>
+    <div class="row">
+      <button id="shake" class="primary-btn">❄️ 스노우볼 흔들기</button>
+      <button id="swap">🔄 두 눈사람 교대</button>
+      <button id="home">🎯 기본 시점</button>
+    </div>
+    <div class="hint">드래그로 회전 · 휠/두 손가락으로 확대 · 흔들기 버튼으로 눈보라 일으키기</div>
+  </div>
+
+  <aside>
+    <section>
+      <h2><span>⛄ 배치 & 스노우볼</span></h2>
+      <div class="grid2">
+        <label>포즈 배치
+          <select id="pose">
+            <option value="side">나란히 다정하게</option>
+            <option value="lie">너 위에 누울래 (포개기)</option>
+            <option value="stack">위로 눈사람 탑 쌓기</option>
+            <option value="solo">나 홀로 대왕 눈사람</option>
+          </select>
+        </label>
+        <label>주변 겨울 소품
+          <select id="props">
+            <option value="all">트리 + 선물 + 눈등불</option>
+            <option value="trees">눈 덮인 소나무 숲</option>
+            <option value="gifts">선물상자와 눈뭉치</option>
+            <option value="none">소품 없음 (깔끔)</option>
+          </select>
+        </label>
+      </div>
+      <div class="checks">
+        <label class="check"><input id="dome" type="checkbox" checked>유리 돔 씌우기</label>
+        <label class="check"><input id="snowing" type="checkbox" checked>눈 내리기 애니메이션</label>
+      </div>
+    </section>
+
+    <section>
+      <h2><span>🧣 첫째 눈사람 (아래 / 왼쪽)</span></h2>
+      <div class="grid2">
+        <label>동물 모양
+          <select id="animal0">
+            <option value="classic">클래식 눈사람</option>
+            <option value="bear">곰돌이 눈사람</option>
+            <option value="rabbit">토끼 눈사람</option>
+            <option value="cat">고양이 눈사람</option>
+            <option value="dog">강아지 눈사람</option>
+            <option value="fox">여우 눈사람</option>
+            <option value="wolf">늑대 눈사람</option>
+            <option value="panda">판다 눈사람</option>
+            <option value="reindeer">루돌프 사슴</option>
+            <option value="hamster">모찌 햄스터</option>
+            <option value="penguin">아기 펭귄</option>
+            <option value="duck">오리·병아리</option>
+          </select>
+        </label>
+        <label>모자
+          <select id="hat0">
+            <option value="beanie">방울 털모자</option>
+            <option value="tophat">신사 실크햇</option>
+            <option value="beret">겨울 베레모</option>
+            <option value="earmuff">포근 귀마개</option>
+            <option value="bucket">빨간 양동이</option>
+            <option value="none">모자 없음</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid3">
+        <label>눈매
+          <select id="eye0">
+            <option value="dot">초롱 단추 눈</option>
+            <option value="sparkle">반짝 왕방울</option>
+            <option value="happy">눈웃음 (^ ^)</option>
+            <option value="sleepy">잠자는 눈</option>
+            <option value="wink">윙크 (&gt; ●)</option>
+            <option value="shy">수줍음 (&gt; &lt;)</option>
+            <option value="chill">시크 눈 (ㅡ ㅡ)</option>
+            <option value="heart">하트 뿅뿅</option>
+          </select>
+        </label>
+        <label>코 파츠
+          <select id="nose0">
+            <option value="carrot">통통 당근 코</option>
+            <option value="button">앙증 단추 코</option>
+            <option value="rudolph">빨간 루돌프 코</option>
+            <option value="muzzle">곰·강아지 주둥이</option>
+            <option value="beak">오리·펭귄 부리</option>
+            <option value="none">코 없음</option>
+          </select>
+        </label>
+        <label>입 파츠
+          <select id="mouth0">
+            <option value="dot_smile">석탄 점선 미소</option>
+            <option value="cat">고양이 입 (ω)</option>
+            <option value="pout">시무룩 입 (︵)</option>
+            <option value="flat">무표정 입 (ㅡ)</option>
+            <option value="wavy">뿌엥 물결 (﹏)</option>
+            <option value="triangle">새침 세모 (ㅅ)</option>
+            <option value="open_o">동그란 입 (O)</option>
+            <option value="open_d">활짝 웃음 (D)</option>
+            <option value="none">입 없음</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid2">
+        <label>몸통 무늬
+          <select id="pat0">
+            <option value="0">눈결정 단색</option>
+            <option value="5">투톤 샤베트 그라데이션</option>
+          </select>
+        </label>
+        <label>목도리·모자 무늬
+          <select id="scarfPat0">
+            <option value="1">니트 줄무늬</option>
+            <option value="2" selected>타탄 체크무늬</option>
+            <option value="4">노르딕 눈꽃 패턴</option>
+            <option value="3">귀여운 물방울</option>
+            <option value="0">깔끔 단색</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid3">
+        <label>눈사람 색<input id="color0" type="color" value="#fcfdff"></label>
+        <label>목도리·포인트<input id="acc0" type="color" value="#c94f56"></label>
+        <label>눈 색<input id="eyeCol0" type="color" value="#2b2833"></label>
+      </div>
+    </section>
+
+    <section>
+      <h2><span>🧤 둘째 눈사람 (위 / 오른쪽)</span></h2>
+      <div class="grid2">
+        <label>동물 모양
+          <select id="animal1">
+            <option value="rabbit">토끼 눈사람</option>
+            <option value="classic">클래식 눈사람</option>
+            <option value="bear">곰돌이 눈사람</option>
+            <option value="cat">고양이 눈사람</option>
+            <option value="dog">강아지 눈사람</option>
+            <option value="fox">여우 눈사람</option>
+            <option value="wolf">늑대 눈사람</option>
+            <option value="panda">판다 눈사람</option>
+            <option value="reindeer">루돌프 사슴</option>
+            <option value="hamster">모찌 햄스터</option>
+            <option value="penguin">아기 펭귄</option>
+            <option value="duck">오리·병아리</option>
+          </select>
+        </label>
+        <label>모자
+          <select id="hat1">
+            <option value="beret">겨울 베레모</option>
+            <option value="earmuff">포근 귀마개</option>
+            <option value="beanie">방울 털모자</option>
+            <option value="tophat">신사 실크햇</option>
+            <option value="bucket">빨간 양동이</option>
+            <option value="none">모자 없음</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid3">
+        <label>눈매
+          <select id="eye1">
+            <option value="happy" selected>눈웃음 (^ ^)</option>
+            <option value="dot">초롱 단추 눈</option>
+            <option value="sparkle">반짝 왕방울</option>
+            <option value="sleepy">잠자는 눈</option>
+            <option value="wink">윙크 (&gt; ●)</option>
+            <option value="shy">수줍음 (&gt; &lt;)</option>
+            <option value="chill">시크 눈 (ㅡ ㅡ)</option>
+            <option value="heart">하트 뿅뿅</option>
+          </select>
+        </label>
+        <label>코 파츠
+          <select id="nose1">
+            <option value="button" selected>앙증 단추 코</option>
+            <option value="carrot">통통 당근 코</option>
+            <option value="rudolph">빨간 루돌프 코</option>
+            <option value="muzzle">곰·강아지 주둥이</option>
+            <option value="beak">오리·펭귄 부리</option>
+            <option value="none">코 없음</option>
+          </select>
+        </label>
+        <label>입 파츠
+          <select id="mouth1">
+            <option value="cat" selected>고양이 입 (ω)</option>
+            <option value="dot_smile">석탄 점선 미소</option>
+            <option value="pout">시무룩 입 (︵)</option>
+            <option value="flat">무표정 입 (ㅡ)</option>
+            <option value="wavy">뿌엥 물결 (﹏)</option>
+            <option value="triangle">새침 세모 (ㅅ)</option>
+            <option value="open_o">동그란 입 (O)</option>
+            <option value="open_d">활짝 웃음 (D)</option>
+            <option value="none">입 없음</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid2">
+        <label>몸통 무늬
+          <select id="pat1">
+            <option value="0">눈결정 단색</option>
+            <option value="5" selected>투톤 샤베트 그라데이션</option>
+          </select>
+        </label>
+        <label>목도리·모자 무늬
+          <select id="scarfPat1">
+            <option value="4" selected>노르딕 눈꽃 패턴</option>
+            <option value="1">니트 줄무늬</option>
+            <option value="2">타탄 체크무늬</option>
+            <option value="3">귀여운 물방울</option>
+            <option value="0">깔끔 단색</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid3">
+        <label>눈사람 색<input id="color1" type="color" value="#fff5eb"></label>
+        <label>목도리·포인트<input id="acc1" type="color" value="#4c7a9c"></label>
+        <label>눈 색<input id="eyeCol1" type="color" value="#2b2833"></label>
+      </div>
+    </section>
+
+    <section>
+      <h2><span>💡 조명 & 촬영 설정</span></h2>
+      <div class="grid2">
+        <label>주조명 방향 회전
+          <input id="lightAng" type="range" min="-180" max="180" value="35">
+        </label>
+        <label>눈 결정 반짝임
+          <input id="glitter" type="range" min="0" max="100" value="65">
+        </label>
+      </div>
+      <div class="grid2">
+        <label>확대 / 줌
+          <input id="zoom" type="range" min="65" max="140" value="98">
+        </label>
+        <label>GIF 애니메이션 모션
+          <select id="gifMode">
+            <option value="turn">360° 회전 + 눈 내리기</option>
+            <option value="swing">좌우 살랑 + 눈 내리기</option>
+            <option value="snow">고정 시점 + 눈보라</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid2">
+        <label>배경 색<input id="bg" type="color" value="#e4ebf2"></label>
+        <label>받침대 색<input id="mat" type="color" value="#7c5c43"></label>
+      </div>
+      <div class="checks">
+        <label class="check"><input id="cushion" type="checkbox" checked>스노우볼 받침대</label>
+        <label class="check"><input id="transparent" type="checkbox">배경 투명 저장</label>
+      </div>
+    </section>
+
+    <div class="row" style="margin-top:0">
+      <button id="save" class="save">📸 고화질 PNG 저장</button>
+      <button id="saveGif" class="save" style="background:#4c6f99">🎞️ 움직이는 GIF 저장</button>
+    </div>
+    <div id="status" role="status"></div>
+  </aside>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const canvas = $('canvas');
+const gl = canvas.getContext('webgl', { antialias: true, alpha: true, preserveDrawingBuffer: true });
+if (!gl) {
+  $('status').textContent = '이 브라우저에서 3D를 표시할 수 없어요. 하드웨어 가속을 켜고 다시 열어 주세요.';
+  throw Error('WebGL unavailable');
+}
+
+const vs = `
+attribute vec3 p, n;
+uniform vec3 pos, scale;
+uniform float turn, roll, yaw, pitch, zoom;
+varying vec3 vNormal, vWorld, vLocal, vView;
+
+vec3 ry(vec3 v, float a) {
+  return vec3(cos(a)*v.x + sin(a)*v.z, v.y, -sin(a)*v.x + cos(a)*v.z);
+}
+vec3 rz(vec3 v, float a) {
+  return vec3(cos(a)*v.x - sin(a)*v.y, sin(a)*v.x + cos(a)*v.y, v.z);
+}
+void main() {
+  vLocal = p;
+  vec3 w = ry(rz(p * scale, roll), turn) + pos;
+  vWorld = w;
+  vec3 wn = normalize(ry(rz(n / scale, roll), turn));
+  vNormal = wn;
+  w.y -= 0.92;
+  w = ry(w, yaw);
+  w = vec3(w.x, cos(pitch)*w.y - sin(pitch)*w.z, sin(pitch)*w.y + cos(pitch)*w.z);
+  vView = w;
+  gl_Position = vec4(w.x * zoom / 3.25, w.y * zoom / 3.25, -w.z / 12.0, 1.0);
+}
+`;
+
+const fs = `
+precision mediump float;
+varying vec3 vNormal, vWorld, vLocal, vView;
+uniform vec3 color, color2;
+uniform float shiny, pat, matType, glitter;
+uniform vec3 keyDir, keyCol, ambCol, rimCol, warmPos, warmCol;
+
+float hash(vec3 p) {
+  return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453);
+}
+
+vec3 applyPattern(vec3 base, vec3 sec, float pType, vec3 lp) {
+  float ang = atan(lp.x, lp.z);
+  float y = lp.y;
+  if (pType < 0.5) {
+    return base;
+  } else if (pType < 1.5) {
+    // 1: Knit horizontal stripes + subtle rib
+    float s = step(0.0, sin(y * 22.0));
+    float rib = 0.96 + 0.04 * sin(ang * 36.0);
+    return mix(base, sec, s * 0.88) * rib;
+  } else if (pType < 2.5) {
+    // 2: Tartan / Plaid check
+    float sy = smoothstep(-0.1, 0.1, sin(y * 20.0));
+    float sx = smoothstep(-0.1, 0.1, sin(ang * 10.0));
+    float fine = step(0.88, sin(y * 40.0)) + step(0.88, sin(ang * 20.0));
+    vec3 c = mix(base, sec, 0.45 * sy + 0.45 * sx);
+    return mix(c, vec3(0.98, 0.95, 0.88), clamp(fine * 0.35, 0.0, 0.5));
+  } else if (pType < 3.5) {
+    // 3: Polka dots
+    vec2 uv = vec2(ang * 3.8, y * 7.5);
+    vec2 g = fract(uv) - 0.5;
+    float d = 1.0 - smoothstep(0.24, 0.29, length(g));
+    return mix(base, sec, d);
+  } else if (pType < 4.5) {
+    // 4: Nordic winter diamond & bands
+    float band = step(0.55, abs(sin(y * 14.0)));
+    float dia = step(0.62, abs(sin(ang * 12.0) + sin(y * 28.0)) * 0.5);
+    vec3 c = mix(base, sec, max(band * 0.75, dia));
+    return c;
+  } else {
+    // 5: Two-tone soft sherbet gradient
+    float t = clamp(y * 0.65 + 0.5, 0.0, 1.0);
+    return mix(sec, base, smoothstep(0.15, 0.85, t));
+  }
+}
+
+void main() {
+  vec3 N = normalize(vNormal);
+
+  // Glass dome shader (matType == 2.0)
+  if (matType > 1.5 && matType < 2.5) {
+    vec3 V = vec3(0.0, 0.0, 1.0);
+    float ndv = abs(dot(N, V));
+    float fresnel = pow(1.0 - clamp(ndv, 0.0, 1.0), 2.4);
+    float spec1 = pow(max(dot(N, normalize(keyDir + vec3(0.0, 0.0, 1.0))), 0.0), 65.0);
+    float spec2 = pow(max(dot(N, normalize(vec3(0.65, -0.45, 0.8))), 0.0), 32.0) * 0.45;
+    vec3 domeCol = mix(ambCol, keyCol, 0.6) * 0.9 + rimCol * fresnel * 0.85 + vec3(1.0) * (spec1 + spec2);
+    float alpha = clamp(0.05 + fresnel * 0.48 + spec1 * 0.75 + spec2 * 0.35, 0.0, 0.88);
+    gl_FragColor = vec4(domeCol, alpha);
+    return;
+  }
+
+  // Emissive warm lantern glow (matType == 3.0)
+  if (matType > 2.5) {
+    gl_FragColor = vec4(color * 1.25, 1.0);
+    return;
+  }
+
+  vec3 patCol = applyPattern(color, color2, pat, vLocal);
+
+  // Directional + Rim + Warm Point Light
+  float diff = max(dot(N, normalize(keyDir)), 0.0);
+  float wrap = max(dot(N, normalize(keyDir)) * 0.5 + 0.5, 0.0);
+  float rim = pow(1.0 - max(dot(N, vec3(0.0, 0.15, 0.98)), 0.0), 2.2);
+
+  vec3 toWarm = warmPos - vWorld;
+  float warmDist = length(toWarm);
+  float warmAtt = 1.0 / (1.0 + warmDist * warmDist * 1.1);
+  float warmDiff = max(dot(N, normalize(toWarm)), 0.0) * warmAtt;
+
+  // Snow & fabric micro-grain + crystal sparkle
+  float grain = hash(floor(vWorld * 95.0)) - 0.5;
+  float sparkleSeed = hash(floor(vWorld * 72.0 + normalize(keyDir) * 8.0));
+  float sparkle = step(0.986, sparkleSeed) * pow(max(dot(N, normalize(keyDir + vec3(0.2, 0.3, 0.9))), 0.0), 6.0) * glitter * (1.0 - matType);
+
+  vec3 light = ambCol
+             + keyCol * (0.52 * diff + 0.25 * wrap)
+             + rimCol * (0.35 * rim)
+             + warmCol * (0.85 * warmDiff)
+             + grain * 0.025;
+
+  vec3 c = patCol * light;
+
+  // Specular highlight
+  float s = pow(max(dot(N, normalize(keyDir + vec3(0.0, 0.2, 1.0))), 0.0), 42.0) * shiny;
+  c += s * keyCol + sparkle * vec3(1.0, 0.99, 0.95);
+
+  gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);
+}
+`;
+
+function createShader(type, src) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw Error(gl.getShaderInfoLog(s));
+  return s;
+}
+const program = gl.createProgram();
+gl.attachShader(program, createShader(gl.VERTEX_SHADER, vs));
+gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fs));
+gl.linkProgram(program);
+if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(program));
+gl.useProgram(program);
+
+// Build unit sphere mesh
+const vertices = [], normals = [];
+const lat = 28, lon = 40;
+function point(i, j) {
+  const a = i * Math.PI / lat, b = j * Math.PI * 2 / lon;
+  return [Math.sin(a) * Math.cos(b), Math.cos(a), Math.sin(a) * Math.sin(b)];
+}
+for (let i = 0; i < lat; i++) {
+  for (let j = 0; j < lon; j++) {
+    for (const v of [point(i, j), point(i + 1, j), point(i + 1, j + 1), point(i, j), point(i + 1, j + 1), point(i, j + 1)]) {
+      vertices.push(...v);
+      normals.push(...v);
+    }
+  }
+}
+for (const [name, data] of [['p', vertices], ['n', normals]]) {
+  const b = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, b);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+  const a = gl.getAttribLocation(program, name);
+  gl.enableVertexAttribArray(a);
+  gl.vertexAttribPointer(a, 3, gl.FLOAT, false, 0, 0);
+}
+
+const u = {};
+for (const k of [
+  'pos', 'scale', 'turn', 'roll', 'yaw', 'pitch', 'zoom',
+  'color', 'color2', 'shiny', 'pat', 'matType', 'glitter',
+  'keyDir', 'keyCol', 'ambCol', 'rimCol', 'warmPos', 'warmCol'
+]) {
+  u[k] = gl.getUniformLocation(program, k);
+}
+gl.enable(gl.DEPTH_TEST);
+
+function rgb(h) {
+  return h.slice(1).match(/../g).map(x => parseInt(x, 16) / 255);
+}
+
+// Mood Lighting Definitions
+const MOODS = {
+  day: {
+    bg: '#e4ebf2',
+    amb: [0.68, 0.73, 0.80],
+    key: [0.58, 0.56, 0.52],
+    rim: [0.45, 0.62, 0.85],
+    warm: [0.15, 0.10, 0.05]
+  },
+  sunset: {
+    bg: '#f2dfd7',
+    amb: [0.58, 0.46, 0.54],
+    key: [0.82, 0.48, 0.32],
+    rim: [0.95, 0.62, 0.45],
+    warm: [0.35, 0.18, 0.10]
+  },
+  night: {
+    bg: '#1c2536',
+    amb: [0.28, 0.35, 0.52],
+    key: [0.35, 0.55, 0.72],
+    rim: [0.25, 0.92, 0.76],
+    warm: [0.85, 0.52, 0.22]
+  },
+  warm: {
+    bg: '#2c221e',
+    amb: [0.38, 0.30, 0.28],
+    key: [0.55, 0.42, 0.32],
+    rim: [0.75, 0.48, 0.30],
+    warm: [1.15, 0.65, 0.28]
+  }
+};
+
+let currentMood = 'day';
+let meshes = [];
+let yaw = -0.32, pitch = 0.26, zoom = 0.98;
+let shakeEnergy = 0;
+
+// Falling 3D snowflakes inside the globe
+const SNOW_COUNT = 75;
+const snowflakes = Array.from({ length: SNOW_COUNT }, () => {
+  const r = Math.random() * 1.35;
+  const theta = Math.random() * Math.PI * 2;
+  return {
+    x: Math.cos(theta) * r,
+    y: Math.random() * 2.1 + 0.05,
+    z: Math.sin(theta) * r,
+    vy: 0.28 + Math.random() * 0.35,
+    phase: Math.random() * Math.PI * 2,
+    size: 0.022 + Math.random() * 0.024
+  };
+});
+
+function ball(pos, scale, c, turn = 0, roll = 0, shiny = 0, pat = 0, c2 = '#ffffff', matType = 0) {
+  meshes.push({
+    pos,
+    scale,
+    c: typeof c === 'string' ? rgb(c) : c,
+    c2: typeof c2 === 'string' ? rgb(c2) : c2,
+    turn,
+    roll,
+    shiny,
+    pat,
+    matType
+  });
+}
+
+// Build a lying or upright Snowman
+function addSnowman(origin, angle, cfg, scaleMul = 1.0) {
+  const { kind, hat, eye = 'dot', nose = 'carrot', mouth = 'dot_smile', eyeCol = '#2b2833', color, acc, pat, scarfPat, lying, upper, headTilt = 0 } = cfg;
+  const secondaryBody = acc;
+  const cream = '#fff9f0';
+  const pandaDark = '#2f2d38';
+
+  const rot = v => [
+    Math.cos(angle) * v[0] + Math.sin(angle) * v[2],
+    v[1],
+    -Math.sin(angle) * v[0] + Math.cos(angle) * v[2]
+  ];
+  const add = (p, s, c = color, r = 0, shine = 0.05, pt = 0, c2 = cream, mt = 0) => {
+    const sp = p.map(x => x * scaleMul);
+    const ss = s.map(x => x * scaleMul);
+    const v = rot(sp);
+    ball(v.map((n, i) => n + origin[i]), ss, c, angle, r, shine, pt, c2, mt);
+  };
+
+  let headCenter, headYaw, headRoll, headRadius;
+
+  if (lying) {
+    // Cozy lying pose ("너 위에 누울래" style)
+    add([0, -0.03, -0.27], [0.44, 0.36, 0.58], color, 0, 0.06, pat, secondaryBody);
+    const pawCol = kind === 'panda' ? pandaDark : (kind === 'duck' ? '#f3a833' : color);
+    for (const x of [-0.32, 0.32]) {
+      add([x, -0.24, 0.08], [0.19, 0.18, 0.25], pawCol, 0, 0.05, pat, secondaryBody);
+      add([x, -0.25, -0.67], [0.20, 0.19, 0.23], pawCol, 0, 0.05, pat, secondaryBody);
+    }
+    const tailLen = (kind === 'cat' || kind === 'dog' || kind === 'fox' || kind === 'wolf') ? 0.31 : 0.20;
+    add([0, 0.07, -0.80], [0.19, 0.19, tailLen], kind === 'panda' ? pandaDark : color, 0, 0.05);
+    if (kind === 'fox') {
+      add([0, 0.09, -1.04], [0.13, 0.13, 0.14], '#ffffff', 0, 0.05);
+    }
+
+    // Cozy muffler wrapped behind neck
+    add([0, 0.08, 0.14], [0.48, 0.18, 0.26], acc, 0, 0.04, scarfPat, cream, 1);
+    add([0.28, -0.08, 0.28], [0.13, 0.22, 0.08], acc, -0.25, 0.04, scarfPat, cream, 1);
+
+    headYaw = upper ? 0.32 : 0.0;
+    headRoll = upper ? -0.16 : 0.0;
+    headCenter = upper ? [0.18, 0.09, 0.06] : [0, 0.22, 0.42];
+    headRadius = [0.80, 0.63, 0.54];
+  } else {
+    // Classic plump upright snowman
+    add([0, 0.34, 0], [0.54, 0.46, 0.52], color, 0, 0.08, pat, secondaryBody);
+    if (kind === 'penguin') {
+      // Cute white belly patch for penguin
+      add([0, 0.33, 0.15], [0.41, 0.37, 0.40], '#ffffff', 0, 0.06);
+      for (const sign of [-1, 1]) {
+        add([sign * 0.22, 0.04, 0.36], [0.13, 0.06, 0.16], '#f3a833', 0, 0.15);
+      }
+    } else {
+      // Cute buttons on belly
+      add([0, 0.43, 0.50], [0.048, 0.048, 0.025], '#35313e', 0, 0.25);
+      add([0, 0.27, 0.52], [0.048, 0.048, 0.025], '#35313e', 0, 0.25);
+    }
+
+    // Cozy snow paws / wings / mittens
+    for (const sign of [-1, 1]) {
+      if (kind === 'penguin') {
+        add([sign * 0.53, 0.38, 0.06], [0.10, 0.26, 0.16], color, -sign * 0.28, 0.06);
+      } else {
+        const armCol = kind === 'panda' ? pandaDark : color;
+        add([sign * 0.50, 0.42, 0.08], [0.17, 0.13, 0.15], armCol, sign * 0.35, 0.06);
+        add([sign * 0.61, 0.45, 0.14], [0.11, 0.10, 0.12], acc, sign * 0.35, 0.08, 0, cream, 1);
+      }
+    }
+
+    // Muffler around neck + hanging tails
+    add([0, 0.70, 0.02], [0.46, 0.14, 0.45], acc, 0, 0.04, scarfPat, cream, 1);
+    add([0.17, 0.53, 0.42], [0.11, 0.23, 0.06], acc, -0.15, 0.04, scarfPat, cream, 1);
+    add([0.27, 0.57, 0.38], [0.09, 0.18, 0.05], acc, -0.32, 0.04, scarfPat, cream, 1);
+
+    headYaw = headTilt * 0.6;
+    headRoll = headTilt;
+    headCenter = [0, 1.07, 0.02];
+    headRadius = [0.48, 0.42, 0.44];
+  }
+
+  const head = (p, s, c = color, r = 0, shine = 0.05, pt = 0, c2 = cream, mt = 0) => {
+    const baseY = lying ? 0.22 : 1.07;
+    const baseZ = lying ? 0.42 : 0.02;
+    const x = p[0], y = p[1] - baseY, z = p[2] - baseZ;
+    const tx = Math.cos(headRoll) * x - Math.sin(headRoll) * y;
+    const ty = Math.sin(headRoll) * x + Math.cos(headRoll) * y;
+    const q = [
+      Math.cos(headYaw) * tx + Math.sin(headYaw) * z + headCenter[0],
+      ty + headCenter[1],
+      -Math.sin(headYaw) * tx + Math.cos(headYaw) * z + headCenter[2]
+    ];
+    const sp = q.map(n => n * scaleMul);
+    const ss = s.map(n => n * scaleMul);
+    const v = rot(sp);
+    ball(v.map((n, i) => n + origin[i]), ss, c, angle + headYaw, r + headRoll, shine, pt, c2, mt);
+  };
+
+  const hy = lying ? 0.22 : 1.07;
+  const hz = lying ? 0.42 : 0.02;
+  const [rx, ry, rz] = headRadius;
+
+  // Head snowball
+  head([0, hy, hz], [rx, ry, rz], color, 0, 0.08, pat, secondaryBody);
+
+  // Extra fox / wolf / duck features (no protruding cheek balls)
+  const earScale = lying ? 1.0 : 0.62;
+  if (kind === 'fox' && !lying) {
+    // Fluffy fox tail peeking out from behind torso
+    add([0.38, 0.24, -0.38], [0.19, 0.17, 0.30], color, 0.45, 0.05);
+    add([0.50, 0.31, -0.50], [0.13, 0.12, 0.15], '#ffffff', 0.45, 0.05);
+  } else if (kind === 'wolf' && !lying) {
+    // Bushy wolf tail behind torso
+    add([-0.36, 0.22, -0.38], [0.17, 0.16, 0.28], color, -0.35, 0.05);
+  } else if ((kind === 'duck' || kind === 'penguin') && hat === 'none') {
+    // Cute tuft of feathers on top of head when not wearing a hat
+    head([0, hy + ry * 0.98, hz - 0.02], [0.055 * earScale, 0.14 * earScale, 0.055 * earScale], color, 0.18);
+    head([-0.045 * earScale, hy + ry * 0.95, hz - 0.03], [0.048 * earScale, 0.11 * earScale, 0.048 * earScale], color, -0.25);
+  }
+
+  // Animal ears & antlers on snowman
+  for (const sign of [-1, 1]) {
+    const ex = sign * rx * 0.65;
+    if (kind === 'rabbit') {
+      head([ex, hy + ry * 1.15, hz - 0.03], [0.19 * earScale, 0.54 * earScale, 0.17 * earScale], color, -sign * 0.18);
+      head([ex, hy + ry * 1.16, hz + 0.09 * earScale], [0.075 * earScale, 0.34 * earScale, 0.025], '#e5bac2', -sign * 0.18);
+    } else if (kind === 'bear') {
+      head([ex * 1.05, hy + ry * 0.84, hz - 0.02], [0.24 * earScale, 0.24 * earScale, 0.18 * earScale], color);
+      head([ex * 1.05, hy + ry * 0.84, hz + 0.09 * earScale], [0.11 * earScale, 0.12 * earScale, 0.025], '#d9b8be');
+    } else if (kind === 'panda') {
+      head([ex * 1.05, hy + ry * 0.84, hz - 0.02], [0.24 * earScale, 0.24 * earScale, 0.18 * earScale], pandaDark);
+    } else if (kind === 'cat') {
+      head([ex * 1.04, hy + ry * 0.90, hz - 0.03], [0.26 * earScale, 0.40 * earScale, 0.20 * earScale], color, -sign * 0.25);
+      head([ex * 1.04, hy + ry * 0.93, hz + 0.09 * earScale], [0.11 * earScale, 0.21 * earScale, 0.025], '#ddb4be', -sign * 0.25);
+    } else if (kind === 'fox') {
+      // Wide-angled big fox ears + cream inner fluff + dark ear tips
+      head([ex * 1.16, hy + ry * 0.92, hz - 0.03], [0.29 * earScale, 0.48 * earScale, 0.19 * earScale], color, -sign * 0.36);
+      head([ex * 1.15, hy + ry * 0.91, hz + 0.09 * earScale], [0.14 * earScale, 0.26 * earScale, 0.03 * earScale], '#fff7eb', -sign * 0.36);
+      head([ex * 1.28, hy + ry * 1.18, hz - 0.02], [0.12 * earScale, 0.16 * earScale, 0.11 * earScale], '#3d3330', -sign * 0.36);
+    } else if (kind === 'wolf') {
+      // Tall upright sharp wolf ears + slate inner ear
+      head([ex * 0.98, hy + ry * 1.02, hz - 0.03], [0.23 * earScale, 0.50 * earScale, 0.19 * earScale], color, -sign * 0.14);
+      head([ex * 0.98, hy + ry * 1.00, hz + 0.09 * earScale], [0.10 * earScale, 0.28 * earScale, 0.03 * earScale], '#b7bec9', -sign * 0.14);
+    } else if (kind === 'dog') {
+      head([sign * rx * 0.96, hy - ry * 0.05, hz - 0.01], [0.23 * earScale, 0.50 * earScale, 0.23 * earScale], color, sign * 0.16);
+    } else if (kind === 'hamster') {
+      head([ex * 1.18, hy + ry * 0.62, hz - 0.04], [0.19 * earScale, 0.19 * earScale, 0.12 * earScale], color, -sign * 0.2);
+      head([ex * 1.18, hy + ry * 0.62, hz + 0.04 * earScale], [0.09 * earScale, 0.09 * earScale, 0.025], '#e5bac2', -sign * 0.2);
+    } else if (kind === 'reindeer') {
+      // Cute side deer ears
+      head([sign * rx * 0.98, hy + ry * 0.42, hz - 0.04], [0.22 * earScale, 0.11 * earScale, 0.10 * earScale], color, sign * 0.35);
+      // Branching brown antlers on top
+      const antlerCol = '#7a5238';
+      head([ex * 0.82, hy + ry * 1.08, hz - 0.04], [0.065 * earScale, 0.34 * earScale, 0.065 * earScale], antlerCol, -sign * 0.22);
+      head([ex * 1.06, hy + ry * 1.18, hz - 0.04], [0.05 * earScale, 0.17 * earScale, 0.05 * earScale], antlerCol, -sign * 0.72);
+      head([ex * 0.68, hy + ry * 1.24, hz - 0.04], [0.045 * earScale, 0.14 * earScale, 0.045 * earScale], antlerCol, sign * 0.45);
+    }
+  }
+
+  // Hat on top of head
+  const topY = hy + ry * 0.86;
+  const hatScale = lying ? 1.0 : 0.64;
+  if (hat === 'beanie') {
+    head([0, topY - 0.02 * hatScale, hz], [rx * 0.86, 0.14 * hatScale, rz * 0.86], cream, 0, 0.04, 1, acc, 1);
+    head([0, topY + 0.12 * hatScale, hz], [rx * 0.78, 0.32 * hatScale, rz * 0.78], acc, 0, 0.04, scarfPat, cream, 1);
+    head([0, topY + 0.42 * hatScale, hz], [0.17 * hatScale, 0.17 * hatScale, 0.17 * hatScale], cream, 0, 0.02);
+  } else if (hat === 'tophat') {
+    head([0, topY, hz], [rx * 0.95, 0.06 * hatScale, rz * 0.95], '#2d313b', 0, 0.2);
+    head([0, topY + 0.24 * hatScale, hz], [rx * 0.62, 0.28 * hatScale, rz * 0.62], '#2d313b', 0, 0.2);
+    head([0, topY + 0.08 * hatScale, hz], [rx * 0.64, 0.06 * hatScale, rz * 0.64], acc, 0, 0.1);
+  } else if (hat === 'beret') {
+    head([0.12 * hatScale, topY + 0.08 * hatScale, hz], [rx * 0.88, 0.19 * hatScale, rz * 0.88], acc, -0.18, 0.05, scarfPat, cream, 1);
+    head([0.15 * hatScale, topY + 0.25 * hatScale, hz], [0.05 * hatScale, 0.08 * hatScale, 0.05 * hatScale], '#4a3b32', -0.18);
+  } else if (hat === 'earmuff') {
+    head([0, hy + ry * 0.18, hz], [rx * 1.06, ry * 0.92, 0.07 * hatScale], acc, 0, 0.1);
+    for (const sign of [-1, 1]) {
+      head([sign * rx * 1.03, hy + 0.02, hz + 0.02], [0.16 * hatScale, 0.24 * hatScale, 0.22 * hatScale], acc, 0, 0.04, scarfPat, cream, 1);
+    }
+  } else if (hat === 'bucket') {
+    head([-0.08 * hatScale, topY + 0.20 * hatScale, hz], [rx * 0.66, 0.28 * hatScale, rz * 0.66], '#d14b4b', 0.14, 0.35);
+    head([-0.04 * hatScale, topY + 0.01 * hatScale, hz], [rx * 0.74, 0.06 * hatScale, rz * 0.74], '#b53838', 0.14, 0.35);
+  }
+
+  // Facial details mapped onto head ellipsoid surface
+  const surf = (x, y) => hz + rz * Math.sqrt(Math.max(0, 1 - (x * x) / (rx * rx) - ((y - hy) * (y - hy)) / (ry * ry)));
+  const fMul = lying ? 1.0 : 0.64;
+
+  // Panda gentle drooping eye patches (soft charcoal, tilted outward-down so it looks cute & gentle)
+  if (kind === 'panda') {
+    for (const sign of [-1, 1]) {
+      const px = sign * 0.285 * fMul;
+      const py = hy - 0.12 * fMul;
+      const pz = surf(px, py);
+      head([px, py, pz - 0.003 * fMul], [0.115 * fMul, 0.095 * fMul, 0.018 * fMul], '#6b6475', -sign * 0.30);
+    }
+  }
+
+  // --- Eyes (8 expressions) ---
+  const ezOff = (kind === 'panda' ? 0.016 : 0) * fMul;
+  for (const sign of [-1, 1]) {
+    const cx = sign * 0.28 * fMul;
+    const cy = hy - 0.115 * fMul;
+    const cz = surf(cx, cy) + ezOff;
+    const pupilCol = eyeCol;
+
+    if (eye === 'dot' || (eye === 'wink' && sign === 1)) {
+      head([cx, cy, cz], [0.068 * fMul, 0.078 * fMul, 0.032 * fMul], pupilCol, 0, 0.35);
+      head([cx - 0.016 * fMul, cy + 0.022 * fMul, cz + 0.026 * fMul], [0.020 * fMul, 0.022 * fMul, 0.009 * fMul], '#fff8ec');
+    } else if (eye === 'sparkle') {
+      head([cx, cy, cz], [0.086 * fMul, 0.098 * fMul, 0.036 * fMul], pupilCol, 0, 0.45);
+      head([cx - 0.022 * fMul, cy + 0.028 * fMul, cz + 0.028 * fMul], [0.026 * fMul, 0.028 * fMul, 0.009 * fMul], '#ffffff');
+      head([cx + 0.020 * fMul, cy - 0.022 * fMul, cz + 0.028 * fMul], [0.013 * fMul, 0.013 * fMul, 0.008 * fMul], '#ffffff');
+    } else if (eye === 'happy') {
+      // ^ ^ arched happy eyes
+      for (let j = 0; j < 7; j++) {
+        const t = (j / 6) * 2 - 1;
+        const ex = cx + t * 0.068 * fMul;
+        const ey = cy - 0.015 * fMul + Math.cos(t * Math.PI * 0.5) * 0.042 * fMul;
+        head([ex, ey, surf(ex, ey) + 0.006 * fMul + ezOff], [0.016 * fMul, 0.016 * fMul, 0.012 * fMul], pupilCol);
+      }
+    } else if (eye === 'sleepy') {
+      // U U peaceful sleeping eyes
+      for (let j = 0; j < 7; j++) {
+        const t = (j / 6) * 2 - 1;
+        const ex = cx + t * 0.068 * fMul;
+        const ey = cy + 0.015 * fMul - Math.cos(t * Math.PI * 0.5) * 0.036 * fMul;
+        head([ex, ey, surf(ex, ey) + 0.006 * fMul + ezOff], [0.015 * fMul, 0.015 * fMul, 0.012 * fMul], pupilCol);
+      }
+    } else if (eye === 'shy' || (eye === 'wink' && sign === -1)) {
+      // > < chevron eyes (pointing inward toward nose)
+      for (const arm of [-1, 1]) {
+        for (let j = 0; j < 5; j++) {
+          const u = j / 4;
+          const ex = cx - sign * (0.035 - u * 0.075) * fMul;
+          const ey = cy + arm * u * 0.042 * fMul;
+          head([ex, ey, surf(ex, ey) + 0.006 * fMul + ezOff], [0.015 * fMul, 0.015 * fMul, 0.012 * fMul], pupilCol);
+        }
+      }
+    } else if (eye === 'chill') {
+      // ㅡ ㅡ relaxed flat eyes
+      head([cx, cy, cz + 0.005 * fMul], [0.076 * fMul, 0.022 * fMul, 0.018 * fMul], pupilCol);
+    } else if (eye === 'heart') {
+      // 3D Heart eyes (uses eyeCol if customized, or default pink-red if default dark)
+      const hc = eyeCol.toLowerCase() === '#2b2833' ? '#e04f67' : eyeCol;
+      head([cx - 0.020 * fMul, cy + 0.008 * fMul, cz + 0.012 * fMul], [0.046 * fMul, 0.070 * fMul, 0.024 * fMul], hc, 0.52, 0.35);
+      head([cx + 0.020 * fMul, cy + 0.008 * fMul, cz + 0.012 * fMul], [0.046 * fMul, 0.070 * fMul, 0.024 * fMul], hc, -0.52, 0.35);
+    }
+  }
+
+  // --- Nose (6 styles) ---
+  const ny = hy - 0.205 * fMul;
+  const nz = surf(0, ny);
+
+  if (nose === 'carrot') {
+    head([0, ny, nz + 0.055 * fMul], [0.052 * fMul, 0.048 * fMul, 0.13 * fMul], '#ef7d3b', 0, 0.15);
+    head([0, ny, nz + 0.13 * fMul], [0.032 * fMul, 0.030 * fMul, 0.07 * fMul], '#e36424', 0, 0.15);
+  } else if (nose === 'button') {
+    head([0, ny, nz + 0.004 * fMul], [0.044 * fMul, 0.030 * fMul, 0.018 * fMul], '#997581', 0, 0.15);
+  } else if (nose === 'rudolph') {
+    head([0, ny + 0.01 * fMul, nz + 0.035 * fMul], [0.068 * fMul, 0.064 * fMul, 0.068 * fMul], '#e03a3e', 0, 0.65);
+  } else if (nose === 'muzzle') {
+    head([0, ny - 0.035 * fMul, nz + 0.018 * fMul], [0.145 * fMul, 0.105 * fMul, 0.062 * fMul], '#ffffff');
+    head([0, ny + 0.014 * fMul, nz + 0.070 * fMul], [0.048 * fMul, 0.036 * fMul, 0.028 * fMul], '#35313e', 0, 0.35);
+  } else if (nose === 'beak') {
+    head([0, ny - 0.01 * fMul, nz + 0.035 * fMul], [0.115 * fMul, 0.046 * fMul, 0.078 * fMul], '#f5a623', 0, 0.25);
+    head([0, ny - 0.032 * fMul, nz + 0.025 * fMul], [0.088 * fMul, 0.032 * fMul, 0.055 * fMul], '#e08e1b', 0, 0.2);
+  }
+
+  // --- Mouth (9 styles, independent of nose) ---
+  const mCol = nose === 'button' ? '#8c6773' : '#3b3542';
+  const mzExtra = (nose === 'muzzle' ? 0.062 : 0) * fMul;
+  const mWidthMul = nose === 'muzzle' ? 0.80 : 1.0;
+  const myBase = hy - (nose === 'beak' ? 0.305 : (nose === 'muzzle' ? 0.255 : 0.285)) * fMul;
+
+  if (mouth === 'dot_smile') {
+    for (const sign of [-1, 1]) {
+      for (let j = 0; j < 6; j++) {
+        const t = j / 5;
+        const x = sign * t * 0.085 * fMul * mWidthMul;
+        const y = myBase - Math.sin((1 - t) * Math.PI * 0.5) * 0.028 * fMul;
+        head([x, y, surf(x, y) + 0.006 * fMul + mzExtra], [0.012 * fMul, 0.012 * fMul, 0.010 * fMul], mCol);
+      }
+    }
+  } else if (mouth === 'cat') {
+    // ω cat mouth
+    for (const sign of [-1, 1]) {
+      for (let j = 0; j < 9; j++) {
+        const t = j / 8;
+        const x = sign * t * 0.078 * fMul * mWidthMul;
+        const y = myBase + 0.015 * fMul - Math.sin(t * Math.PI) * 0.028 * fMul;
+        head([x, y, surf(x, y) + 0.006 * fMul + mzExtra], [0.011 * fMul, 0.011 * fMul, 0.009 * fMul], mCol);
+      }
+    }
+  } else if (mouth === 'pout') {
+    // ︵ pouting / sad downturn mouth
+    for (let j = 0; j < 11; j++) {
+      const t = (j / 10) * 2 - 1;
+      const x = t * 0.075 * fMul * mWidthMul;
+      const y = myBase - 0.022 * fMul + Math.cos(t * Math.PI * 0.5) * 0.028 * fMul;
+      head([x, y, surf(x, y) + 0.006 * fMul + mzExtra], [0.012 * fMul, 0.012 * fMul, 0.010 * fMul], mCol);
+    }
+  } else if (mouth === 'flat') {
+    // ㅡ flat poker-face mouth
+    head([0, myBase, surf(0, myBase) + 0.006 * fMul + mzExtra], [0.068 * fMul * mWidthMul, 0.013 * fMul, 0.012 * fMul], mCol);
+  } else if (mouth === 'wavy') {
+    // ﹏ wavy trembling mouth
+    for (let j = 0; j < 13; j++) {
+      const t = (j / 12) * 2 - 1;
+      const x = t * 0.080 * fMul * mWidthMul;
+      const y = myBase + Math.sin(t * Math.PI * 1.5) * 0.016 * fMul;
+      head([x, y, surf(x, y) + 0.006 * fMul + mzExtra], [0.011 * fMul, 0.011 * fMul, 0.010 * fMul], mCol);
+    }
+  } else if (mouth === 'triangle') {
+    // ㅅ cute chevron mouth
+    for (const sign of [-1, 1]) {
+      for (let j = 0; j < 6; j++) {
+        const u = j / 5;
+        const x = sign * u * 0.058 * fMul * mWidthMul;
+        const y = myBase + (0.012 - u * 0.036) * fMul;
+        head([x, y, surf(x, y) + 0.006 * fMul + mzExtra], [0.011 * fMul, 0.011 * fMul, 0.010 * fMul], mCol);
+      }
+    }
+  } else if (mouth === 'open_o') {
+    // O surprised / singing mouth
+    const my = myBase - 0.012 * fMul;
+    head([0, my, surf(0, my) + 0.006 * fMul + mzExtra], [0.038 * fMul * mWidthMul, 0.046 * fMul, 0.018 * fMul], '#3b3542');
+    head([0, my - 0.006 * fMul, surf(0, my) + 0.016 * fMul + mzExtra], [0.022 * fMul * mWidthMul, 0.024 * fMul, 0.010 * fMul], '#d96b78');
+  } else if (mouth === 'open_d') {
+    // Happy open mouth + pink tongue
+    const my = myBase - 0.010 * fMul;
+    head([0, my, surf(0, my) + 0.005 * fMul + mzExtra], [0.062 * fMul * mWidthMul, 0.042 * fMul, 0.018 * fMul], '#3b3542');
+    head([0, my - 0.010 * fMul, surf(0, my) + 0.015 * fMul + mzExtra], [0.038 * fMul * mWidthMul, 0.022 * fMul, 0.010 * fMul], '#e37b88');
+  }
+
+  // Rosy winter cheeks (extra rosy when shy/heart, omitted on duck)
+  if (kind !== 'duck') {
+    const cheekScale = (eye === 'shy' || eye === 'heart') ? 1.25 : 1.0;
+    const cheekCol = (eye === 'shy' || eye === 'heart') ? '#e88296' : '#e89da9';
+    for (const sign of [-1, 1]) {
+      const x = sign * 0.45 * fMul;
+      const y = hy - 0.24 * fMul;
+      head([x, y, surf(x, y)], [0.115 * fMul * cheekScale, 0.055 * fMul * cheekScale, 0.018 * fMul], cheekCol);
+    }
+  }
+}
+
+function addPineTree(x, z, s = 1.0) {
+  const snowCol = '#f7fbff';
+  const pineCol = '#3b6e5c';
+  ball([x, 0.12 * s, z], [0.12 * s, 0.18 * s, 0.12 * s], '#6e4f3a');
+  ball([x, 0.38 * s, z], [0.42 * s, 0.28 * s, 0.42 * s], pineCol, 0, 0, 0.05);
+  ball([x, 0.44 * s, z], [0.39 * s, 0.18 * s, 0.39 * s], snowCol, 0, 0, 0.08);
+  ball([x, 0.68 * s, z], [0.32 * s, 0.25 * s, 0.32 * s], pineCol, 0, 0, 0.05);
+  ball([x, 0.74 * s, z], [0.29 * s, 0.15 * s, 0.29 * s], snowCol, 0, 0, 0.08);
+  ball([x, 0.95 * s, z], [0.21 * s, 0.22 * s, 0.21 * s], pineCol, 0, 0, 0.05);
+  ball([x, 1.02 * s, z], [0.17 * s, 0.12 * s, 0.17 * s], snowCol, 0, 0, 0.08);
+  // Star bauble on top
+  ball([x, 1.18 * s, z], [0.065 * s, 0.065 * s, 0.065 * s], '#f5c242', 0, 0, 0.5);
+}
+
+function addGiftAndLantern(mode) {
+  if (mode === 'all' || mode === 'gifts') {
+    // Gift box on left front
+    const gx = -0.92, gz = 0.58;
+    ball([gx, 0.18, gz], [0.20, 0.16, 0.20], '#d64550', 0.3, 0, 0.15, 2, '#f9e79f', 1);
+    ball([gx, 0.35, gz], [0.09, 0.05, 0.04], '#f5c242', 0.3, 0.2, 0.3);
+    ball([gx, 0.35, gz], [0.04, 0.05, 0.09], '#f5c242', 0.3, -0.2, 0.3);
+    // Cute mini snowballs
+    ball([0.85, 0.11, 0.72], [0.13, 0.11, 0.13], '#ffffff', 0, 0, 0.08);
+    ball([1.02, 0.09, 0.58], [0.09, 0.08, 0.09], '#ffffff', 0, 0, 0.08);
+  }
+  if (mode === 'all') {
+    // Warm glowing snow lantern on right
+    const lx = 1.02, lz = 0.25;
+    ball([lx, 0.10, lz], [0.19, 0.08, 0.19], '#4a4e58', 0, 0, 0.2);
+    ball([lx, 0.26, lz], [0.15, 0.16, 0.15], '#ffcf70', 0, 0, 0.0, 0, '#ffffff', 3);
+    ball([lx, 0.43, lz], [0.20, 0.07, 0.20], '#4a4e58', 0, 0, 0.2);
+    ball([lx, 0.47, lz], [0.17, 0.05, 0.17], '#ffffff', 0, 0, 0.08);
+  }
+}
+
+function build() {
+  meshes = [];
+
+  // 1. Snowglobe Pedestal Base & Snow Floor
+  if ($('cushion').checked) {
+    const baseCol = $('mat').value;
+    // Wooden / ornate pedestal tiers
+    ball([0, -0.32, 0], [1.94, 0.14, 1.94], baseCol, 0, 0, 0.22);
+    ball([0, -0.16, 0], [1.80, 0.22, 1.80], baseCol, 0, 0, 0.28);
+    // Golden plaque on front of pedestal
+    ball([0, -0.18, 1.77], [0.42, 0.09, 0.06], '#d9b26f', 0, 0, 0.55);
+    // Soft snow mound inside globe
+    ball([0, 0.02, 0], [1.72, 0.20, 1.72], '#f8fbff', 0, 0, 0.08);
+  }
+
+  // 2. Winter Props
+  const propMode = $('props').value;
+  if (propMode === 'all' || propMode === 'trees') {
+    addPineTree(-0.92, -0.68, 1.05);
+    addPineTree(0.90, -0.62, 0.88);
+    if (propMode === 'trees') addPineTree(0.05, -0.98, 0.95);
+  }
+  addGiftAndLantern(propMode);
+
+  // 3. Snowmen Configuration
+  const cfg0 = {
+    kind: $('animal0').value,
+    hat: $('hat0').value,
+    eye: $('eye0').value,
+    nose: $('nose0').value,
+    mouth: $('mouth0').value,
+    eyeCol: $('eyeCol0').value,
+    color: $('color0').value,
+    acc: $('acc0').value,
+    pat: +$('pat0').value,
+    scarfPat: +$('scarfPat0').value,
+    lying: false,
+    upper: false,
+    headTilt: 0.08
+  };
+  const cfg1 = {
+    kind: $('animal1').value,
+    hat: $('hat1').value,
+    eye: $('eye1').value,
+    nose: $('nose1').value,
+    mouth: $('mouth1').value,
+    eyeCol: $('eyeCol1').value,
+    color: $('color1').value,
+    acc: $('acc1').value,
+    pat: +$('pat1').value,
+    scarfPat: +$('scarfPat1').value,
+    lying: false,
+    upper: false,
+    headTilt: -0.12
+  };
+
+  const pose = $('pose').value;
+  if (pose === 'lie') {
+    cfg0.lying = true;
+    cfg1.lying = true;
+    cfg1.upper = true;
+    addSnowman([-0.48, 0.56, 0.26], -0.20, cfg0, 0.88);
+    addSnowman([-0.16, 1.18, -0.18], 0.10, cfg1, 0.88);
+  } else if (pose === 'side') {
+    addSnowman([-0.46, 0.02, 0.08], 0.18, cfg0, 0.95);
+    addSnowman([0.44, 0.02, 0.14], -0.22, cfg1, 0.82);
+  } else if (pose === 'stack') {
+    cfg0.headTilt = 0.02;
+    cfg1.headTilt = -0.14;
+    addSnowman([0, 0.02, 0.08], 0.05, cfg0, 0.88);
+    addSnowman([0.02, 1.10, 0.06], -0.10, cfg1, 0.64);
+  } else if (pose === 'solo') {
+    cfg0.headTilt = 0.06;
+    addSnowman([0, 0.02, 0.10], 0.08, cfg0, 1.12);
+  }
+}
+
+let lastTime = performance.now();
+
+function draw(clear = false) {
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  const c = rgb($('bg').value);
+  gl.clearColor(...c, clear ? 0 : 1);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const mood = MOODS[currentMood];
+  const ang = (+$('lightAng').value) * Math.PI / 180;
+  const keyDir = [Math.sin(ang) * 0.9, 1.0, Math.cos(ang) * 1.2];
+
+  gl.uniform1f(u.yaw, yaw);
+  gl.uniform1f(u.pitch, pitch);
+  gl.uniform1f(u.zoom, zoom);
+  gl.uniform1f(u.glitter, (+$('glitter').value) / 100);
+  gl.uniform3fv(u.keyDir, keyDir);
+  gl.uniform3fv(u.keyCol, mood.key);
+  gl.uniform3fv(u.ambCol, mood.amb);
+  gl.uniform3fv(u.rimCol, mood.rim);
+  gl.uniform3fv(u.warmPos, [1.02, 0.30, 0.25]);
+  gl.uniform3fv(u.warmCol, mood.warm);
+
+  gl.disable(gl.BLEND);
+  gl.depthMask(true);
+
+  const renderMesh = m => {
+    gl.uniform3fv(u.pos, m.pos);
+    gl.uniform3fv(u.scale, m.scale);
+    gl.uniform3fv(u.color, m.c);
+    gl.uniform3fv(u.color2, m.c2);
+    gl.uniform1f(u.turn, m.turn);
+    gl.uniform1f(u.roll, m.roll);
+    gl.uniform1f(u.shiny, m.shiny);
+    gl.uniform1f(u.pat, m.pat);
+    gl.uniform1f(u.matType, m.matType);
+    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3);
+  };
+
+  // Draw opaque scene objects
+  for (const m of meshes) renderMesh(m);
+
+  // Draw 3D falling snowflakes
+  if ($('snowing').checked) {
+    for (const f of snowflakes) {
+      renderMesh({
+        pos: [f.x, f.y, f.z],
+        scale: [f.size, f.size, f.size],
+        c: [1, 1, 1],
+        c2: [1, 1, 1],
+        turn: 0,
+        roll: 0,
+        shiny: 0.2,
+        pat: 0,
+        matType: 0
+      });
+    }
+  }
+
+  // Draw transparent glass snowglobe dome last
+  if ($('dome').checked) {
+    gl.enable(gl.BLEND);
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+    renderMesh({
+      pos: [0, 1.02, 0],
+      scale: [1.76, 1.56, 1.76],
+      c: [1, 1, 1],
+      c2: [1, 1, 1],
+      turn: 0,
+      roll: 0,
+      shiny: 0.95,
+      pat: 0,
+      matType: 2
+    });
+    gl.depthMask(true);
+    gl.disable(gl.BLEND);
+  }
+}
+
+function stepSnow(dt) {
+  const speedMul = 1 + shakeEnergy * 5.5;
+  for (const f of snowflakes) {
+    f.phase += dt * (1.8 + shakeEnergy * 8.0);
+    f.y -= f.vy * dt * (1 - shakeEnergy * 0.6);
+    f.x += Math.sin(f.phase) * dt * 0.22 * speedMul;
+    f.z += Math.cos(f.phase * 0.8) * dt * 0.22 * speedMul;
+
+    const dy = f.y - 0.95;
+    const r2 = f.x * f.x + f.z * f.z;
+    if (f.y < 0.08 || r2 + dy * dy > 1.52 * 1.52) {
+      const nr = Math.random() * 1.25;
+      const th = Math.random() * Math.PI * 2;
+      f.x = Math.cos(th) * nr;
+      f.z = Math.sin(th) * nr;
+      f.y = 1.65 + Math.random() * 0.55;
+    }
+  }
+  shakeEnergy *= Math.pow(0.22, dt);
+}
+
+let isRecordingGif = false;
+
+function tick(now) {
+  const dt = Math.min(0.05, (now - lastTime) / 1000);
+  lastTime = now;
+
+  if (!isRecordingGif && ($('snowing').checked || shakeEnergy > 0.01)) {
+    stepSnow(dt);
+    draw();
+  }
+  requestAnimationFrame(tick);
+}
+
+// Wire UI Controls
+const rebuildIds = [
+  'pose', 'props', 'dome',
+  'animal0', 'hat0', 'eye0', 'nose0', 'mouth0', 'pat0', 'scarfPat0', 'color0', 'acc0', 'eyeCol0',
+  'animal1', 'hat1', 'eye1', 'nose1', 'mouth1', 'pat1', 'scarfPat1', 'color1', 'acc1', 'eyeCol1',
+  'mat', 'cushion'
+];
+for (const id of rebuildIds) {
+  $(id).oninput = () => { build(); draw(); };
+}
+for (const id of ['lightAng', 'glitter', 'bg', 'snowing']) {
+  $(id).oninput = () => draw();
+}
+$('zoom').oninput = () => {
+  zoom = +$('zoom').value / 100;
+  draw();
+};
+
+// Mood preset buttons
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMood = btn.dataset.mood;
+    document.body.dataset.mood = currentMood;
+    $('bg').value = MOODS[currentMood].bg;
+    draw();
+  };
+});
+
+$('shake').onclick = () => {
+  $('snowing').checked = true;
+  shakeEnergy = 1.25;
+  for (const f of snowflakes) {
+    f.y = 0.2 + Math.random() * 1.9;
+  }
+  $('status').textContent = '스노우볼을 흔들어 눈보라가 휘날려요! ❄️';
+  draw();
+};
+
+$('swap').onclick = () => {
+  for (const k of ['animal', 'hat', 'eye', 'nose', 'mouth', 'pat', 'scarfPat', 'color', 'acc', 'eyeCol']) {
+    const v = $(k + '0').value;
+    $(k + '0').value = $(k + '1').value;
+    $(k + '1').value = v;
+  }
+  build();
+  draw();
+};
+
+$('home').onclick = () => {
+  yaw = -0.32;
+  pitch = 0.26;
+  zoom = 0.98;
+  $('zoom').value = 98;
+  draw();
+};
+
+// Pointer / Touch / Wheel camera controls
+const pointers = new Map();
+let pinch = 0;
+canvas.onpointerdown = e => {
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, [e.clientX, e.clientY]);
+  pinch = 0;
+};
+canvas.onpointermove = e => {
+  if (!pointers.has(e.pointerId)) return;
+  const old = pointers.get(e.pointerId);
+  pointers.set(e.pointerId, [e.clientX, e.clientY]);
+  if (pointers.size === 1) {
+    const dx = e.clientX - old[0];
+    const dy = e.clientY - old[1];
+    yaw += dx * 0.009;
+    pitch = Math.max(-0.15, Math.min(1.35, pitch + dy * 0.007));
+    if (Math.hypot(dx, dy) > 22) shakeEnergy = Math.min(1.0, shakeEnergy + 0.18);
+  } else {
+    const a = [...pointers.values()];
+    const d = Math.hypot(a[0][0] - a[1][0], a[0][1] - a[1][1]);
+    if (pinch) zoom = Math.max(0.65, Math.min(1.4, zoom * d / pinch));
+    pinch = d;
+    $('zoom').value = Math.round(zoom * 100);
+  }
+  draw();
+};
+for (const ev of ['pointerup', 'pointercancel']) {
+  canvas.addEventListener(ev, e => {
+    pointers.delete(e.pointerId);
+    pinch = 0;
+  });
+}
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoom = Math.max(0.65, Math.min(1.4, zoom - e.deltaY * 0.001));
+  $('zoom').value = Math.round(zoom * 100);
+  draw();
+}, { passive: false });
+
+$('save').onclick = () => {
+  canvas.width = canvas.height = 1600;
+  draw($('transparent').checked);
+  canvas.toBlob(b => {
+    canvas.width = canvas.height = 1000;
+    draw();
+    if (!b) {
+      $('status').textContent = '저장에 실패했어요.';
+      return;
+    }
+    const url = URL.createObjectURL(b);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '겨울_스노우볼_3D.png';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    $('status').textContent = '1600 × 1600 고화질 PNG를 저장했어요! ⛄';
+  }, 'image/png');
+};
+
+// --- Pure JS GIF89a Encoder (18-bit Median-Cut 256 Palette + LZW) ---
+function quantizeFrame(rgba, w, h, transparent) {
+  const maxColors = transparent ? 255 : 256;
+  const hist = new Int32Array(262144);
+  const totalPixels = w * h;
+
+  for (let i = 0; i < totalPixels * 4; i += 4) {
+    if (transparent && rgba[i + 3] < 128) continue;
+    const key = ((rgba[i] >> 2) << 12) | ((rgba[i + 1] >> 2) << 6) | (rgba[i + 2] >> 2);
+    hist[key]++;
+  }
+
+  const colors = [];
+  for (let k = 0; k < 262144; k++) {
+    if (hist[k] > 0) colors.push(k);
+  }
+
+  function makeBox(list) {
+    let rMin = 63, rMax = 0, gMin = 63, gMax = 0, bMin = 63, bMax = 0, count = 0;
+    for (let i = 0; i < list.length; i++) {
+      const c = list[i], n = hist[c];
+      const r = (c >> 12) & 63, g = (c >> 6) & 63, b = c & 63;
+      if (r < rMin) rMin = r; if (r > rMax) rMax = r;
+      if (g < gMin) gMin = g; if (g > gMax) gMax = g;
+      if (b < bMin) bMin = b; if (b > bMax) bMax = b;
+      count += n;
+    }
+    return { list, rMin, rMax, gMin, gMax, bMin, bMax, count };
+  }
+
+  const boxes = [makeBox(colors.length ? colors : [0])];
+  while (boxes.length < maxColors) {
+    let bestIdx = -1, bestScore = 0;
+    for (let i = 0; i < boxes.length; i++) {
+      const bx = boxes[i];
+      if (bx.list.length < 2) continue;
+      const rSpan = bx.rMax - bx.rMin, gSpan = bx.gMax - bx.gMin, bSpan = bx.bMax - bx.bMin;
+      const span = Math.max(rSpan, gSpan, bSpan);
+      if (span === 0) continue;
+      const score = (span * 2 + (rSpan + gSpan + bSpan)) * Math.pow(bx.list.length, 0.55) * Math.pow(bx.count, 0.15);
+      if (score > bestScore) { bestScore = score; bestIdx = i; }
+    }
+    if (bestIdx === -1) break;
+    const bx = boxes[bestIdx];
+    const rSpan = bx.rMax - bx.rMin, gSpan = bx.gMax - bx.gMin, bSpan = bx.bMax - bx.bMin;
+    const axis = rSpan >= gSpan && rSpan >= bSpan ? 12 : (gSpan >= bSpan ? 6 : 0);
+    bx.list.sort((a, b) => ((a >> axis) & 63) - ((b >> axis) & 63));
+
+    const minVal = (bx.list[0] >> axis) & 63;
+    const maxVal = (bx.list[bx.list.length - 1] >> axis) & 63;
+    const midVal = (minVal + maxVal) >> 1;
+    let mid = 0;
+    while (mid < bx.list.length - 2 && ((bx.list[mid] >> axis) & 63) <= midVal) {
+      mid++;
+    }
+    if (((bx.list[mid] >> axis) & 63) > midVal && mid > 0) {
+      mid--;
+    }
+    mid = Math.max(0, Math.min(bx.list.length - 2, mid));
+
+    const left = bx.list.slice(0, mid + 1);
+    const right = bx.list.slice(mid + 1);
+    boxes.splice(bestIdx, 1, makeBox(left), makeBox(right));
+  }
+
+  const palette = new Uint8Array(256 * 3);
+  const palLen = boxes.length;
+
+  for (let i = 0; i < palLen; i++) {
+    const list = boxes[i].list;
+    let rSum = 0, gSum = 0, bSum = 0, tot = 0;
+    for (let j = 0; j < list.length; j++) {
+      const c = list[j], wgt = Math.sqrt(hist[c]);
+      const r = (c >> 12) & 63, g = (c >> 6) & 63, b = c & 63;
+      rSum += ((r << 2) | (r >> 4)) * wgt;
+      gSum += ((g << 2) | (g >> 4)) * wgt;
+      bSum += ((b << 2) | (b >> 4)) * wgt;
+      tot += wgt;
+    }
+    if (tot > 0) {
+      palette[i * 3] = Math.min(255, Math.round(rSum / tot));
+      palette[i * 3 + 1] = Math.min(255, Math.round(gSum / tot));
+      palette[i * 3 + 2] = Math.min(255, Math.round(bSum / tot));
+    }
+  }
+
+  const lut = new Int16Array(262144).fill(-1);
+  const indexed = new Uint8Array(totalPixels);
+  const bayer = [-1, 1, 0, -1];
+  for (let y = 0; y < h; y++) {
+    const rowOff = y * w;
+    for (let x = 0; x < w; x++) {
+      const idx = rowOff + x;
+      const p = idx * 4;
+      if (transparent && rgba[p + 3] < 128) {
+        indexed[idx] = 255;
+        continue;
+      }
+      const d = bayer[((y & 1) << 1) | (x & 1)];
+      const r = Math.max(0, Math.min(255, rgba[p] + d)) >> 2;
+      const g = Math.max(0, Math.min(255, rgba[p + 1] + d)) >> 2;
+      const b = Math.max(0, Math.min(255, rgba[p + 2] + d)) >> 2;
+      const key = (r << 12) | (g << 6) | b;
+      let best = lut[key];
+      if (best === -1) {
+        best = 0;
+        let bestDist = 1e9;
+        const pr = (r << 2) | (r >> 4), pg = (g << 2) | (g >> 4), pb = (b << 2) | (b >> 4);
+        for (let k = 0; k < palLen; k++) {
+          const dr = pr - palette[k * 3];
+          const dg = pg - palette[k * 3 + 1];
+          const db = pb - palette[k * 3 + 2];
+          const dist = dr * dr * 2 + dg * dg * 3 + db * db;
+          if (dist < bestDist) { bestDist = dist; best = k; }
+        }
+        lut[key] = best;
+      }
+      indexed[idx] = best;
+    }
+  }
+  return { palette, indexed };
+}
+
+function lzwEncode(indexed) {
+  const clearCode = 256, eoiCode = 257;
+  const dict = new Int32Array(4096 * 256);
+  dict.fill(-1);
+
+  const bytes = [];
+  let bitBuf = 0, bitCount = 0;
+  let codeSize = 9, nextCode = 258;
+
+  const emit = code => {
+    bitBuf |= code << bitCount;
+    bitCount += codeSize;
+    while (bitCount >= 8) {
+      bytes.push(bitBuf & 0xff);
+      bitBuf >>= 8;
+      bitCount -= 8;
+    }
+  };
+
+  emit(clearCode);
+  let prefix = indexed[0];
+
+  for (let i = 1; i < indexed.length; i++) {
+    const k = indexed[i];
+    const key = (prefix << 8) | k;
+    const hit = dict[key];
+    if (hit !== -1) {
+      prefix = hit;
+    } else {
+      emit(prefix);
+      if (nextCode < 4096) {
+        dict[key] = nextCode++;
+        if (nextCode > (1 << codeSize) && codeSize < 12) codeSize++;
+      } else {
+        emit(clearCode);
+        dict.fill(-1);
+        codeSize = 9;
+        nextCode = 258;
+      }
+      prefix = k;
+    }
+  }
+  emit(prefix);
+  emit(eoiCode);
+  if (bitCount > 0) bytes.push(bitBuf & 0xff);
+
+  const out = [8]; // LZW min code size = 8
+  for (let i = 0; i < bytes.length; i += 255) {
+    const chunk = Math.min(255, bytes.length - i);
+    out.push(chunk);
+    for (let j = 0; j < chunk; j++) out.push(bytes[i + j]);
+  }
+  out.push(0); // Block terminator
+  return out;
+}
+
+$('saveGif').onclick = async () => {
+  if (isRecordingGif) return;
+  isRecordingGif = true;
+  const btn = $('saveGif');
+  const origText = btn.textContent;
+  btn.disabled = true;
+
+  const gifW = 480, gifH = 480;
+  const totalFrames = 32;
+  const delayCs = 5; // 50ms per frame (20 fps)
+  const transparent = $('transparent').checked;
+  const mode = $('gifMode').value;
+
+  const offCanvas = document.createElement('canvas');
+  offCanvas.width = gifW;
+  offCanvas.height = gifH;
+  const ctx = offCanvas.getContext('2d', { willReadFrequently: true });
+
+  const startYaw = yaw;
+  const prevSnowing = $('snowing').checked;
+  $('snowing').checked = true;
+  if (mode === 'snow') shakeEnergy = 1.1;
+
+  const frames = [];
+  for (let i = 0; i < totalFrames; i++) {
+    btn.textContent = `⏳ 생성 중 (${i + 1}/${totalFrames})`;
+    $('status').textContent = `움직이는 GIF 프레임 촬영 및 인코딩 중... (${Math.round((i + 1) / totalFrames * 100)}%)`;
+    await new Promise(r => setTimeout(r, 12));
+
+    const t = i / totalFrames;
+    if (mode === 'turn') {
+      yaw = startYaw + t * Math.PI * 2;
+    } else if (mode === 'swing') {
+      yaw = startYaw + Math.sin(t * Math.PI * 2) * 0.42;
+    }
+    stepSnow(0.05);
+    draw(transparent);
+
+    ctx.clearRect(0, 0, gifW, gifH);
+    ctx.drawImage(canvas, 0, 0, gifW, gifH);
+    const rgba = ctx.getImageData(0, 0, gifW, gifH).data;
+    frames.push(quantizeFrame(rgba, gifW, gifH, transparent));
+  }
+
+  yaw = startYaw;
+  $('snowing').checked = prevSnowing;
+  draw();
+
+  // Assemble GIF89a binary stream
+  const stream = [];
+  const pushBytes = (...arr) => { for (const b of arr) stream.push(b & 0xff); };
+  const pushStr = s => { for (let i = 0; i < s.length; i++) stream.push(s.charCodeAt(i)); };
+  const pushU16 = v => { stream.push(v & 0xff, (v >> 8) & 0xff); };
+
+  // Header + Logical Screen Descriptor (with Global Color Table from Frame 0)
+  pushStr('GIF89a');
+  pushU16(gifW);
+  pushU16(gifH);
+  pushBytes(0xf7, 0, 0);
+  for (let i = 0; i < 768; i++) stream.push(frames[0].palette[i]);
+
+  // Netscape 2.0 Infinite Loop Extension
+  pushBytes(0x21, 0xff, 0x0b);
+  pushStr('NETSCAPE2.0');
+  pushBytes(0x03, 0x01, 0x00, 0x00, 0x00);
+
+  // Encode each frame
+  for (let i = 0; i < frames.length; i++) {
+    const { palette, indexed } = frames[i];
+    // Graphic Control Extension
+    const gcePacked = transparent ? 0x09 : 0x04;
+    pushBytes(0x21, 0xf9, 0x04, gcePacked);
+    pushU16(delayCs);
+    pushBytes(transparent ? 255 : 0, 0x00);
+
+    // Image Descriptor with Local Color Table (256 colors)
+    pushBytes(0x2c);
+    pushU16(0);
+    pushU16(0);
+    pushU16(gifW);
+    pushU16(gifH);
+    pushBytes(0x87);
+    for (let k = 0; k < 768; k++) stream.push(palette[k]);
+
+    // LZW Image Data
+    const lzw = lzwEncode(indexed);
+    for (let k = 0; k < lzw.length; k++) stream.push(lzw[k]);
+  }
+
+  // GIF Trailer
+  pushBytes(0x3b);
+
+  const blob = new Blob([new Uint8Array(stream)], { type: 'image/gif' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '겨울_스노우볼_3D.gif';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+
+  btn.disabled = false;
+  btn.textContent = origText;
+  isRecordingGif = false;
+  $('status').textContent = '480 × 480 움직이는 GIF(무한 루프)를 저장했어요! 🎞️❄️';
+};
+
+build();
+draw();
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
