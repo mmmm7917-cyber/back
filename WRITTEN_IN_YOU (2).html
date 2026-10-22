@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WRITTEN IN YOU — 너로 쓰인 얼굴</title>
+<style>
+:root{--cream:#f7f3e9;--ivory:#eee9dd;--ink:#302a2b;--wine:#8d4055;--line:#d9d0c5;--soft:#e9d6d8}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:#e9e5df;font-family:'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;font-size:13px}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}input,select,textarea{outline-color:#a46778}input[type=range]{accent-color:var(--wine);width:100%}input[type=color]{width:46px;height:32px;padding:2px;border:1px solid var(--line);background:white;border-radius:6px;cursor:pointer}input[type=text],input[type=date],select,textarea{width:100%;border:1px solid #d9d0c6;background:#fffdf9;border-radius:6px;padding:9px 10px;color:#30292b;min-width:0}textarea{resize:vertical;min-height:112px;line-height:1.7}label{display:block}small{color:#817877}.shell{display:grid;grid-template-columns:365px minmax(0,1fr);height:100dvh;min-height:580px}.sidebar{overflow-y:auto;background:#f8f6f0;border-right:1px solid #d3c8bf;scrollbar-color:#c3a8aa transparent}.brand{padding:28px 22px 18px;border-bottom:1px solid var(--line)}.eyebrow{letter-spacing:.19em;color:var(--wine);font:600 10px Georgia,serif}.brand h1{font:normal 26px Georgia,'Noto Serif',serif;margin:9px 0 7px;letter-spacing:-.035em}.brand p{font-size:12px;color:#756c6b;margin:0}.panel{padding:17px 20px;border-bottom:1px solid #e5ddd5}.panel h2{font-size:13px;font-weight:700;margin:0 0 15px;display:flex;align-items:center;gap:10px}.panel h2 span{font:normal 12px Georgia;color:#a5707b}.control{margin:11px 0}.control>label,.control .topline{font-size:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}.control .topline output{font:12px Georgia;color:#9a6474}.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.buttons{display:flex;gap:5px}.choice{min-width:0;flex:1;border:1px solid #d8cbc6;background:#fffaf5;color:#6d6061;border-radius:6px;padding:9px 7px;text-align:center;font-size:12px}.choice.active{background:#733c4b;border-color:#733c4b;color:white}.upload{display:grid;grid-template-columns:54px 1fr;align-items:center;gap:10px;padding:9px;background:#fffaf4;border:1px dashed #c9b6b4;border-radius:9px}.thumb{width:54px;height:54px;background:#efebe4;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#b49a9d;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:contain}.upload .pick{background:#e9dde0;border:0;border-radius:6px;padding:6px 8px;font-size:11px;color:#6c3c4a}.tinybtn{border:0;background:none;color:#94777c;font-size:11px;padding:5px}.rangegrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rangegrid .control{margin:8px 0}.toggleline{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:12px}.toggleline input{accent-color:#814757}.rule{border:0;border-top:1px solid #e9e0d9;margin:17px 0}.hint{line-height:1.6;font-size:11px;color:#87797a;margin:8px 0}.badge{display:inline-block;font-size:10px;background:#e9dadc;color:#824b5e;padding:3px 6px;border-radius:4px}.stage{min-width:0;display:flex;flex-direction:column;padding:20px 24px 18px;gap:13px;overflow:auto;background:radial-gradient(circle at 60% 10%,#f7f1e9,#e5dfda 75%)}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.toolbar strong{font-size:13px}.tabs{display:flex;gap:5px}.tab{border:1px solid #d1c3be;background:rgba(255,255,255,.48);padding:9px 13px;border-radius:6px;color:#776c6b;font-size:12px}.tab.active{background:#523744;color:#fff;border-color:#523744}.previewWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}.canvasFrame{width:min(100%,calc((100dvh - 190px) * 1.3889));max-width:1120px;position:relative;box-shadow:0 20px 44px #3d29262b,0 3px 8px #3d292615;background:white;border:7px solid #fff8f1}#preview{display:block;width:100%;height:auto;touch-action:none;cursor:grab}#preview.dragging{cursor:grabbing}.actions{max-width:1120px;width:100%;margin:0 auto;display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.action{border:1px solid #cdb9b5;background:#fffbf6;padding:12px 19px;border-radius:7px;color:#543f45;font-weight:600}.action.primary{background:#713e4e;border-color:#713e4e;color:white}.action:focus-visible,.choice:focus-visible,.tab:focus-visible{outline:2px solid #c48792}.status{font-size:12px;color:#7b6870;margin-right:auto;min-width:170px}.exportopts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#ffffff7d;border:1px solid #d8d0c9;padding:9px 12px;border-radius:7px;font-size:12px}.exportopts select{width:auto;min-width:100px;padding:5px}.exportopts label{display:flex;align-items:center;gap:5px}.progress{height:5px;background:#ded1ce;overflow:hidden;border-radius:6px;display:none;max-width:1120px;width:100%;margin:0 auto}.progress>div{height:100%;background:#92576b;width:0;transition:width .2s}.footnote{max-width:1120px;width:100%;margin:0 auto;color:#82777a;font-size:11px}.hidden{display:none!important}@media(max-width:930px){.shell{height:auto;display:flex;flex-direction:column}.stage{order:0;padding:15px 12px;min-height:0;overflow:visible}.sidebar{order:1;overflow:visible;border-right:0;border-top:1px solid #ddd0ca}.brand{padding:18px 20px}.canvasFrame{width:100%;border-width:4px}.previewWrap{min-height:0}.actions{justify-content:center}.status{flex-basis:100%;min-width:0}.action{flex:1;padding:12px 6px}.tab{padding:9px 10px}.toolbar strong{display:none}.panel{padding:16px 20px}}@media(max-width:380px){.tab{padding:8px 7px;font-size:11px}.rangegrid{gap:4px}}
+</style>
+</head>
+<body>
+<main class="shell">
+ <aside class="sidebar">
+  <header class="brand"><div class="eyebrow">편지 · 문자 초상</div><h1>WRITTEN IN YOU</h1><p>너로 쓰인 얼굴 · 편지와 문자 초상 제작기</p></header>
+  <section class="panel"><h2><span>01</span> 캐릭터</h2>
+   <div class="control"><label>인원</label><div class="buttons"><button class="choice active" data-choose="count" data-value="1">1인</button><button class="choice" data-choose="count" data-value="2">2인</button></div></div>
+   <div class="control pairOnly hidden"><label>편지 관계</label><div class="buttons"><button class="choice active" data-choose="relation" data-value="one">A의 편지로 A 초상</button><button class="choice" data-choose="relation" data-value="mutual">각자의 편지로 각자 초상</button></div></div>
+   <div id="charControls"></div>
+  </section>
+  <section class="panel"><h2><span>02</span> 편지</h2>
+   <div id="letterControls"></div>
+   <div class="control"><label>강조할 단어·문장</label><input type="text" data-key="highlight" placeholder="선택 사항"></div>
+   <div class="control"><label>지울 문장</label><input type="text" data-key="erase" placeholder="편지에 포함된 문장"></div>
+   <div class="control"><label>편지 날짜 <small>비워 두면 표시 안 함</small></label><input type="text" data-key="date" placeholder=""></div>
+   <div class="control"><label>서명 <small>비워 두면 표시 안 함</small></label><input type="text" data-key="signature" placeholder=""></div>
+  </section>
+  <section class="panel"><h2><span>03</span> 문자 초상</h2>
+   <div class="control"><label>문자 종류</label><select data-key="charStyle"><option value="letter">편지 문장</option><option value="name">이름 반복</option><option value="ascii">표준 기호</option><option value="fine">세밀한 기호</option><option value="number">숫자</option><option value="binary">이진수</option></select></div>
+   <div class="rangegrid"><div class="control"><div class="topline">글자 크기 <output id="out-fontSize">12</output></div><input type="range" min="8" max="21" step="1" data-key="fontSize"></div><div class="control"><div class="topline">문자 밀도 <output id="out-density">100%</output></div><input type="range" min="60" max="140" step="5" data-key="density"></div><div class="control"><div class="topline">명암 대비 <output id="out-contrast">120%</output></div><input type="range" min="50" max="200" step="5" data-key="contrast"></div><div class="control"><div class="topline">반반 경계 <output id="out-split">50%</output></div><input type="range" min="15" max="85" step="5" data-key="split"></div></div>
+   <label class="toggleline"><input type="checkbox" data-key="originalColor"> 원본 색상을 글자색에 반영</label><label class="toggleline"><input type="checkbox" data-key="invert"> 글자 명암 반전</label><label class="toggleline"><input type="checkbox" data-key="boldHighlight" checked> 강조 문구 굵게</label>
+   <div class="row2"><div class="control"><label>잉크색</label><input type="color" data-key="ink"></div><div class="control"><label>강조색</label><input type="color" data-key="accent"></div></div>
+  </section>
+  <section class="panel"><h2><span>04</span> 편지지</h2>
+   <div class="control"><label>디자인</label><select data-key="paper"><option value="classic">기본 편지지</option><option value="type">타자기 원고</option><option value="dark">검은 편지</option></select></div>
+   <div class="control pairOnly hidden"><label>페어 배치</label><select data-key="layout"><option value="side">나란히</option><option value="spread">펼친 편지</option><option value="one">하나의 편지</option></select></div>
+   <div class="row3"><div class="control"><label>종이색</label><input type="color" data-key="paperColor"></div><div class="control"><label>바깥 배경</label><input type="color" data-key="backColor"></div><div class="control"><label>테두리색</label><input type="color" data-key="borderColor"></div></div>
+   <div class="control"><div class="topline">안쪽 여백 <output id="out-margin">36</output></div><input type="range" min="12" max="70" step="2" data-key="margin"></div>
+   <label class="toggleline"><input type="checkbox" data-key="lines" checked> 편지 줄 표시</label><label class="toggleline"><input type="checkbox" data-key="border" checked> 종이 테두리 표시</label><label class="toggleline"><input type="checkbox" data-key="senderThumb"> 작성자 작은 이미지 표시 (2인 단방향)</label>
+  </section>
+  <section class="panel"><h2><span>05</span> 애니메이션</h2>
+   <div class="control"><label>연출</label><select data-key="motion"><option value="main">편지가 초상이 되기까지</option><option value="unsent">미발송</option><option value="swap">각자의 편지 (서로에게 전용)</option></select></div>
+   <div class="control"><label>최종 장면</label><select data-key="reveal"><option value="original">원본 이미지 공개</option><option value="ascii">문자 초상 유지</option><option value="split">반반 전환</option></select></div>
+   <div class="rangegrid"><div class="control"><div class="topline">타이핑 속도 <output id="out-speed">100%</output></div><input type="range" min="60" max="180" step="10" data-key="speed"></div><div class="control"><div class="topline">이동 강도 <output id="out-flight">100%</output></div><input type="range" min="30" max="180" step="10" data-key="flight"></div><div class="control"><div class="topline">강조 시점 <output id="out-emphasis">70%</output></div><input type="range" min="10" max="100" step="5" data-key="emphasis"></div><div class="control"><div class="topline">마지막 유지 <output id="out-hold">0.3초</output></div><input type="range" min="0" max="1.2" step="0.1" data-key="hold"></div></div>
+   <label class="toggleline"><input type="checkbox" data-key="cursor" checked> 타이핑 커서</label><label class="toggleline"><input type="checkbox" data-key="loop" checked> 미리보기 반복</label>
+  </section>
+ </aside>
+ <section class="stage">
+  <div class="toolbar"><strong>실시간 미리보기</strong><div class="tabs"><button class="tab" data-stage="letter">편지 화면</button><button class="tab active" data-stage="portrait">문자 초상</button><button class="tab" data-stage="final">완성 화면</button><button class="tab" data-stage="animation">애니메이션</button></div></div>
+  <div class="previewWrap"><div class="canvasFrame"><canvas id="preview" width="1000" height="720" aria-label="편지와 문자 초상 미리보기"></canvas></div></div>
+  <div class="exportopts"><label>PNG 배율 <select id="pngScale"><option value="1">원본</option><option value="2" selected>2배 고해상도</option></select></label><label>배경 <select id="pngBackground"><option value="solid">배경 포함</option><option value="outer">바깥 배경 투명</option><option value="portrait">초상만 투명</option></select></label><span class="badge">드래그 이동 · 오른쪽 아래 점으로 크기 조절</span></div>
+  <div class="actions"><span class="status" id="status" aria-live="polite">이미지를 업로드하거나 편지를 작성해 보세요.</span><button class="action" id="play">▶ 재생</button><button class="action" id="png">PNG 저장</button><button class="action primary" id="gif">GIF 저장</button></div>
+  <div class="progress" id="progress"><div id="progressFill"></div></div>
+  <div class="footnote">작업 내용은 이 브라우저에서만 처리됩니다. 원본 이미지는 변경되지 않습니다.</div>
+ </section>
+</main>
+<script>
+'use strict';
+const W=1000,H=720,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const canvas=$('#preview'),ctx=canvas.getContext('2d');
+const defaultChar=()=>({image:null,url:'',filename:'',x:0,y:0,scale:100,rotate:0,flip:false,region:'all',cropX:0,cropY:0,cropW:100,cropH:100});
+const state={count:1,relation:'one',layout:'side',paper:'classic',motion:'main',reveal:'original',charStyle:'letter',fontSize:12,density:100,contrast:120,split:50,originalColor:false,invert:false,boldHighlight:true,ink:'#302a2b',accent:'#8d4055',paperColor:'#f7f3e9',backColor:'#e8dfd5',borderColor:'#c9bdb1',margin:36,lines:true,border:true,senderThumb:false,speed:100,flight:100,emphasis:70,hold:0.3,cursor:true,loop:true,highlight:'',erase:'',date:'',signature:'',chars:[defaultChar(),defaultChar()],letters:[{from:'',to:'',body:''},{from:'',to:'',body:''}]};
+let stage='portrait',playing=false,playStart=0,playTime=0,raf=0,dirty=true,portraits=[],exporting=false,dragging=null;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t)},rgb=(s)=>{const n=parseInt(s.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255]},rgba=(col,alpha)=>{let c=rgb(col);return `rgba(${c[0]},${c[1]},${c[2]},${alpha})`};
+const font=()=>state.paper==='type'?"'Courier New','Malgun Gothic',monospace":"'Noto Serif CJK KR','Nanum Myeongjo','Batang','Malgun Gothic',serif";
+const showStatus=(t,bad=false)=>{const e=$('#status');e.textContent=t;e.style.color=bad?'#b04a4a':'#7b6870'};
+function addRange(obj,key,label,min,max,step=1,unit=''){return `<div class="control"><div class="topline">${label}<output data-output="${key}">${obj[key]}${unit}</output></div><input type="range" data-prop="${key}" min="${min}" max="${max}" step="${step}" value="${obj[key]}"></div>`}
+function charMarkup(i){let c=state.chars[i];return `<div class="charBlock" data-ci="${i}"><div class="control"><label>${i?'캐릭터 B':'캐릭터 A'}</label><div class="upload"><div class="thumb" data-thumb="${i}">${c.url?`<img src="${c.url}" alt="">`:'＋'}</div><div><button class="pick" data-upload="${i}">이미지 선택</button><button class="tinybtn" data-delete="${i}">삭제</button><div style="margin-top:4px"><small>${escapeHtml(c.filename||'PNG · JPG · WEBP')}</small></div></div></div><input class="hidden" type="file" accept="image/png,image/jpeg,image/webp" data-file="${i}"></div><div class="rangegrid">${addRange(c,'x','가로 위치',-180,180,1)}${addRange(c,'y','세로 위치',-160,160,1)}${addRange(c,'scale','크기',35,350,5,'%')}${addRange(c,'rotate','회전',-180,180,5,'°')}</div><label class="toggleline"><input type="checkbox" data-prop="flip" ${c.flip?'checked':''}> 좌우 반전</label><div class="control"><label>문자 변환 범위</label><select data-prop="region"><option value="all" ${c.region==='all'?'selected':''}>이미지 전체 (투명 영역 제외)</option><option value="crop" ${c.region==='crop'?'selected':''}>직접 지정한 사각형</option></select></div><div class="rangegrid ${c.region==='crop'?'':'hidden'}" data-crop>${addRange(c,'cropX','영역 왼쪽',0,90,5,'%')}${addRange(c,'cropY','영역 위쪽',0,90,5,'%')}${addRange(c,'cropW','영역 너비',10,100,5,'%')}${addRange(c,'cropH','영역 높이',10,100,5,'%')}</div></div>`}
+function buildChars(){let h=state.count===2?charMarkup(0)+'<hr class="rule">'+charMarkup(1):charMarkup(0);$('#charControls').innerHTML=h;$$('[data-upload]').forEach(b=>b.onclick=()=>document.querySelector(`[data-file="${b.dataset.upload}"]`).click());$$('[data-file]').forEach(f=>f.onchange=async()=>{const n=+f.dataset.file,file=f.files?.[0];if(!file)return;try{if(!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('PNG, JPG, WEBP만 사용할 수 있습니다.');let url=URL.createObjectURL(file),img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});if(!img.naturalWidth)throw Error('이미지를 열 수 없습니다.');if(state.chars[n].url)URL.revokeObjectURL(state.chars[n].url);Object.assign(state.chars[n],{image:img,url,filename:file.name});buildChars();invalidate();showStatus('이미지를 불러왔습니다.')}catch(e){showStatus(e.message,true)}});$$('[data-delete]').forEach(b=>b.onclick=()=>{let c=state.chars[+b.dataset.delete];if(c.url)URL.revokeObjectURL(c.url);Object.assign(c,defaultChar());buildChars();invalidate()});$$('[data-prop]').forEach(el=>{let i=+el.closest('.charBlock').dataset.ci,key=el.dataset.prop;el.oninput=()=>{state.chars[i][key]=el.type==='checkbox'?el.checked:el.type==='range'?+el.value:el.value;el.closest('.charBlock').querySelector(`[data-output="${key}"]`)?.replaceChildren(document.createTextNode(el.value+(key==='scale'||key.startsWith('crop')?'%':key==='rotate'?'°':'')));if(key==='region')el.closest('.charBlock').querySelector('[data-crop]').classList.toggle('hidden',el.value!=='crop');invalidate()}})}
+function letterMarkup(i){let x=state.letters[i];return `<div class="letterBlock" data-li="${i}"><div class="control"><label>${i===0?(state.count===2?'A가 쓴 편지':'편지 내용'):'B가 쓴 편지'}</label><div class="row2"><input type="text" data-field="from" value="${escapeAttr(x.from)}" placeholder="작성자 이름"><input type="text" data-field="to" value="${escapeAttr(x.to)}" placeholder="수신자 이름"></div></div><div class="control"><textarea data-field="body" placeholder="여기에 편지를 작성하세요.">${escapeHtml(x.body)}</textarea></div></div>`}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};function escapeAttr(s){return escapeHtml(s).replace(/"/g,'&quot;')};
+function buildLetters(){let need=state.count===2&&state.relation==='mutual';$('#letterControls').innerHTML=letterMarkup(0)+(need?'<hr class="rule">'+letterMarkup(1):'');$$('[data-field]').forEach(el=>{el.oninput=()=>{const i=+el.closest('.letterBlock').dataset.li;state.letters[i][el.dataset.field]=el.value;invalidate()}})}
+function setup(){buildChars();buildLetters();$$('[data-choose]').forEach(el=>el.onclick=()=>{const k=el.dataset.choose;state[k]=k==='count'?+el.dataset.value:el.dataset.value;if(state.count===1&&state.motion==='swap')state.motion='main';if(state.count===2&&state.relation==='one'&&state.motion==='swap')state.motion='main';refresh();invalidate()});$$('[data-key]').forEach(el=>{const k=el.dataset.key;el.type==='checkbox'?el.checked=!!state[k]:el.value=state[k];el.oninput=()=>{state[k]=el.type==='checkbox'?el.checked:el.type==='range'?+el.value:el.value;if(k==='paper'){if(state.paper==='classic'){Object.assign(state,{paperColor:'#f7f3e9',backColor:'#e8dfd5',ink:'#302a2b',accent:'#8d4055',borderColor:'#c9bdb1'})}else if(state.paper==='type'){Object.assign(state,{paperColor:'#eff0ed',backColor:'#dfded9',ink:'#3a403d',accent:'#8a6250',borderColor:'#c0c5c3'})}else{Object.assign(state,{paperColor:'#18212c',backColor:'#0d121b',ink:'#e6e8e9',accent:'#e1a6af',borderColor:'#586271'})}syncControls()}if(k==='motion'&&state.motion==='swap'){state.count=2;state.relation='mutual';refresh()}if(k==='reveal'&&stage==='animation'&&!playing)playTime=3.2;updateOutputs();invalidate()}});$$('[data-stage]').forEach(b=>b.onclick=()=>{playing=false;stage=b.dataset.stage;$$('[data-stage]').forEach(x=>x.classList.toggle('active',x===b));$('#play').textContent='▶ 재생';invalidate()});$('#play').onclick=()=>{if(playing){playing=false;$('#play').textContent='▶ 재생'}else{stage='animation';$$('[data-stage]').forEach(x=>x.classList.toggle('active',x.dataset.stage==='animation'));playing=true;playStart=performance.now()-playTime*1000;$('#play').textContent='Ⅱ 일시정지';requestAnimationFrame(tick)}invalidate()};$('#png').onclick=savePNG;$('#gif').onclick=saveGIF;setupDrag();refresh();invalidate()}
+function syncControls(){$$('[data-key]').forEach(el=>{const k=el.dataset.key;el.type==='checkbox'?el.checked=!!state[k]:el.value=state[k]});updateOutputs()}
+function updateOutputs(){['fontSize','density','contrast','split','margin','speed','flight','emphasis','hold'].forEach(k=>{let el=$('#out-'+k);if(el)el.textContent=state[k]+(k==='hold'?'초':['density','contrast','split','speed','flight','emphasis'].includes(k)?'%':'')})}
+function refresh(){$$('.pairOnly').forEach(el=>el.classList.toggle('hidden',state.count!==2));$$('[data-choose]').forEach(b=>b.classList.toggle('active',String(state[b.dataset.choose])===b.dataset.value));let motion=$('[data-key="motion"]');motion.querySelector('[value="swap"]').disabled=state.count!==2||state.relation!=='mutual';if(motion.value==='swap'&&motion.querySelector('[value="swap"]').disabled){state.motion='main';motion.value='main'}buildChars();buildLetters();syncControls()}
+function invalidate(){dirty=true;portraits=[];renderPreview()}
+function tick(now){if(!playing)return;playTime=Math.max(0,(now-playStart)/1000);let duration=3.2+state.hold;if(playTime>=duration){if(state.loop){playTime=playTime%duration;playStart=now-playTime*1000}else{playTime=duration;playing=false;$('#play').textContent='▶ 재생'}}renderPreview();if(playing)raf=requestAnimationFrame(tick)}
+function geometry(){
+ const pair=state.count===2,mutual=pair&&state.relation==='mutual';
+ let papers=[],targets={},letters=[];
+ if(!mutual){papers=[{x:38,y:32,w:924,h:656}];letters=[{x:103+state.margin*.18,y:120,w:375-state.margin*.3,h:470}];targets[0]=pair?{x:505,y:88,w:442,h:558}:{x:145,y:65,w:710,h:590};}
+ else if(state.layout==='side'){
+  papers=[{x:28,y:38,w:458,h:645},{x:514,y:38,w:458,h:645}];
+  letters=[{x:69,y:118,w:380,h:480},{x:552,y:118,w:380,h:480}];
+  targets[0]={x:77,y:148,w:364,h:487};targets[1]={x:560,y:148,w:364,h:487};
+ }else if(state.layout==='spread'){
+  papers=[{x:35,y:34,w:930,h:652}];letters=[{x:82,y:124,w:375,h:460},{x:542,y:124,w:375,h:460}];
+  targets[0]={x:85,y:145,w:363,h:492};targets[1]={x:551,y:145,w:363,h:492};
+ }else{
+  papers=[{x:34,y:32,w:932,h:656}];letters=[{x:94,y:134,w:374,h:470},{x:536,y:134,w:374,h:470}];
+  targets[0]={x:96,y:142,w:361,h:492};targets[1]={x:545,y:142,w:361,h:492};
+ }
+ const pad=state.margin-36;
+ for(let b of letters){b.x+=pad*.7;b.y+=pad*.3;b.w-=pad*1.4;b.h-=pad*.65}
+ for(let b of Object.values(targets)){b.x+=pad*.25;b.y+=pad*.2;b.w-=pad*.5;b.h-=pad*.4}
+ return {papers,targets,letters,mutual};
+}
+function targetLetter(i){return state.count===2&&state.relation==='mutual'?i:0}
+function imageRect(i,box,crop=false){
+ const c=state.chars[i],img=c.image;if(!img)return null;
+ let sx=0,sy=0,sw=img.naturalWidth,sh=img.naturalHeight;
+ if(crop&&c.region==='crop'){sx=Math.round(sw*c.cropX/100);sy=Math.round(sh*c.cropY/100);sw=Math.max(1,Math.min(sw-sx,Math.round(img.naturalWidth*c.cropW/100)));sh=Math.max(1,Math.min(sh-sy,Math.round(img.naturalHeight*c.cropH/100)))}
+ const fit=Math.min(box.w/sw,box.h/sh)*(.91*c.scale/100);return {sx,sy,sw,sh,w:sw*fit,h:sh*fit,cx:box.x+box.w/2+c.x,cy:box.y+box.h/2+c.y};
+}
+function drawImageLayer(g,i,box,alpha=1,crop=false){let img=state.chars[i].image,m=imageRect(i,box,crop);if(!img||!m||alpha<=0)return;g.save();g.globalAlpha*=alpha;g.translate(m.cx,m.cy);g.rotate(state.chars[i].rotate*Math.PI/180);g.scale(state.chars[i].flip?-1:1,1);g.drawImage(img,m.sx,m.sy,m.sw,m.sh,-m.w/2,-m.h/2,m.w,m.h);g.restore()}
+function sourceSymbols(index){let letter=state.letters[targetLetter(index)]||state.letters[0];let raw=state.charStyle==='name'?(letter.to||letter.from||'·'):state.charStyle==='letter'?(letter.body||'·'):state.charStyle==='number'?'0123456789':state.charStyle==='binary'?'01011010':state.charStyle==='fine'?'@%#MW8&B$Q0ODCLJYXIit;:,.·':'@%#*+=-:. ';let symbols=Array.from(raw.replace(/\s+/g,''));if(!symbols.length)symbols=['·'];
+ let h=Array(symbols.length).fill(false);let phrase=Array.from((state.highlight||'').replace(/\s+/g,''));if(phrase.length){for(let i=0;i<=symbols.length-phrase.length;i++)if(phrase.every((p,j)=>p===symbols[i+j]))for(let j=0;j<phrase.length;j++)h[i+j]=true}
+ return {symbols,h};
+}
+function buildPortrait(i,box){let c=state.chars[i];if(!c.image)return [];
+ const off=document.createElement('canvas');off.width=W;off.height=H;const g=off.getContext('2d',{willReadFrequently:true});drawImageLayer(g,i,box,1,true);
+ const pix=g.getImageData(0,0,W,H).data,fs=+state.fontSize,dens=state.density/100;
+ const stepX=Math.max(fs*1.08,fs*1.65/dens),stepY=Math.max(fs*1.22,fs*1.85/dens);
+ const ox=box.x+box.w*.05,oy=box.y+box.h*.04,maxX=box.x+box.w*.95,maxY=box.y+box.h*.96;
+ const {symbols,h}=sourceSymbols(i),result=[];let n=0;
+ for(let y=oy+stepY*.5;y<maxY;y+=stepY)for(let x=ox+stepX*.5;x<maxX;x+=stepX){const ix=(Math.round(y)*W+Math.round(x))*4;if(ix<0||ix+3>=pix.length)continue;
+  const a=pix[ix+3]/255;if(a<.16)continue;
+  const r=pix[ix],gg=pix[ix+1],b=pix[ix+2],light=(.2126*r+.7152*gg+.0722*b)/255;
+  const v=clamp(.5+(light-.5)*state.contrast/100,0,1),shadow=state.invert?v:1-v;
+  let opacity=clamp(.28+.72*shadow,.18,1)*clamp(a*1.4,0,1);
+  if(a<.33)opacity*=.58;
+  let glyph=state.charStyle==='ascii'||state.charStyle==='fine'?symbols[clamp(Math.floor(v*symbols.length),0,symbols.length-1)]:symbols[n%symbols.length];
+  result.push({x,y,glyph,opacity,hl:!!h[n%symbols.length],r,gg,b});n++;
+ }
+ return result;
+}
+function getPortraits(geom){if(!portraits.length){portraits=[[],[]];Object.entries(geom.targets).forEach(([i,box])=>{portraits[+i]=buildPortrait(+i,box)})}return portraits}
+function drawGlyphs(g,items,alpha=1,options={}){if(alpha<=0||!items?.length)return;g.save();g.textAlign='center';g.textBaseline='middle';let size=state.fontSize;g.font=`${size}px ${font()}`;const original=state.originalColor,ink=state.ink,accent=state.accent,limit=options.limit??1,emphasize=options.emphasize??1;
+  for(let k=0;k<items.length*limit;k++){let a=items[k],active=a.hl&&emphasize>=1;g.globalAlpha=clamp(a.opacity*alpha,0,1);g.fillStyle=active?accent:original?`rgb(${a.r},${a.gg},${a.b})`:ink;if(active&&state.boldHighlight)g.font=`bold ${size}px ${font()}`;else g.font=`${size}px ${font()}`;g.fillText(a.glyph,a.x,a.y)}
+ g.restore()}
+function fontLetter(){return state.paper==='type'?"'Courier New','Malgun Gothic',monospace":font()}
+function layoutLetter(g,text,box){let arr=Array.from(text||''),fs=arr.length>440?13:arr.length>240?15:arr.length>110?17:20,lineH=fs*1.65,startX=box.x,startY=box.y+75,w=box.w,maxLines=Math.floor((box.h-122)/lineH);let x=startX,y=startY,lines=0,out=[];
+ g.save();g.font=`${fs}px ${fontLetter()}`;
+ for(let j=0;j<arr.length;j++){let ch=arr[j];if(ch==='\r')continue;if(ch==='\n'){x=startX;y+=lineH;lines++;if(lines>=maxLines)break;continue}let cw=g.measureText(ch).width+(state.paper==='type'?1:0);if(x+cw>startX+w){x=startX;y+=lineH;lines++;if(lines>=maxLines)break}out.push({glyph:ch,x:x+cw/2,y,fs});x+=cw}
+ g.restore();return out;
+}
+function deletedBody(raw,t){if(t<1.1)return raw;
+ let erase=state.erase,unsent=state.motion==='unsent';if(unsent&&!erase){let trimmed=raw.trimEnd();let match=trimmed.match(/[^.!?。！？\n]+[.!?。！？]?$/);erase=match?.[0]||trimmed.slice(-Math.max(3,Math.floor(trimmed.length*.3)))}
+ if(!erase||!raw.includes(erase))return raw;
+ let at=raw.indexOf(erase),amount=Math.round(erase.length*smooth((t-1.1)/.4));return raw.slice(0,at)+erase.slice(0,erase.length-amount)+raw.slice(at+erase.length);
+}
+function drawLetter(g,i,box,t,alpha=1){let L=state.letters[i];if(!L||alpha<=0)return [];
+ g.save();g.globalAlpha*=alpha;g.fillStyle=state.ink;g.textBaseline='middle';g.textAlign='left';let top=box.y-31;
+ g.font=`${state.paper==='type'?'15':'18'}px ${fontLetter()}`;
+ let heading=[L.from,L.to].filter(Boolean).join(' → ');if(heading){g.fillText(heading,box.x,top);top+=28}
+ if(state.date){g.font=`14px ${fontLetter()}`;g.fillStyle=rgba(state.ink,.72);g.fillText(state.date,box.x,top+7)}
+ let visible=L.body;
+ if(t!==null){let rate=Math.pow(clamp((t-.3)/.8,0,1),1/(state.speed/100)),count=Math.floor(Array.from(L.body).length*rate);visible=Array.from(L.body).slice(0,count).join('');if(t>1.1)visible=deletedBody(L.body,t)}
+ let coords=layoutLetter(g,visible,box);let hl=state.highlight.replace(/\s+/g,''),needle=Array.from(hl);
+ let mask=Array(coords.length).fill(false);if(needle.length){let seq=coords.map(o=>o.glyph);for(let j=0;j<=seq.length-needle.length;j++)if(needle.every((v,k)=>v===seq[j+k]))for(let k=0;k<needle.length;k++)mask[j+k]=true}
+ let emphasis=t===null||t>=state.emphasis/100*3.2;
+ for(let j=0;j<coords.length;j++){let p=coords[j];g.fillStyle=mask[j]&&emphasis?state.accent:state.ink;g.font=`${mask[j]&&state.boldHighlight&&emphasis?'bold ':''}${p.fs}px ${fontLetter()}`;g.fillText(p.glyph,p.x-p.fs*.24,p.y)}
+ if(t!==null&&state.cursor&&t<1.5&&Math.floor(t*6)%2===0){let last=coords[coords.length-1],cx=last?last.x+last.fs*.36:box.x,cy=last?last.y:box.y+75;g.fillStyle=state.accent;if(state.paper==='type')g.fillRect(cx,cy-11,11,19);else g.fillRect(cx,cy-14,2,25)}
+ if(state.signature){g.textAlign='right';g.font=`italic 19px ${fontLetter()}`;g.fillStyle=state.ink;g.fillText(state.signature,box.x+box.w,box.y+box.h-9)}
+ g.restore();return layoutLetter(g,L.body,box);
+}
+function roundRect(g,x,y,w,h,r){g.beginPath();g.roundRect(x,y,w,h,r)}
+function drawPapers(g,geom,mode='normal'){
+ if(mode==='normal') {g.fillStyle=state.backColor;g.fillRect(0,0,W,H)}
+ if(mode==='portrait')return;
+ for(let p of geom.papers){
+  if(mode==='normal'){g.save();g.shadowColor='#1c13212b';g.shadowBlur=28;g.shadowOffsetY=7;g.fillStyle=state.paperColor;roundRect(g,p.x,p.y,p.w,p.h,state.paper==='type'?2:3);g.fill();g.restore()}
+  else {g.fillStyle=state.paperColor;roundRect(g,p.x,p.y,p.w,p.h,2);g.fill()}
+  if(state.border){g.strokeStyle=state.borderColor;g.lineWidth=1;g.strokeRect(p.x+11,p.y+11,p.w-22,p.h-22)}
+  if(state.lines){let lineColor=state.paper==='dark'?rgba('#f2f5f7',.18):state.paper==='type'?rgba(state.ink,.18):rgba(state.borderColor,.42);let lineWidth=state.paper==='dark'?.9:.8;let lineStart=state.paper==='type'?118:122;let lineGap=state.paper==='type'?34:38;g.strokeStyle=lineColor;g.lineWidth=lineWidth;for(let y=p.y+lineStart;y<p.y+p.h-35;y+=lineGap){g.beginPath();g.moveTo(p.x+state.margin,y);g.lineTo(p.x+p.w-state.margin,y);g.stroke()}}
+  if(state.paper==='type'){g.strokeStyle=rgba(state.ink,.15);g.lineWidth=2;g.strokeRect(p.x+20,p.y+20,p.w-40,p.h-40);g.strokeStyle=rgba(state.ink,.3);g.lineWidth=.7;g.beginPath();g.moveTo(p.x+35,p.y+79);g.lineTo(p.x+p.w-35,p.y+79);g.stroke()}
+ }
+ if(geom.mutual&&state.layout==='spread'){g.save();let p=geom.papers[0];let grad=g.createLinearGradient(480,0,520,0);grad.addColorStop(0,'#00000000');grad.addColorStop(.49,'#3928271f');grad.addColorStop(.54,'#ffffff35');grad.addColorStop(1,'#00000000');g.fillStyle=grad;g.fillRect(480,p.y+13,40,p.h-26);g.strokeStyle=rgba(state.borderColor,.75);g.beginPath();g.moveTo(500,p.y+19);g.lineTo(500,p.y+p.h-19);g.stroke();g.restore()}
+ if(geom.mutual&&state.layout==='one'){g.strokeStyle=rgba(state.borderColor,.6);g.beginPath();g.moveTo(500,120);g.lineTo(500,630);g.stroke()}
+}
+function drawSmallSender(g,geom){return;}
+function drawMovers(g,geom,t,plist){let progress=clamp((t-1.46)/.91,0,1);if(!progress||progress>=1)return;
+ const strength=state.flight/100,fromCoords=geom.letters.map((box,i)=>layoutLetter(g,state.letters[i]?.body||'',box));
+ Object.entries(geom.targets).forEach(([id])=>{let i=+id,items=plist[i],origin=fromCoords[targetLetter(i)]||[],count=Math.min(210,items.length);if(!count||!origin.length)return;
+  let travel=geom.mutual&&state.motion!=='swap'?clamp((progress-(i===0?0:.24))/.76,0,1):progress;
+  g.save();g.textAlign='center';g.textBaseline='middle';g.font=`${state.fontSize}px ${font()}`;
+  for(let j=0;j<count;j++){let to=items[Math.floor(j*items.length/count)],from=origin[j%origin.length];let late=(j%11)/45,local=smooth(clamp((travel-late)/(1-late),0,1));if(local>=.99)continue;
+   let startX=from.x,startY=from.y,mid=Math.sin(Math.PI*local)*(state.motion==='swap'?42:20)*strength*(j%2?1:-1);
+   let x=lerp(startX,to.x,local),y=lerp(startY,to.y,local)+mid;
+   g.globalAlpha=clamp(local*3,0,.95)*(1-local*.4);g.fillStyle=to.hl?state.accent:state.ink;g.fillText(to.glyph,x,y)
+  }g.restore()
+ })
+}
+function drawPortraitResult(g,geom,plist,mode,alpha=1,emphasize=1,perTarget=null){if(alpha<=0)return;
+ for(let [key,box] of Object.entries(geom.targets)){let i=+key,items=plist[i];if(!state.chars[i].image)continue;
+  let opacity=alpha*(perTarget?.[i]??1);
+  if(mode==='ascii'){drawGlyphs(g,items,opacity,{emphasize});continue}
+  if(mode==='original'){drawImageLayer(g,i,box,opacity,false);continue}
+  if(mode==='split'){
+   let xCut=box.x+box.w*state.split/100;
+   g.save();g.beginPath();g.rect(box.x-12,box.y-12,xCut-box.x+12,box.h+24);g.clip();drawGlyphs(g,items,opacity,{emphasize});g.restore();
+   g.save();g.beginPath();g.rect(xCut,box.y-12,box.x+box.w+12-xCut,box.h+24);g.clip();drawImageLayer(g,i,box,opacity,false);g.restore();
+   g.save();g.strokeStyle=rgba(state.accent,.85);g.lineWidth=1.5;g.beginPath();g.moveTo(xCut,box.y+25);g.lineTo(xCut,box.y+box.h-25);g.stroke();g.restore()
+  }
+ }
+}
+function drawScene(g,t=null,view='final',options={}){
+ const geo=geometry(),transparent=options.transparent||'solid';g.save();g.clearRect(0,0,W,H);
+ const isolated=transparent==='portrait',noOuter=transparent==='outer';
+ if(!isolated){if(noOuter){drawPapers(g,geo,'clearOuter')}else drawPapers(g,geo,'normal')}
+ const plist=getPortraits(geo),anim=view==='animation';
+ if(isolated){drawPortraitResult(g,geo,plist,view==='final'?state.reveal:'ascii',1);g.restore();return}
+ if(view==='letter'){geo.letters.forEach((box,i)=>drawLetter(g,i,box,null,1));drawSmallSender(g,geo)}
+ else if(view==='portrait'){drawPortraitResult(g,geo,plist,'ascii',1)}
+ else if(view==='final'){drawPortraitResult(g,geo,plist,state.reveal,1);drawSmallSender(g,geo)}
+ else if(anim){let tm=clamp(t??0,0,3.2),transition=clamp((tm-1.48)/1,0,1),letterFade=1-smooth((tm-1.42)/.82);
+  geo.letters.forEach((box,i)=>drawLetter(g,i,box,tm,letterFade));
+  if(tm>=1.48){let stagger=geo.mutual&&state.motion!=='swap'?{0:smooth((tm-1.65)/.55),1:smooth((tm-1.92)/.6)}:null;drawPortraitResult(g,geo,plist,'ascii',smooth((tm-1.65)/.85),tm>=1.5+state.emphasis/100*1.2?1:0,stagger);drawMovers(g,geo,tm,plist)}
+  if(tm>=2.68&&state.reveal!=='ascii'){
+   let revealAlpha=smooth((tm-2.7)/.46);
+   if(state.reveal==='original'){for(let [key,box] of Object.entries(geo.targets)){let i=+key;drawImageLayer(g,i,box,revealAlpha,false)}}
+   else {drawPortraitResult(g,geo,plist,'split',revealAlpha)}
+  }
+  if(tm>2.8&&state.senderThumb)drawSmallSender(g,geo);
+ }
+ if(options.edit&&view!=='letter'&&!playing){let ids=Object.keys(geo.targets);ids.forEach(key=>{let i=+key,box=geo.targets[i];if(!state.chars[i].image)return;let m=imageRect(i,box);g.save();g.strokeStyle='rgba(177,92,113,.85)';g.setLineDash([7,5]);g.lineWidth=1.3;g.strokeRect(m.cx-m.w/2-8,m.cy-m.h/2-8,m.w+16,m.h+16);g.setLineDash([]);g.fillStyle='#ffffff';g.fillRect(m.cx+m.w/2+1,m.cy+m.h/2+1,10,10);g.strokeRect(m.cx+m.w/2+1,m.cy+m.h/2+1,10,10);g.restore()})}
+ g.restore();
+}
+function renderPreview(){if(exporting)return;try{drawScene(ctx,stage==='animation'?playTime:null,stage,{edit:true})}catch(e){showStatus('미리보기에 문제가 발생했습니다: '+e.message,true);console.error(e)}}
+function setupDrag(){
+ canvas.addEventListener('pointerdown',e=>{
+  if(playing||stage==='letter')return;
+  const p=point(e),geo=geometry();
+  for(const id of Object.keys(geo.targets).reverse()){
+   const i=+id,m=imageRect(i,geo.targets[id]);if(!m)continue;
+   const hx=m.cx+m.w/2+6,hy=m.cy+m.h/2+6;
+   if(Math.abs(p.x-hx)<24&&Math.abs(p.y-hy)<24){dragging={i,prev:p,mode:'resize',startScale:state.chars[i].scale,startDistance:Math.hypot(m.w/2,m.h/2),center:{x:m.cx,y:m.cy}};break}
+   if(p.x>m.cx-m.w/2-12&&p.x<m.cx+m.w/2+12&&p.y>m.cy-m.h/2-12&&p.y<m.cy+m.h/2+12){dragging={i,prev:p,mode:'move'};break}
+  }
+  if(dragging){canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging');e.preventDefault()}
+ });
+ canvas.addEventListener('pointermove',e=>{
+  if(!dragging)return;const p=point(e),c=state.chars[dragging.i];
+  const block=document.querySelector(`[data-ci="${dragging.i}"]`);
+  if(dragging.mode==='resize'){
+   const distance=Math.hypot(p.x-dragging.center.x,p.y-dragging.center.y);
+   c.scale=clamp(Math.round(dragging.startScale*distance/Math.max(1,dragging.startDistance)),35,350);
+   const input=block?.querySelector('[data-prop="scale"]');if(input)input.value=c.scale;
+   block?.querySelector('[data-output="scale"]')?.replaceChildren(document.createTextNode(c.scale+'%'));
+  }else{
+   c.x=clamp(c.x+p.x-dragging.prev.x,-300,300);c.y=clamp(c.y+p.y-dragging.prev.y,-240,240);dragging.prev=p;
+   for(const k of ['x','y']){const input=block?.querySelector(`[data-prop="${k}"]`);if(input)input.value=Math.round(c[k]);block?.querySelector(`[data-output="${k}"]`)?.replaceChildren(document.createTextNode(Math.round(c[k])))}
+  }
+  invalidate();e.preventDefault();
+ });
+ const stop=()=>{dragging=null;canvas.classList.remove('dragging')};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
+}
+function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000)}
+async function savePNG(){if(exporting)return;try{const scale=+$('#pngScale').value,off=document.createElement('canvas');off.width=W*scale;off.height=H*scale;let g=off.getContext('2d');g.scale(scale,scale);drawScene(g,stage==='animation'?playTime:null,stage==='animation'?'animation':stage,{transparent:$('#pngBackground').value});let blob=await new Promise((res,rej)=>off.toBlob(b=>b?res(b):rej(Error('PNG 변환에 실패했습니다.')),'image/png'));download(blob,`WRITTEN_IN_YOU_${stage}.png`);showStatus('PNG 저장 완료')}catch(e){showStatus('PNG 저장 실패: '+e.message,true)}}
+// A single median-cut color table is used throughout the GIF so the same ink and paper
+// color never jump between frames. All GIF frames cover the entire canvas.
+function makePalette(samples){
+ const range=list=>{let lo=[255,255,255],hi=[0,0,0];for(let v of list){let c=[(v>>>16)&255,(v>>>8)&255,v&255];for(let k=0;k<3;k++){if(c[k]<lo[k])lo[k]=c[k];if(c[k]>hi[k])hi[k]=c[k]}}return hi.map((v,k)=>v-lo[k])};
+ const boxes=[samples.length?samples:[0xffffff]];
+ while(boxes.length<256){let best=-1,bestScore=-1,dim=0;
+  for(let i=0;i<boxes.length;i++){const a=boxes[i];if(a.length<2)continue;let r=range(a),which=r.indexOf(Math.max(...r)),score=Math.max(...r)*Math.sqrt(a.length);if(score>bestScore){bestScore=score;best=i;dim=which}}
+  if(best<0)break;
+  const a=boxes[best],shift=[16,8,0][dim];a.sort((x,y)=>((x>>>shift)&255)-((y>>>shift)&255));let mid=a.length>>1;
+  boxes[best]=a.slice(0,mid);boxes.push(a.slice(mid));
+ }
+ let colors=[];
+ for(let box of boxes){let rr=0,gg=0,bb=0;for(let v of box){rr+=(v>>>16)&255;gg+=(v>>>8)&255;bb+=v&255}let n=box.length||1;colors.push([Math.round(rr/n),Math.round(gg/n),Math.round(bb/n)])}
+ while(colors.length<256)colors.push(colors[colors.length-1]||[255,255,255]);return colors;
+}
+function paletteLookup(palette){const lut=new Uint8Array(32768);for(let code=0;code<32768;code++){
+  const r=((code>>10)&31)*8+4,g=((code>>5)&31)*8+4,b=(code&31)*8+4;let best=Infinity,id=0;
+  for(let j=0;j<256;j++){let c=palette[j],dr=r-c[0],dg=g-c[1],db=b-c[2],v=3*dr*dr+5*dg*dg+2*db*db;if(v<best){best=v;id=j;if(!v)break}}
+  lut[code]=id;
+ }return lut}
+function pixelsToIndices(pixels,lut){let out=new Uint8Array(pixels.length/4);for(let i=0,p=0;i<pixels.length;i+=4,p++){let key=((pixels[i]>>3)<<10)|((pixels[i+1]>>3)<<5)|(pixels[i+2]>>3);out[p]=lut[key]}return out}
+function lzwEncode(indexed){
+ const bytes=[],clear=256,eoi=257;let size=9,next=258,table=new Map(),buffer=0,bitCount=0;
+ const write=(code)=>{buffer|=code<<bitCount;bitCount+=size;while(bitCount>=8){bytes.push(buffer&255);buffer>>>=8;bitCount-=8}};
+ write(clear);let prefix=indexed[0]??0;
+ for(let i=1;i<indexed.length;i++){
+  const v=indexed[i],key=prefix*256+v,found=table.get(key);
+  if(found!==undefined){prefix=found;continue}
+  write(prefix);
+  if(next<4096){table.set(key,next++);if(next>(1<<size)&&size<12)size++}
+  else{write(clear);table.clear();next=258;size=9}
+  prefix=v;
+ }
+ write(prefix);write(eoi);if(bitCount)bytes.push(buffer&255);
+ return new Uint8Array(bytes);
+}
+class GifWriter{
+ constructor(w,h,palette){this.data=[];this.ascii('GIF89a');this.word(w);this.word(h);this.byte(0xf7);this.byte(0);this.byte(0);for(let p of palette){this.byte(p[0]);this.byte(p[1]);this.byte(p[2])}this.bytes([0x21,0xff,0x0b]);this.ascii('NETSCAPE2.0');this.bytes([3,1,0,0,0])}
+ byte(x){this.data.push(x&255)}word(n){this.byte(n);this.byte(n>>8)}bytes(a){for(let x of a)this.byte(x)}ascii(s){for(let i=0;i<s.length;i++)this.byte(s.charCodeAt(i))}
+ frame(indexed,w,h,delay){this.bytes([0x21,0xf9,4,0x08]);this.word(delay);this.bytes([0,0]);this.byte(0x2c);this.word(0);this.word(0);this.word(w);this.word(h);this.byte(0);this.byte(8);let compressed=lzwEncode(indexed);for(let p=0;p<compressed.length;p+=255){let count=Math.min(255,compressed.length-p);this.byte(count);for(let i=0;i<count;i++)this.byte(compressed[p+i])}this.byte(0)}
+ finish(){this.byte(0x3b);return new Blob([new Uint8Array(this.data)],{type:'image/gif'})}
+}
+function progress(p,message){$('#progress').style.display='block';$('#progressFill').style.width=clamp(p*100,0,100)+'%';showStatus(message+' '+Math.round(p*100)+'%')}
+const breathe=()=>new Promise(r=>setTimeout(r,0));
+async function saveGIF(){if(exporting)return;let controls=$$('button,input,select,textarea');try{
+ exporting=true;playing=false;$('#play').textContent='▶ 재생';controls.forEach(c=>c.disabled=true);$('#progress').style.display='block';
+ const width=900,height=648,fps=10,duration=3.2+state.hold,count=Math.max(32,Math.ceil(duration*fps));
+ const frame=document.createElement('canvas');frame.width=width;frame.height=height;let g=frame.getContext('2d',{willReadFrequently:true});
+ const paint=t=>{g.setTransform(width/W,0,0,height/H,0,0);drawScene(g,t,'animation',{edit:false,transparent:'solid'});return g.getImageData(0,0,width,height).data};
+ const samples=[];for(let s=0;s<8;s++){const time=duration*s/7,p=paint(time);for(let y=2;y<height;y+=10)for(let x=2;x<width;x+=10){let ix=(y*width+x)*4;samples.push((p[ix]<<16)|(p[ix+1]<<8)|p[ix+2])}progress(.05+s*.035,'색상표 준비 중');await breathe()}
+ const palette=makePalette(samples);progress(.35,'색상표 계산 중');await breathe();const lut=paletteLookup(palette),gif=new GifWriter(width,height,palette);
+ for(let i=0;i<count;i++){
+  const t=Math.min(duration-.001,i/fps),pixels=paint(t),indexed=pixelsToIndices(pixels,lut);
+  gif.frame(indexed,width,height,Math.round(100/fps));progress(.4+.59*(i+1)/count,'GIF 제작 중');
+  await breathe();
+ }
+ const blob=gif.finish();if(blob.size<1000)throw Error('GIF 데이터가 비정상적으로 작습니다.');download(blob,'WRITTEN_IN_YOU.gif');progress(1,'GIF 저장 완료');showStatus(`GIF 저장 완료 · ${count}프레임 · ${(blob.size/1048576).toFixed(1)}MB`)
+ }catch(e){console.error(e);showStatus('GIF 저장 실패: '+e.message,true)}finally{exporting=false;controls.forEach(c=>c.disabled=false);const swap=$('[data-key="motion"] option[value="swap"]');swap.disabled=state.count!==2||state.relation!=='mutual';setTimeout(()=>{$('#progress').style.display='none'},1000);renderPreview()}}
+setup();
+</script>
+</body></html>
