@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>OUR DESKTOP × LOVE VIRUS</title>
+<style>
+:root{--bg:#f4f3fb;--card:#ffffffdc;--ink:#4a4766;--dim:#9a96b5;--line:#e7e4f3;--accent:#7f6fe0;--soft:#efecff}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;font:13px/1.4 "Pretendard",ui-sans-serif,"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 92% -10%,#e7e2ff 0,transparent 42%),radial-gradient(ellipse at 0% 100%,#e2f4fb 0,transparent 40%),var(--bg)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+button:disabled{opacity:.45;cursor:progress}
+.wrap{max-width:1560px;margin:auto;padding:18px 22px 32px}
+header{display:flex;align-items:center;gap:12px;padding:2px 4px 16px}
+.logo{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,#a291f3,#7464d8);color:#fff;font-size:18px;box-shadow:0 6px 16px #7f6fe040}
+header h1{margin:0;font-size:16px;letter-spacing:.09em;color:#57507f}
+header h1 span{color:#b4a5f0}
+.layout{display:grid;grid-template-columns:296px minmax(0,1fr);grid-template-areas:"tools stage";gap:16px;align-items:start}
+.tools{grid-area:tools;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 28px #7770b40d}
+.panel{padding:15px 16px}
+.panel h2{margin:0 0 12px;font-size:11px;letter-spacing:.12em;color:#9b93c7;font-weight:800}
+.row{margin:11px 0 0}
+.label{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#7a7696;margin-bottom:6px}
+.label output{font-weight:700;color:var(--accent)}
+.seg{display:flex;gap:3px;background:#f2f0fa;padding:3px;border-radius:11px}
+.seg button{flex:1;padding:8px 4px;border-radius:8px;color:#8c87a8;font-size:12px;font-weight:600;white-space:nowrap;transition:.15s}
+.seg button:hover{color:#5e4fc4}
+.seg button.on{background:#fff;color:#5e4fc4;box-shadow:0 1px 4px #6e60c426}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{padding:7px 11px;border-radius:20px;border:1px solid var(--line);background:#fff;color:#a29eba;font-size:12px;font-weight:600;transition:.15s}
+.chips button.on{border-color:#beb3f5;background:var(--soft);color:#5e4fc4}
+.swatches{display:flex;gap:8px}
+.swatch{width:32px;height:32px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px #e1ddf0;transition:.15s}
+.swatch.on{box-shadow:0 0 0 2px var(--accent)}
+input[type=text],textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:#fcfbff;padding:9px 11px;outline:none;min-width:0}
+textarea{resize:vertical;min-height:58px;line-height:1.5}
+input[type=text]:focus,textarea:focus{border-color:#a597ee}
+input[type=range]{width:100%;margin:0;accent-color:var(--accent)}
+.upload{display:flex;align-items:center;gap:10px;padding:6px;border:1px dashed #d8d2ee;border-radius:12px;background:#fbfaff;position:relative;margin-bottom:6px;transition:.15s}
+.upload:hover{border-color:#b6aaf3;background:#f8f6ff}
+.upload.has{border-style:solid}
+.thumb{width:36px;height:36px;flex:none;border-radius:9px;display:grid;place-items:center;background:var(--soft) center/cover no-repeat;font-weight:800;color:#8272d4}
+.upload.has .thumb{color:transparent}
+.upload .name{flex:1;min-width:0;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upload:not(.has) .name{color:#a29eba}
+.upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.upload .x{position:relative;z-index:2;width:26px;height:26px;border-radius:8px;color:#a39bd0;font-size:16px}
+.upload .x:hover{background:#efeafb}
+.upload:not(.has) .x{display:none}
+.stage{grid-area:stage;padding:12px;min-width:0;position:sticky;top:14px}
+.screen{position:relative;border-radius:12px;overflow:hidden;border:1px solid #dcd8ec;background:#fbfaff;aspect-ratio:1000/625}
+.screen canvas{display:block;width:100%;height:100%;touch-action:none}
+.toast{position:absolute;top:12px;right:12px;max-width:70%;background:#1c2433ee;color:#fff;border-radius:11px;padding:9px 14px;font-size:12px;font-weight:600;box-shadow:0 8px 24px #0d142b40;opacity:0;transform:translateY(-6px);transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.toast i{display:none;height:4px;width:180px;max-width:100%;border-radius:4px;background:#3d4b5e;margin-top:7px;overflow:hidden}
+.toast.prog i{display:block}
+.toast b{display:block;height:100%;width:0;background:linear-gradient(90deg,#3cc9e6,#8ef0ff);transition:width .2s}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 0 0}
+.bar .seg{flex:0 1 330px}
+.btn{height:38px;padding:0 15px;border-radius:10px;border:1px solid var(--line);background:#fff;color:#6f6993;font-weight:700;font-size:12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transition:.15s}
+.btn:hover{border-color:#b8adeb}
+.btn.primary{min-width:84px;background:linear-gradient(135deg,#9f8cf0,#7768d9);border-color:transparent;color:#fff;box-shadow:0 5px 13px #9182df36}
+.btn.dark{background:#252c3b;border-color:#252c3b;color:#fff}
+.btn.dark:hover{background:#363f53}
+.sp{flex:1}
+@media (max-width:860px){
+  .layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "tools"}
+  .stage{position:static}
+  .tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .wrap{padding:10px 10px 24px}
+  header{padding-bottom:10px}
+  .tools{grid-template-columns:minmax(0,1fr)}
+  .stage{padding:8px;border-radius:14px}
+  .bar .seg{flex:1 1 100%}
+  .sp{display:none}
+  .btn{flex:1;padding:0 8px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo">♡</div><h1>OUR DESKTOP <span>×</span> LOVE VIRUS</h1></header>
+<div class="layout">
+
+<main class="card stage">
+  <div class="screen">
+    <canvas id="preview" aria-label="바탕화면 미리보기"></canvas>
+    <div class="toast" id="toast"><span id="toastMsg"></span><i><b id="toastFill"></b></i></div>
+  </div>
+  <div class="bar">
+    <div class="seg" data-group="scene">
+      <button data-val="desktop" class="on">바탕화면</button><button data-val="popup">오류</button><button data-val="virus">증식</button><button data-val="restored">복구</button>
+    </div>
+    <button class="btn primary" id="playBtn">▶ 재생</button>
+    <button class="btn" id="resetBtn" title="배치 초기화">↺</button>
+    <span class="sp"></span>
+    <button class="btn dark" id="pngBtn">PNG</button>
+    <button class="btn dark" id="gifBtn">GIF</button>
+    <button class="btn dark" id="sheetBtn">4컷</button>
+  </div>
+</main>
+
+<aside class="tools">
+  <section class="card panel">
+    <h2>CHARACTER</h2>
+    <div class="upload" data-slot="A"><span class="thumb">A</span><span class="name">캐릭터 A</span><input type="file" accept="image/png,image/jpeg,image/webp"><button class="x" aria-label="지우기">×</button></div>
+    <div class="upload" data-slot="B"><span class="thumb">B</span><span class="name">캐릭터 B</span><input type="file" accept="image/png,image/jpeg,image/webp"><button class="x" aria-label="지우기">×</button></div>
+    <div class="row"><div class="seg" data-group="selected"><button data-val="A" class="on">A</button><button data-val="B">B</button></div></div>
+    <div class="row"><div class="label">크기 <output id="sizeOut">100%</output></div><input id="charSize" type="range" min="50" max="180" value="100"></div>
+  </section>
+
+  <section class="card panel">
+    <h2>DESKTOP</h2>
+    <div class="upload" data-slot="Bg"><span class="thumb">▧</span><span class="name">배경 이미지</span><input type="file" accept="image/png,image/jpeg,image/webp"><button class="x" aria-label="지우기">×</button></div>
+    <div class="row"><div class="swatches" data-group="wallpaper">
+      <button class="swatch on" data-val="lavender" title="라벤더" style="background:#aeb6ea"></button>
+      <button class="swatch" data-val="pink" title="핑크" style="background:#f0b8d5"></button>
+      <button class="swatch" data-val="mint" title="민트" style="background:#b1dfd8"></button>
+      <button class="swatch" data-val="night" title="나이트" style="background:#4f6398"></button>
+      <button class="swatch" data-val="cream" title="크림" style="background:#e4d7c6"></button>
+    </div></div>
+    <div class="row"><div class="seg" data-group="theme"><button class="on" data-val="soft">파스텔</button><button data-val="classic">클래식</button><button data-val="dark">다크</button></div></div>
+    <div class="row chips">
+      <button data-key="show.photo">사진</button><button data-key="show.memo">메모</button><button data-key="show.music">음악</button><button data-key="show.icons">아이콘</button><button data-key="show.taskbar">작업표시줄</button>
+    </div>
+    <div class="row"><div class="label">창 이름</div><input id="photoTitle" type="text" maxlength="28"></div>
+    <div class="row"><div class="label">캡션</div><input id="caption" type="text" maxlength="26"></div>
+    <div class="row"><div class="label">메모</div><textarea id="memo" maxlength="140"></textarea></div>
+  </section>
+
+  <section class="card panel">
+    <h2>LOVE VIRUS</h2>
+    <div class="row" style="margin-top:0"><div class="label">오류 문구</div><input id="error" type="text" maxlength="46"></div>
+    <div class="row"><div class="label">팝업 <output id="popupsOut">3</output></div><input id="popups" type="range" min="1" max="6" value="3"></div>
+    <div class="row"><div class="seg" data-group="popupStyle"><button data-val="blue" class="on">하늘</button><button data-val="pink">분홍</button><button data-val="dark">검정</button></div></div>
+    <div class="row"><div class="seg" data-group="effect"><button data-val="digital" class="on">디지털</button><button data-val="vhs">VHS</button><button data-val="glitch">글리치</button></div></div>
+    <div class="row"><div class="label">강도 <output id="amountOut">52%</output></div><input id="amount" type="range" min="0" max="100" value="52"></div>
+    <div class="row chips"><button data-key="fx.hearts">픽셀 하트</button><button data-key="fx.scan">스캔라인</button></div>
+  </section>
+
+  <section class="card panel">
+    <h2>EXPORT</h2>
+    <div class="label">PNG</div>
+    <div class="seg" data-group="res"><button data-val="1">1×</button><button data-val="2" class="on">2×</button><button data-val="3">3×</button></div>
+    <div class="row"><div class="label">GIF</div><div class="seg" data-group="fps"><button data-val="10" class="on">10fps</button><button data-val="12">12fps</button><button data-val="15">15fps</button></div></div>
+    <div class="row chips"><button data-key="out.transparent">투명 배경</button><button data-key="out.notice">진행 알림</button></div>
+  </section>
+</aside>
+
+</div>
+</div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const W=1000,H=625,LOOP=3,TASKBAR=47;
+const C=$('preview'),ctx=C.getContext('2d');
+
+/* ---------- state ---------- */
+const layout=()=>({
+  windows:{photo:{x:274,y:100,w:490,h:362},memo:{x:744,y:84,w:222,h:168},music:{x:96,y:472,w:236,h:96}},
+  order:['music','memo','photo'],
+  chars:{A:{x:165,y:192},B:{x:325,y:192}}, // relative to the photo window
+  icons:[{id:'photo',x:34,y:34,label:'사진'},{id:'memo',x:34,y:128,label:'메모'},{id:'music',x:34,y:222,label:'음악'},{id:'virus',x:34,y:316,label:'LOVE VIRUS'},{id:'trash',x:918,y:474,label:'휴지통'}]
+});
+const S={
+  wallpaper:'lavender',theme:'soft',scene:'desktop',selected:'A',
+  effect:'digital',amount:52,popupStyle:'blue',popups:3,res:2,fps:10,
+  photoTitle:'우리 둘.jpg',caption:'우리의 바탕화면',memo:'♡ 사진 정리\n♡ 바탕화면 꾸미기',error:'알 수 없는 오류가 발생했어요.',
+  show:{photo:true,memo:true,music:true,icons:true,taskbar:true},
+  fx:{hearts:true,scan:false},
+  out:{transparent:false,notice:false},
+  images:{A:null,B:null,Bg:null},size:{A:100,B:100},
+  ...layout(),
+  closed:new Set(),playing:false,t0:0,t:0,busy:false,drag:null,down:null,icon:null
+};
+const EXPR={desktop:'normal',popup:'shock',virus:'shock',restored:'happy'};
+
+/* ---------- mascots (inline SVG → Image) ---------- */
+const OUT='#4b3f6e';
+const st=(w=4)=>`stroke="${OUT}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
+const heartSVG=(x,y,s)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0-3C-2-9-11-9-11-2C-11 4-4 8 0 12C4 8 11 4 11-2C11-9 2-9 0-3Z" fill="#ff86ab" stroke="${OUT}" stroke-width="${(2.6/s).toFixed(2)}" stroke-linejoin="round"/>`;
+function mascotSVG(kind,expr){
+  const bunny=kind==='A';
+  const fur=bunny?'#fff2e6':'#c6cbf5',shade=bunny?'#f2d3bd':'#9ea6e3',belly=bunny?'#fffaf5':'#eef0ff',pink='#f7a9c1';
+  let s=`<ellipse cx="100" cy="250" rx="56" ry="7" fill="${OUT}" opacity=".13"/>`;
+  if(bunny){
+    const r={normal:-9,shock:3,happy:-17}[expr];
+    for(const [cx,d] of [[74,1],[126,-1]])
+      s+=`<g transform="rotate(${r*d} ${cx} 98)"><ellipse cx="${cx}" cy="52" rx="17" ry="46" fill="${fur}" ${st()}/><ellipse cx="${cx}" cy="58" rx="8" ry="31" fill="${pink}"/></g>`;
+  }else{
+    const tail='M134 222C186 224 190 170 166 156';
+    s+=`<path d="${tail}" fill="none" stroke="${OUT}" stroke-width="18" stroke-linecap="round"/><path d="${tail}" fill="none" stroke="${fur}" stroke-width="10" stroke-linecap="round"/>`;
+    s+=`<path d="M40 106L48 36L96 72Z" fill="${fur}" ${st()}/><path d="M54 90L57 56L81 75Z" fill="${pink}"/>`;
+    s+=`<path d="M160 106L152 36L104 72Z" fill="${fur}" ${st()}/><path d="M146 90L143 56L119 75Z" fill="${pink}"/>`;
+  }
+  // body, belly, feet
+  s+=`<rect x="60" y="148" width="80" height="92" rx="38" fill="${fur}" ${st()}/>`;
+  s+=`<ellipse cx="100" cy="208" rx="25" ry="23" fill="${belly}"/>`;
+  s+=`<ellipse cx="79" cy="240" rx="18" ry="10" fill="${fur}" ${st()}/><ellipse cx="121" cy="240" rx="18" ry="10" fill="${fur}" ${st()}/>`;
+  // arms (pose follows the expression)
+  const [ax,ay,ar]={normal:[62,200,20],shock:[54,182,48],happy:[50,164,64]}[expr];
+  s+=`<ellipse cx="${ax}" cy="${ay}" rx="12" ry="21" transform="rotate(${ar} ${ax} ${ay})" fill="${fur}" ${st()}/>`;
+  s+=`<ellipse cx="${200-ax}" cy="${ay}" rx="12" ry="21" transform="rotate(${-ar} ${200-ax} ${ay})" fill="${fur}" ${st()}/>`;
+  if(!bunny)s+=`<path d="M64 168Q100 186 136 168" fill="none" stroke="#ff8fb3" stroke-width="7" stroke-linecap="round"/>`;
+  // head
+  s+=`<ellipse cx="100" cy="118" rx="68" ry="56" fill="${fur}" ${st()}/>`;
+  s+=`<ellipse cx="74" cy="86" rx="20" ry="9" transform="rotate(-18 74 86)" fill="#fff" opacity=".65"/>`;
+  if(!bunny)s+=`<path d="M90 66v11M100 63v14M110 66v11" stroke="${shade}" stroke-width="5" stroke-linecap="round"/>`;
+  s+=`<ellipse cx="58" cy="138" rx="11" ry="6.5" fill="#f592b0" opacity=".5"/><ellipse cx="142" cy="138" rx="11" ry="6.5" fill="#f592b0" opacity=".5"/>`;
+  // eyes
+  for(const cx of [74,126]){
+    if(expr==='normal')s+=`<ellipse cx="${cx}" cy="118" rx="7.5" ry="9.5" fill="${OUT}"/><circle cx="${cx+2.5}" cy="114" r="3" fill="#fff"/><circle cx="${cx-2}" cy="122" r="1.5" fill="#fff"/>`;
+    else if(expr==='shock')s+=`<circle cx="${cx}" cy="116" r="11" fill="#fff" ${st(3)}/><circle cx="${cx}" cy="117" r="4.2" fill="${OUT}"/>`;
+    else s+=`<path d="M${cx-10} 121Q${cx} 108 ${cx+10} 121" fill="none" ${st(4.5)}/>`;
+  }
+  // nose + mouth
+  s+=`<path d="M95 128h10l-5 5.5Z" fill="#f08aa8" ${st(2.2)}/>`;
+  if(expr==='normal')s+=`<path d="M100 133.5v3.5M92 137q4 5 8 0q4 5 8 0" fill="none" ${st(3)}/>`;
+  else if(expr==='shock')s+=`<ellipse cx="100" cy="147" rx="7" ry="9" fill="${OUT}"/><ellipse cx="100" cy="151" rx="4.5" ry="3.5" fill="#f08aa8"/>`;
+  else s+=`<path d="M88 138Q100 158 112 138Z" fill="#e8607f" ${st(3)}/>`;
+  // accessories
+  if(bunny)s+=`<g transform="rotate(18 142 76)"><path d="M142 76L126 66V86ZM142 76L158 66V86Z" fill="#ff8fb3" ${st(3)}/><circle cx="142" cy="76" r="5" fill="#ff8fb3" ${st(3)}/></g>`;
+  else s+=`<path d="M30 126L52 131M30 140L52 139M170 126L148 131M170 140L148 139" fill="none" ${st(2.5)}/><circle cx="100" cy="181" r="7.5" fill="#ffd36b" ${st(2.5)}/><path d="M96.5 183.5h7" ${st(2)}/>`;
+  // expression extras
+  if(expr==='shock')s+=`<path d="M163 74q10 14 0 20q-10-6 0-20Z" fill="#a8dcf7" ${st(2.5)}/><path d="M30 66l-10-9M24 84l-14-2M42 50l-5-12" fill="none" ${st(3.5)}/>`;
+  if(expr==='happy')s+=heartSVG(172,62,1.1)+heartSVG(26,80,.75);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" width="400" height="520">${s}</svg>`;
+}
+const MASCOT={};
+for(const k of ['A','B']){MASCOT[k]={};for(const e of ['normal','shock','happy']){const im=new Image();im.onload=()=>draw();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(mascotSVG(k,e));MASCOT[k][e]=im}}
+const CH_W=150,CH_H=195;
+
+/* ---------- canvas helpers ---------- */
+const FONT='"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif';
+const rr=(g,x,y,w,h,r)=>{g.beginPath();g.roundRect(x,y,w,h,Math.max(0,Math.min(r,w/2,h/2)))};
+const fillR=(g,x,y,w,h,r,c)=>{g.fillStyle=c;rr(g,x,y,w,h,r);g.fill()};
+const strokeR=(g,x,y,w,h,r,c,l=1)=>{g.strokeStyle=c;g.lineWidth=l;rr(g,x,y,w,h,r);g.stroke()};
+const setFont=(g,size,weight=500)=>{g.font=`${weight} ${size}px ${FONT}`};
+const txt=(g,s,x,y,size=14,color='#444465',weight=500,align='left')=>{g.fillStyle=color;setFont(g,size,weight);g.textAlign=align;g.textBaseline='middle';g.fillText(String(s),x,y)};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const easeBack=x=>{x=clamp(x,0,1);const c=1.70158;return 1+(c+1)*(x-1)**3+c*(x-1)**2};
+function wrap(g,text,maxW,maxLines){
+  const out=[];let line='';
+  for(const ch of text){
+    if(ch==='\n'){out.push(line);line='';continue}
+    if(g.measureText(line+ch).width>maxW&&line){out.push(line);line=ch.trimStart()}else line+=ch;
+  }
+  out.push(line);
+  if(out.length>maxLines){out.length=maxLines;out[maxLines-1]=out[maxLines-1].slice(0,-1)+'…'}
+  return out;
+}
+function contain(g,im,x,y,w,h){const s=Math.min(w/im.width,h/im.height);g.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s)}
+
+const PAL={lavender:['#a7b3ee','#e8ceef','#faf1fa'],pink:['#efb2cf','#ffe2e8','#fbf2e5'],mint:['#8accc6','#c4eee1','#edf9e8'],night:['#344675','#7977b1','#a5a7d5'],cream:['#d5bfae','#f6e8da','#fff9f1']};
+const THEME={
+  soft:{front:'#dfdbf9',panel:'#fffdff',text:'#5a5882',line:'#bcb5ea',bar:'#c9c2f4',sub:'#958dbb',title:'#484268'},
+  classic:{front:'#e6e6ec',panel:'#f7f7fc',text:'#38466e',line:'#6979aa',bar:'#6a7eba',sub:'#6679aa',title:'#fff'},
+  dark:{front:'#30334e',panel:'#1f2a49',text:'#e7e6ff',line:'#7279b2',bar:'#56628c',sub:'#abb5d9',title:'#fff'}
+};
+const T=()=>THEME[S.theme];
+const POPUP={
+  blue:{bar:'#9cbee9',main:'#f9fbff',edge:'#7fa9df',text:'#55668c',title:'#41506f',icon:'#ffe0ec',heart:'#e66aa0',btn:'#e3ebf8'},
+  pink:{bar:'#e8b2cf',main:'#fff3f8',edge:'#dd92bf',text:'#73506a',title:'#5e3a55',icon:'#ffe0ee',heart:'#d9579a',btn:'#f8dfeb'},
+  dark:{bar:'#384159',main:'#20283b',edge:'#57647f',text:'#e6e8ff',title:'#fff',icon:'#3a2c45',heart:'#ff7fb6',btn:'#323c55'}
+};
+
+/* ---------- desktop pieces ---------- */
+function drawWallpaper(g,transparent){
+  if(transparent)return;
+  const c=PAL[S.wallpaper],grad=g.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0,c[0]);grad.addColorStop(.56,c[1]);grad.addColorStop(1,c[2]);
+  g.fillStyle=grad;g.fillRect(0,0,W,H);
+  if(S.images.Bg){
+    const im=S.images.Bg,s=Math.max(W/im.width,H/im.height);
+    g.drawImage(im,(W-im.width*s)/2,(H-im.height*s)/2,im.width*s,im.height*s);
+    g.fillStyle='rgba(59,61,93,.07)';g.fillRect(0,0,W,H);return;
+  }
+  const night=S.wallpaper==='night';
+  g.save();g.globalAlpha=night?.3:.22;g.strokeStyle=night?'#f6f0ff':'#fff';g.lineWidth=1;g.beginPath();
+  for(let x=0;x<W;x+=32){g.moveTo(x+.5,0);g.lineTo(x+.5,H)}
+  for(let y=0;y<H;y+=32){g.moveTo(0,y+.5);g.lineTo(W,y+.5)}
+  g.stroke();g.globalAlpha=.34;
+  for(let i=0;i<27;i++)txt(g,i%3?'✦':'✧',(i*181+51)%990,(i*97+41)%590,i%3?10:23,'#fff',600);
+  g.restore();
+  g.fillStyle='rgba(255,255,255,.2)';g.beginPath();g.ellipse(700,140,270,130,.3,0,Math.PI*2);g.fill();
+  g.fillStyle='rgba(255,255,255,.16)';g.beginPath();g.ellipse(480,520,340,120,-.3,0,Math.PI*2);g.fill();
+}
+function pixelHeart(g,x,y,s,c='#fff'){
+  const rows=['0110110','1111111','1111111','0111110','0011100','0001000'];
+  g.save();g.translate(x,y);g.scale(s,s);g.fillStyle=c;
+  for(let r=0;r<6;r++)for(let col=0;col<7;col++)if(rows[r][col]==='1')g.fillRect(col-3.5,r-3,1.06,1.06);
+  g.restore();
+}
+function glyph(g,name,x,y,size){
+  g.save();g.translate(x,y);const k=size/30;g.scale(k,k);
+  g.strokeStyle='#fff';g.lineWidth=2.3;g.lineJoin='round';g.lineCap='round';
+  if(name==='photo'){g.strokeRect(-11,-9,22,18);g.beginPath();g.arc(5,-3,3,0,7);g.stroke();g.beginPath();g.moveTo(-10,8);g.lineTo(-3,0);g.lineTo(2,4);g.lineTo(6,1);g.lineTo(11,7);g.stroke()}
+  else if(name==='memo'){g.strokeRect(-9,-12,18,24);g.beginPath();for(let i=0;i<3;i++){g.moveTo(-5,-5+i*6);g.lineTo(5,-5+i*6)}g.stroke()}
+  else if(name==='music'){g.beginPath();g.moveTo(-4,7);g.lineTo(-4,-11);g.lineTo(9,-13);g.lineTo(9,4);g.stroke();g.beginPath();g.ellipse(-8,8,4.5,3.2,-.35,0,7);g.ellipse(5,5,4.5,3.2,-.35,0,7);g.fillStyle='#fff';g.fill()}
+  else if(name==='virus')pixelHeart(g,0,0,3.4,'#fff');
+  else{g.strokeRect(-8,-8,16,19);g.beginPath();g.moveTo(-12,-9);g.lineTo(12,-9);g.moveTo(-4,-13);g.lineTo(4,-13);g.moveTo(-3,-3);g.lineTo(-3,6);g.moveTo(3,-3);g.lineTo(3,6);g.stroke()}
+  g.restore();
+}
+const ICON_COL={photo:['#b990d9','#837ae5'],memo:['#ecc48d','#e99cab'],music:['#90b5e8','#7d8dc9'],virus:['#f2a5ca','#c66aa8'],trash:['#b6b8df','#8c90c8']};
+function drawIcons(g,ui){
+  if(!S.show.icons)return;
+  for(const ic of S.icons){
+    const {x,y}=ic,[c0,c1]=ICON_COL[ic.id];
+    if(ui&&S.icon===ic.id)fillR(g,x-16,y-9,79,84,11,'#ffffff55');
+    g.save();g.shadowBlur=14;g.shadowOffsetY=3;g.shadowColor='#443b7f40';
+    const gr=g.createLinearGradient(x,y,x+46,y+46);gr.addColorStop(0,c0);gr.addColorStop(1,c1);
+    fillR(g,x,y,47,46,13,gr);g.restore();
+    strokeR(g,x+.5,y+.5,46,45,13,'#ffffffa0');
+    glyph(g,ic.id,x+23.5,y+23,27);
+    g.save();g.shadowColor='#26284680';g.shadowBlur=5;txt(g,ic.label,x+23.5,y+62,12,'#fff',700,'center');g.restore();
+  }
+}
+function frame(g,w,title){
+  const th=T(),{x,y}=w;
+  g.save();g.shadowBlur=26;g.shadowOffsetY=6;g.shadowColor='#2829453a';fillR(g,x,y,w.w,w.h,13,th.front);g.restore();
+  fillR(g,x+5,y+5,w.w-10,w.h-10,9,th.panel);
+  fillR(g,x+5,y+5,w.w-10,33,7,th.bar);
+  setFont(g,12,700);
+  txt(g,wrap(g,title,w.w-100,1)[0],x+17,y+21.5,12,th.title,700);
+  for(let j=0;j<3;j++){fillR(g,x+w.w-65+j*18,y+15,12,12,4,j===2?'#f28b9b':'#ffffff98')}
+  txt(g,'×',x+w.w-23,y+20.5,11,'#fff',800,'center');
+  strokeR(g,x,y,w.w,w.h,13,th.line,1.5);
+  return th;
+}
+function drawChars(g,ox,oy,expr,t,anim){
+  ['A','B'].forEach((k,n)=>{
+    const p=S.chars[k],z=S.size[k]/100,w=CH_W*z,h=CH_H*z;
+    let cx=ox+p.x,cy=oy+p.y;
+    if(anim){if(expr==='shock')cx+=Math.sin(t*55+n*2)*1.6;else cy-=Math.abs(Math.sin(t*4.2+n*1.3))*5}
+    const im=S.images[k]||MASCOT[k][expr];
+    if(im&&im.complete&&im.naturalWidth)contain(g,im,cx-w/2,cy-h/2,w,h);
+  });
+}
+function drawPhoto(g,expr,t,anim){
+  if(!S.show.photo)return;
+  const w=S.windows.photo,dark=S.theme==='dark';
+  frame(g,w,S.photoTitle||'사진');
+  const ix=w.x+10,iy=w.y+43,iw=w.w-20,ih=w.h-53;
+  g.save();rr(g,ix,iy,iw,ih,6);g.clip();
+  const gr=g.createLinearGradient(ix,iy,ix+iw,iy+ih);
+  gr.addColorStop(0,dark?'#59618a':'#f7e5f8');gr.addColorStop(1,dark?'#313557':'#e0ecff');
+  g.fillStyle=gr;g.fillRect(ix,iy,iw,ih);
+  for(let i=0;i<15;i++)txt(g,i%2?'✧':'✦',ix+(i*91+37)%iw,iy+(i*67+13)%ih,15,i%2?'#fff':'#c9b7ee',600);
+  if(S.caption){
+    setFont(g,12,700);const cw=Math.min(iw-40,g.measureText(S.caption).width+36);
+    fillR(g,ix+(iw-cw)/2,iy+ih-40,cw,26,13,'#ffffff88');
+    txt(g,wrap(g,S.caption,cw-24,1)[0],ix+iw/2,iy+ih-27,12,'#817aa9',700,'center');
+  }
+  drawChars(g,w.x,w.y,expr,t,anim);
+  g.restore();
+}
+function drawMemo(g){
+  if(!S.show.memo)return;
+  const w=S.windows.memo,dark=S.theme==='dark';
+  frame(g,w,'메모.txt');
+  fillR(g,w.x+12,w.y+47,w.w-24,w.h-60,6,dark?'#36405e':'#fffef5');
+  setFont(g,12,500);
+  wrap(g,S.memo,w.w-48,Math.floor((w.h-72)/21)).forEach((l,i)=>txt(g,l,w.x+23,w.y+65+i*21,12,dark?'#e8e9ff':'#76718c',500));
+}
+function drawMusic(g,t){
+  if(!S.show.music)return;
+  const w=S.windows.music,th=frame(g,w,'재생 목록'),{x,y}=w;
+  const gr=g.createLinearGradient(x+16,y+46,x+60,y+90);gr.addColorStop(0,'#c3b6f3');gr.addColorStop(1,'#9b8de0');
+  fillR(g,x+16,y+46,44,44,9,gr);pixelHeart(g,x+38.5,y+68,3,'#fff');
+  for(let i=0;i<9;i++){const h=5+Math.abs(Math.sin(t*7+i*1.7))*16;fillR(g,x+74+i*8,y+66-h,5,h,2,i%2?th.sub:'#a99be6')}
+  const bw=w.w-92;fillR(g,x+74,y+78,bw,4,2,'#c4c0dd88');fillR(g,x+74,y+78,bw*(.25+(t/LOOP)*.5),4,2,'#8f80da');
+}
+function drawTaskbar(g){
+  if(!S.show.taskbar)return;
+  const dark=S.theme==='dark',y=H-TASKBAR;
+  g.fillStyle=dark?'#2c3150ee':'#f7f4ffee';g.fillRect(0,y,W,TASKBAR);
+  g.fillStyle='#ffffffa0';g.fillRect(0,y,W,1);
+  fillR(g,9,y+7,40,33,9,dark?'#7378bc':'#aea5ea');pixelHeart(g,29,y+23.5,2.2,'#fff');
+  const names={photo:'사진',memo:'메모',music:'음악'};
+  const open=['photo','memo','music'].filter(k=>S.show[k]),top=[...S.order].reverse().find(k=>S.show[k]);
+  open.forEach((k,i)=>{
+    const on=k===top;
+    fillR(g,58+i*96,y+8,90,31,7,on?(dark?'#4c5487':'#d9d3f8'):(dark?'#3a4066':'#ebe8fa'));
+    txt(g,names[k],103+i*96,y+23.5,12,dark?'#e7e6ff':'#6b628c',700,'center');
+  });
+  const d=new Date();
+  txt(g,`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,W-20,y+23.5,12,dark?'#cfd3f5':'#797499',700,'right');
+}
+
+/* ---------- virus ---------- */
+const POP_POS=[[330,168],[470,262],[206,282],[574,110],[338,378],[650,330]],POP_W=290,POP_H=118;
+const appearAt=i=>i===0?.72:1.36+i/S.popups*1.1;
+function popupList(scene,t,seq,closed){
+  if(scene!=='popup'&&scene!=='virus')return [];
+  const n=scene==='popup'?1:S.popups,list=[];
+  for(let i=0;i<n;i++){if(seq?t>=appearAt(i):!(closed&&closed.has(i)))list.push(i)}
+  return list;
+}
+function drawPopups(g,list,t,seq){
+  const co=POPUP[S.popupStyle];
+  for(const i of list){
+    const s=seq?easeBack((t-appearAt(i))/.2):1;
+    let [x,y]=POP_POS[i];
+    if(S.effect==='glitch')x+=Math.sin(t*28+i)*S.amount/18;
+    g.save();g.globalAlpha=clamp(s,0,1);
+    g.translate(x+POP_W/2,y+POP_H/2);g.scale(s,s);g.translate(-POP_W/2,-POP_H/2);
+    g.save();g.shadowBlur=20;g.shadowOffsetY=5;g.shadowColor='#25204455';fillR(g,0,0,POP_W,POP_H,10,co.main);g.restore();
+    fillR(g,3,3,POP_W-6,29,8,co.bar);
+    strokeR(g,.5,.5,POP_W-1,POP_H-1,10,co.edge,1.5);
+    txt(g,i%2?'system.exe':'LOVE VIRUS',14,17.5,12,co.title,800);
+    fillR(g,POP_W-29,8,18,18,5,'#ffffff90');txt(g,'×',POP_W-20,16.5,14,'#685b81',700,'center');
+    fillR(g,15,45,40,40,10,co.icon);pixelHeart(g,35,65,3.4,co.heart);
+    setFont(g,12,600);
+    const lines=wrap(g,S.error,POP_W-86,2);
+    lines.forEach((l,k)=>txt(g,l,66,(lines.length>1?55:64)+k*18,12,co.text,600));
+    fillR(g,POP_W-94,85,76,24,7,co.btn);txt(g,'확인',POP_W-56,97,12,co.text,700,'center');
+    g.restore();
+  }
+}
+function drawOverlays(g,t,scene){
+  const k=S.amount/100;
+  if(S.fx.hearts&&(scene==='virus'||scene==='restored')){
+    for(let i=0;i<12;i++){
+      const x=(i*91+46+Math.sin(t*2+i)*30)%W,y=H+20-((t*90+i*61)%(H+60));
+      pixelHeart(g,x,y,2.2+(i%3)*.7,i%2?'#ffffffd0':'#faaddadd');
+    }
+  }
+  if(S.effect==='vhs'||S.fx.scan){
+    g.save();const vhs=S.effect==='vhs';
+    g.globalAlpha=vhs?.14+k*.21:.12;g.fillStyle='#303256';
+    for(let y=0;y<H;y+=4)g.fillRect(0,y,W,1.5);
+    g.globalAlpha=vhs?.14+k*.24:.12;g.fillStyle='#ffdfec';g.fillRect(0,(t*124)%H|0,W,5+k*11);
+    g.restore();
+  }
+  if(S.effect==='vhs'){
+    g.save();g.strokeStyle='#452b56';g.globalAlpha=.1+k*.2;g.beginPath();
+    for(let i=0;i<32;i++){const y=(i*57+t*63)%H;g.moveTo(0,y);g.lineTo(W,y+1)}
+    g.stroke();g.restore();
+  }
+  if(S.effect==='glitch'&&k>.02&&scene==='virus'){
+    g.save();
+    const n=5+Math.floor(k*8);
+    for(let i=0;i<n;i++){
+      const y=(i*89+Math.floor(t*6)*41)%575+16,h=2+(i*3)%8;
+      g.globalAlpha=.18+k*.22;g.fillStyle=i%2?'#ff57ab':'#20d7f7';
+      g.fillRect(Math.sin(t*39+i)*13*k,y,W*.6,h);
+    }
+    g.globalAlpha=.12+k*.16;g.fillStyle='#f24b9d';g.fillRect(0,0,4+k*9,H);g.fillStyle='#39d5ff';g.fillRect(W-9,0,3+k*7,H);
+    g.restore();
+  }
+}
+const NOTICE={desktop:'파일 여는 중',popup:'오류 발견',virus:'LOVE VIRUS 감염',restored:'복구 완료'};
+function drawNotice(g,scene,pct){
+  const gold=scene==='restored',w=300,h=58,x=W-w-22,y=H-(S.show.taskbar?TASKBAR:0)-h-16;
+  g.save();g.shadowBlur=18;g.shadowColor='#17152270';fillR(g,x,y,w,h,11,'#1b2531');g.restore();
+  strokeR(g,x+.5,y+.5,w-1,h-1,11,gold?'#8e6a2c':'#32576d');
+  fillR(g,x+9,y+9,40,40,9,gold?'#5c471e':'#17465b');
+  if(gold)txt(g,'✓',x+29,y+29,21,'#ffcf65',800,'center');else pixelHeart(g,x+29.5,y+29,3,'#51d9f4');
+  txt(g,NOTICE[scene],x+62,y+21,12,gold?'#f7d07b':'#d2ecf4',700);
+  txt(g,pct+'%',x+w-14,y+21,11,gold?'#f9c961':'#7fb8cc',700,'right');
+  fillR(g,x+62,y+37,w-76,5,3,'#3a5360');
+  fillR(g,x+62,y+37,(w-76)*pct/100,5,3,gold?'#e6ae47':'#26c8e8');
+}
+
+/* ---------- render ---------- */
+function stageAt(t){
+  t=((t%LOOP)+LOOP)%LOOP;
+  if(t<.72)return{scene:'desktop',pct:t/.72*26};
+  if(t<1.36)return{scene:'popup',pct:26+(t-.72)/.64*25};
+  if(t<2.46)return{scene:'virus',pct:51+(t-1.36)/1.1*34};
+  return{scene:'restored',pct:85+(t-2.46)/.54*15};
+}
+function render(g,o={}){
+  const t=o.t||0,seq=!!o.seq,lt=((t%LOOP)+LOOP)%LOOP;
+  const stage=seq?stageAt(t):{scene:o.scene,pct:100},scene=stage.scene;
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,g.canvas.width,g.canvas.height);
+  g.setTransform(g.canvas.width/W,0,0,g.canvas.height/H,0,0);
+  drawWallpaper(g,o.transparent);
+  drawIcons(g,o.ui);
+  for(const k of S.order){if(k==='photo')drawPhoto(g,EXPR[scene],t,seq);else if(k==='memo')drawMemo(g);else drawMusic(g,t)}
+  drawPopups(g,popupList(scene,lt,seq,o.closed),lt,seq);
+  drawTaskbar(g);
+  drawOverlays(g,t,scene);
+  if(o.notice)drawNotice(g,scene,Math.round(Math.min(100,stage.pct)));
+}
+function draw(){render(ctx,{t:S.t,seq:S.playing,scene:S.scene,closed:S.closed,notice:S.out.notice,ui:true})}
+function fit(){
+  const r=C.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);
+  const w=Math.round(r.width*d),h=Math.round(r.height*d);
+  if(w&&h&&(C.width!==w||C.height!==h)){C.width=w;C.height=h;draw()}
+}
+new ResizeObserver(fit).observe(C);
+
+/* ---------- playback / scenes ---------- */
+let raf=0;
+function markScene(s){document.querySelectorAll('[data-group="scene"] button').forEach(b=>b.classList.toggle('on',b.dataset.val===s))}
+function loop(now){S.t=((now-S.t0)/1000)%LOOP;markScene(stageAt(S.t).scene);draw();raf=requestAnimationFrame(loop)}
+function play(on){
+  if(S.busy)return;
+  cancelAnimationFrame(raf);
+  if(S.playing&&!on)S.scene=stageAt(S.t).scene;
+  S.playing=on;S.closed.clear();
+  $('playBtn').textContent=on?'❚❚ 정지':'▶ 재생';
+  if(on){S.t0=performance.now()-S.t*1000;raf=requestAnimationFrame(loop)}else{markScene(S.scene);draw()}
+}
+function setScene(s){
+  cancelAnimationFrame(raf);S.playing=false;S.t=0;S.scene=s;S.closed.clear();
+  $('playBtn').textContent='▶ 재생';markScene(s);draw();
+}
+$('playBtn').onclick=()=>play(!S.playing);
+$('resetBtn').onclick=()=>{Object.assign(S,layout());S.icon=null;setScene('desktop')};
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.target.closest('input,textarea,button')){e.preventDefault();play(!S.playing)}});
+
+/* ---------- toast ---------- */
+let toastTimer=0;
+function toast(msg,pct){
+  const el=$('toast');$('toastMsg').textContent=msg;
+  el.classList.toggle('prog',pct!=null);$('toastFill').style.width=(pct??100)+'%';
+  el.classList.add('show');clearTimeout(toastTimer);
+  if(pct==null||pct>=100)toastTimer=setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+/* ---------- controls ---------- */
+const getK=k=>k.split('.').reduce((o,p)=>o[p],S);
+const setK=(k,v)=>{const ps=k.split('.'),last=ps.pop();ps.reduce((o,p)=>o[p],S)[last]=v};
+function syncChips(){document.querySelectorAll('[data-key]').forEach(b=>b.classList.toggle('on',!!getK(b.dataset.key)))}
+document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{setK(b.dataset.key,!getK(b.dataset.key));syncChips();draw()});
+function selectChar(k){
+  S.selected=k;$('charSize').value=S.size[k];$('sizeOut').textContent=S.size[k]+'%';
+  document.querySelectorAll('[data-group="selected"] button').forEach(b=>b.classList.toggle('on',b.dataset.val===k));
+}
+document.querySelectorAll('[data-group]').forEach(el=>el.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-val]');if(!b||S.busy)return;
+  const group=el.dataset.group,v=b.dataset.val;
+  if(group==='scene')return setScene(v);
+  if(group==='selected')return selectChar(v);
+  S[group]=group==='res'||group==='fps'?+v:v;
+  el.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));draw();
+}));
+for(const id of ['photoTitle','caption','memo','error']){$(id).value=S[id];$(id).addEventListener('input',e=>{S[id]=e.target.value;draw()})}
+for(const [id,suffix] of [['popups',''],['amount','%']])$(id).addEventListener('input',e=>{S[id]=+e.target.value;$(id+'Out').textContent=e.target.value+suffix;S.closed.clear();draw()});
+$('charSize').oninput=e=>{S.size[S.selected]=+e.target.value;$('sizeOut').textContent=e.target.value+'%';draw()};
+
+/* ---------- uploads ---------- */
+const urls={};
+document.querySelectorAll('.upload').forEach(row=>{
+  const key=row.dataset.slot,input=row.querySelector('input'),name=row.querySelector('.name'),thumb=row.querySelector('.thumb'),label=name.textContent;
+  const reset=()=>{if(urls[key])URL.revokeObjectURL(urls[key]);urls[key]=null;S.images[key]=null;row.classList.remove('has');name.textContent=label;thumb.style.backgroundImage='';input.value=''};
+  input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    if(!/^image\/(png|jpeg|webp)$/.test(file.type)){input.value='';return toast('PNG · JPG · WEBP만 가능해요')}
+    const url=URL.createObjectURL(file),im=new Image();im.src=url;
+    try{await im.decode()}catch{URL.revokeObjectURL(url);input.value='';return toast('이미지를 읽을 수 없어요')}
+    reset();urls[key]=url;S.images[key]=im;
+    row.classList.add('has');name.textContent=file.name;thumb.style.backgroundImage=`url("${url}")`;
+    draw();
+  };
+  row.querySelector('.x').onclick=e=>{e.preventDefault();e.stopPropagation();reset();draw()};
+});
+
+/* ---------- canvas interaction ---------- */
+function hit(x,y){
+  if(!S.playing){
+    const list=popupList(S.scene,0,false,S.closed);
+    for(let n=list.length-1;n>=0;n--){
+      const [px,py]=POP_POS[list[n]],lx=x-px,ly=y-py;
+      if(lx>=0&&lx<=POP_W&&ly>=0&&ly<=POP_H){
+        const close=(lx>POP_W-36&&ly<32)||(lx>POP_W-98&&ly>80&&ly<113);
+        return{type:close?'popclose':'pop',id:list[n]};
+      }
+    }
+  }
+  for(const k of [...S.order].reverse()){
+    const w=S.windows[k];
+    if(!S.show[k]||x<w.x||x>w.x+w.w||y<w.y||y>w.y+w.h)continue;
+    if(y<w.y+38)return{type:x>w.x+w.w-34?'close':'win',id:k};
+    if(k==='photo')for(const c of [S.selected,S.selected==='A'?'B':'A']){
+      const p=S.chars[c],z=S.size[c]/100;
+      if(Math.abs(x-w.x-p.x)<CH_W*z*.42&&Math.abs(y-w.y-p.y)<CH_H*z*.47)return{type:'char',id:c};
+    }
+    return{type:'inside',id:k};
+  }
+  if(S.show.icons)for(const ic of S.icons)if(x>=ic.x-16&&x<ic.x+63&&y>=ic.y-9&&y<ic.y+75)return{type:'icon',id:ic.id};
+  return{type:'none'};
+}
+const coords=e=>{const r=C.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}};
+const front=k=>{S.order=S.order.filter(o=>o!==k).concat(k)};
+const CURSOR={win:'grab',char:'grab',icon:'pointer',popclose:'pointer',close:'pointer'};
+let lastClick={id:null,time:0};
+
+C.addEventListener('pointerdown',e=>{
+  if(S.busy)return;
+  const p=coords(e),h=hit(p.x,p.y);
+  S.down={h,p,moved:false};S.drag=null;S.icon=h.type==='icon'?h.id:null;
+  if(h.type==='popclose'){
+    S.closed.add(h.id);
+    if(!popupList(S.scene,0,false,S.closed).length)setScene('restored');else draw();
+    return;
+  }
+  if(h.type==='close'){S.show[h.id]=false;syncChips();draw();return}
+  if(h.type==='win'||h.type==='inside'){front(h.id);if(h.type==='win'){const v=S.windows[h.id];S.drag={type:'win',id:h.id,dx:p.x-v.x,dy:p.y-v.y}}}
+  else if(h.type==='char'){
+    const w=S.windows.photo,v=S.chars[h.id];front('photo');selectChar(h.id);
+    S.drag={type:'char',id:h.id,dx:p.x-w.x-v.x,dy:p.y-w.y-v.y};
+  }else if(h.type==='icon'){const v=S.icons.find(i=>i.id===h.id);S.drag={type:'icon',id:h.id,dx:p.x-v.x,dy:p.y-v.y}}
+  if(S.drag)C.style.cursor='grabbing';
+  C.setPointerCapture(e.pointerId);draw();
+});
+C.addEventListener('pointermove',e=>{
+  const p=coords(e);
+  if(!S.down){C.style.cursor=CURSOR[hit(p.x,p.y).type]||'default';return}
+  if(Math.hypot(p.x-S.down.p.x,p.y-S.down.p.y)>4)S.down.moved=true;
+  const d=S.drag;if(!d)return;
+  if(d.type==='win'){const v=S.windows[d.id];v.x=clamp(p.x-d.dx,80-v.w,W-80);v.y=clamp(p.y-d.dy,0,H-TASKBAR-38)}
+  else if(d.type==='char'){const w=S.windows.photo,v=S.chars[d.id];v.x=clamp(p.x-w.x-d.dx,20,w.w-20);v.y=clamp(p.y-w.y-d.dy,70,w.h-20)}
+  else{const v=S.icons.find(i=>i.id===d.id);v.x=clamp(p.x-d.dx,10,W-60);v.y=clamp(p.y-d.dy,10,H-TASKBAR-80)}
+  draw();
+});
+function release(){
+  const pd=S.down;S.down=null;S.drag=null;C.style.cursor='';
+  if(!pd||pd.moved||pd.h.type!=='icon')return;
+  const now=performance.now(),id=pd.h.id,dbl=lastClick.id===id&&now-lastClick.time<450;
+  lastClick={id,time:dbl?0:now};
+  if(!dbl)return;
+  if(id==='virus')setScene('virus');
+  else if(id==='trash')setScene('restored');
+  else{S.show[id]=true;front(id);syncChips();draw()}
+}
+C.addEventListener('pointerup',release);
+C.addEventListener('pointercancel',release);
+
+/* ---------- export ---------- */
+const toBlob=c=>new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error('인코딩 실패')),'image/png'));
+const tick=()=>new Promise(r=>setTimeout(r,16));
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+function lock(on){S.busy=on;for(const id of ['playBtn','resetBtn','pngBtn','gifBtn','sheetBtn'])$(id).disabled=on}
+async function job(fn){if(S.busy)return;play(false);lock(true);try{await fn()}catch(e){console.error(e);toast('저장 실패 · '+e.message)}finally{lock(false);draw()}}
+
+$('pngBtn').onclick=()=>job(async()=>{
+  const c=document.createElement('canvas');c.width=W*S.res;c.height=H*S.res;
+  render(c.getContext('2d'),{scene:S.scene,closed:S.closed,transparent:S.out.transparent,notice:S.out.notice});
+  download(await toBlob(c),`OUR_DESKTOP_${S.scene.toUpperCase()}.png`);
+  toast(`PNG 저장 · ${c.width}×${c.height}`);
+});
+$('sheetBtn').onclick=()=>job(async()=>{
+  const pad=24,c=document.createElement('canvas');c.width=W*2+pad*3;c.height=H*2+pad*3;
+  const g=c.getContext('2d');g.fillStyle='#f2f0fc';g.fillRect(0,0,c.width,c.height);
+  const cell=document.createElement('canvas');cell.width=W;cell.height=H;
+  ['desktop','popup','virus','restored'].forEach((scene,i)=>{
+    render(cell.getContext('2d'),{scene,notice:S.out.notice});
+    const x=pad+(i%2)*(W+pad),y=pad+Math.floor(i/2)*(H+pad);
+    g.save();rr(g,x,y,W,H,18);g.clip();g.drawImage(cell,x,y);g.restore();
+  });
+  download(await toBlob(c),'OUR_DESKTOP_4CUT.png');
+  toast('4컷 저장');
+});
+
+// GIF89a: a global 256-color palette shared by every frame avoids palette flicker.
+function makePalette(frames){const hist=new Map();for(let fi=0;fi<frames.length;fi+=Math.max(1,Math.floor(frames.length/10))){let data=frames[fi].data;for(let j=0;j<data.length;j+=44){if(data[j+3]<128)continue;let key=((data[j]>>3)<<10)|((data[j+1]>>3)<<5)|(data[j+2]>>3);hist.set(key,(hist.get(key)||0)+1)}}let bins=[...hist].map(([k,count])=>({r:((k>>10)&31)*8+4,g:((k>>5)&31)*8+4,b:(k&31)*8+4,count}));if(!bins.length)bins=[{r:0,g:0,b:0,count:1}];let boxes=[bins];while(boxes.length<255){let at=-1,score=-1,channel='r';for(let i=0;i<boxes.length;i++){let box=boxes[i];if(box.length<2)continue;let min=[255,255,255],max=[0,0,0],sum=0;for(let p of box){min[0]=Math.min(min[0],p.r);min[1]=Math.min(min[1],p.g);min[2]=Math.min(min[2],p.b);max[0]=Math.max(max[0],p.r);max[1]=Math.max(max[1],p.g);max[2]=Math.max(max[2],p.b);sum+=p.count}let spread=max.map((v,j)=>v-min[j]),k=spread.indexOf(Math.max(...spread)),sc=spread[k]*Math.sqrt(sum);if(sc>score){score=sc;at=i;channel=['r','g','b'][k]}}if(at<0)break;let b=boxes.splice(at,1)[0];b.sort((a,z)=>a[channel]-z[channel]);let mass=b.reduce((s,p)=>s+p.count,0),half=0,cut=0;for(let i=0;i<b.length-1;i++){half+=b[i].count;if(half>=mass/2){cut=i+1;break}}if(!cut)cut=Math.floor(b.length/2);boxes.push(b.slice(0,cut),b.slice(cut))}let palette=[[0,0,0]];for(let b of boxes){let r=0,g=0,bb=0,n=0;for(let p of b){r+=p.r*p.count;g+=p.g*p.count;bb+=p.b*p.count;n+=p.count}palette.push([Math.round(r/n),Math.round(g/n),Math.round(bb/n)])}while(palette.length<256)palette.push([0,0,0]);return palette}
+function colorLut(palette){let lut=new Uint8Array(32768);for(let i=0;i<32768;i++){let r=((i>>10)&31)*8+4,g=((i>>5)&31)*8+4,b=(i&31)*8+4,min=1,dist=1e20;for(let j=1;j<256;j++){let p=palette[j],dr=r-p[0],dg=g-p[1],db=b-p[2],d=dr*dr*.30+dg*dg*.59+db*db*.11;if(d<dist){dist=d;min=j}}lut[i]=min}return lut}
+function frameIndex(frame,lut){const p=frame.data,arr=new Uint8Array(p.length/4);for(let j=0,k=0;j<p.length;j+=4,k++){arr[k]=p[j+3]<128?0:lut[((p[j]>>3)<<10)|((p[j+1]>>3)<<5)|(p[j+2]>>3)]}return arr}
+function gifLZW(idx){let out=[],acc=0,nbit=0;const emit=(v,bits)=>{acc|=v<<nbit;nbit+=bits;while(nbit>=8){out.push(acc&255);acc>>>=8;nbit-=8}};let dict=new Map(),next=258,size=9;emit(256,size);let prev=idx[0];for(let i=1;i<idx.length;i++){let v=idx[i],key=(prev<<8)|v,found=dict.get(key);if(found!==undefined){prev=found;continue}emit(prev,size);if(next<4096){dict.set(key,next++);if(next>(1<<size)&&size<12)size++}else{emit(256,size);dict.clear();next=258;size=9}prev=v}emit(prev,size);emit(257,size);if(nbit)out.push(acc&255);return out}
+function encodeGIF(frames,pal,lut,w,h,fps){const chunks=[],head=[];const push=(...v)=>head.push(...v),short=v=>push(v&255,v>>8&255);for(let c of 'GIF89a')push(c.charCodeAt(0));short(w);short(h);push(0xf7,0,0);for(let rgb of pal)push(...rgb);push(0x21,0xff,11);for(let c of 'NETSCAPE2.0')push(c.charCodeAt(0));push(3,1,0,0,0);chunks.push(new Uint8Array(head));for(let fi=0;fi<frames.length;fi++){const frame=frames[fi];const b=[];const out=(...v)=>b.push(...v),s=v=>out(v&255,v>>8&255);out(0x21,0xf9,4,9);s(Math.round((fi+1)*100/fps)-Math.round(fi*100/fps));out(0,0,0x2c);s(0);s(0);s(w);s(h);out(0,8);let codes=gifLZW(frameIndex(frame,lut));chunks.push(new Uint8Array(b));for(let i=0;i<codes.length;i+=255){let n=Math.min(255,codes.length-i);const c=new Uint8Array(n+1);c[0]=n;for(let j=0;j<n;j++)c[j+1]=codes[i+j];chunks.push(c)}chunks.push(new Uint8Array([0]))}chunks.push(new Uint8Array([0x3b]));return new Blob(chunks,{type:'image/gif'})}
+
+$('gifBtn').onclick=()=>job(async()=>{
+  const fps=S.fps,N=fps*LOOP,tw=640,th=Math.round(tw*H/W),c=document.createElement('canvas');c.width=tw;c.height=th;
+  const g=c.getContext('2d',{willReadFrequently:true}),frames=[];
+  for(let i=0;i<N;i++){
+    render(g,{t:i/fps,seq:true,notice:S.out.notice});frames.push(g.getImageData(0,0,tw,th));
+    if(i%4===0){toast('GIF 만드는 중',Math.round(i/N*60));await tick()}
+  }
+  toast('GIF 만드는 중',70);await tick();
+  const palette=makePalette(frames),lut=colorLut(palette);
+  toast('GIF 만드는 중',88);await tick();
+  download(encodeGIF(frames,palette,lut,tw,th,fps),`OUR_DESKTOP_LOVE_VIRUS_${fps}FPS.gif`);
+  toast(`GIF 저장 · ${LOOP}초 · ${fps}fps`);
+});
+
+syncChips();fit();draw();
+setInterval(()=>{if(!S.playing&&!S.busy)draw()},30000); // keep the taskbar clock current
+</script>
+</body>
+</html>
