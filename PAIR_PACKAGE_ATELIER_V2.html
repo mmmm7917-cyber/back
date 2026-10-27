@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="color-scheme" content="light"><title>PAIR PACKAGE ATELIER</title>
+<style>
+:root{--bg:#f5f0e9;--panel:#fffcf7;--accent:#c78391;--accent-light:#f8e8e9;--paper:#fff9ef;--ink:#514b49;--muted:#968d88;--line:#e8ded6;--wood:#ece0d2;--shadow:rgba(77,58,55,.09);font-family:'Segoe UI',Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg);font-size:13px}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}button,select,input[type=color]{-webkit-tap-highlight-color:transparent}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px} .app{height:100dvh;min-height:640px;display:flex;flex-direction:column;overflow:hidden}
+header{height:74px;flex-shrink:0;display:flex;align-items:center;padding:0 27px;gap:26px;border-bottom:1px solid var(--line);background:var(--panel)}.brand{display:flex;align-items:center;gap:12px;min-width:270px}.brandmark{width:38px;height:38px;border:1px solid var(--accent);border-radius:11px;display:grid;place-items:center;color:var(--accent);background:var(--accent-light)}.brand-title{font-family:Georgia,serif;font-size:19px;letter-spacing:.075em;font-weight:500;white-space:nowrap}.brand-sub{font-size:10px;letter-spacing:.16em;color:var(--muted);margin-top:3px}.header-main{display:flex;align-items:center;gap:8px;margin:auto}.modebtn{border:0;background:transparent;padding:10px 17px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.17em;border-radius:8px}.modebtn.active{background:var(--accent-light);color:var(--accent)}.head-right{display:flex;align-items:center;gap:12px}.theme-select{border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);padding:9px 10px;font-size:11px;max-width:150px}.header-help{width:31px;height:31px;border-radius:50%;border:1px solid var(--line);color:var(--muted);background:transparent}.layout{display:grid;grid-template-columns:292px minmax(0,1fr) 262px;flex:1;min-height:0}.panel{min-height:0;background:var(--panel);display:flex;flex-direction:column;overflow:hidden}.panel.left{border-right:1px solid var(--line)}.panel.right{border-left:1px solid var(--line)}.panel-title{padding:24px 20px 14px;display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.17em}.panel-title small{font-size:10px;font-weight:400;color:var(--muted);letter-spacing:0}.tabs{display:flex;gap:2px;padding:0 12px 13px;border-bottom:1px solid var(--line)}.tab{font-size:10px;padding:12px 3px;flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;letter-spacing:.05em;border-bottom:2px solid transparent}.tab.active{color:var(--accent);border-color:var(--accent)}.panel-scroll{min-height:0;flex:1;overflow:auto;overscroll-behavior:contain;padding:17px 19px 35px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}.control-section{margin-bottom:24px}.section-label{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.14em;margin-bottom:11px}.section-label .right{color:var(--accent);font-weight:500;letter-spacing:0}.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.options.three{grid-template-columns:repeat(3,minmax(0,1fr))}.opt{background:transparent;border:1px solid var(--line);border-radius:9px;padding:10px 6px;min-height:37px;color:var(--ink);font-size:10px;transition:.18s}.opt.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:700}.opt:hover,.smallbtn:hover,.btn:hover{border-color:var(--accent)}.select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:10px 8px;min-height:38px}.labelrow{display:flex;justify-content:space-between;gap:7px;align-items:center;margin:10px 0}.labelrow label{font-size:11px;color:var(--muted)}.labelrow output{font-size:11px;font-variant-numeric:tabular-nums}.labelrow input[type=range]{flex:1;min-width:0;accent-color:var(--accent)}.labelrow input[type=color]{width:35px;height:31px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.line-input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--ink);outline:0}.upload{display:flex;align-items:center;gap:9px;padding:10px 8px;border:1px dashed var(--line);border-radius:9px;margin-bottom:7px;min-height:56px}.upload .pick{background:var(--accent-light);color:var(--accent);border:0;border-radius:8px;padding:9px 10px;font-size:10px;font-weight:700;flex-shrink:0}.upload .filename{font-size:10px;line-height:1.4;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.smallbtn{background:transparent;border:1px solid var(--line);padding:8px 11px;border-radius:8px;color:var(--ink);font-size:11px;min-height:32px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:9px;padding:11px 12px;font-size:11px;font-weight:700}.btn.primary{background:var(--accent);border-color:var(--accent);color:white}.btn.soft{color:var(--accent);background:var(--accent-light);border-color:transparent}.btn.full{width:100%}.buttonrow{display:flex;gap:7px;margin-top:8px}.buttonrow>*{flex:1;min-width:0}.hint{font-size:10px;color:var(--muted);line-height:1.6}.divider{height:1px;background:var(--line);margin:20px 0}.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.swatch{height:29px;border:2px solid var(--panel);border-radius:7px;outline:1px solid var(--line);padding:0}.swatch.active{outline:2px solid var(--accent)}.deco-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.deco{aspect-ratio:1;border:1px solid var(--line);background:var(--panel);border-radius:9px;color:var(--accent);display:flex;align-items:center;justify-content:center}.deco:hover{background:var(--accent-light);border-color:var(--accent)}.deco svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.35}.stage-container{display:flex;flex-direction:column;min-height:0;background:var(--bg);position:relative}.stage-bar{height:54px;flex-shrink:0;display:flex;align-items:center;padding:0 25px;justify-content:space-between;gap:10px}.stage-label{font-size:10px;font-weight:700;letter-spacing:.16em;color:var(--muted)}.stage-controls{display:flex;align-items:center;gap:8px}.stage-canvas-wrap{padding:4px 26px 9px;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}.canvas-shell{position:relative;max-width:100%;max-height:100%;aspect-ratio:960/620;border:1px solid rgba(164,137,123,.18);border-radius:13px;box-shadow:0 16px 35px var(--shadow);overflow:hidden;background:var(--wood);width:min(100%,calc((100dvh - 226px)*960/620))}.canvas-shell canvas{display:block;width:100%;height:100%;touch-action:none;cursor:default}.canvas-shell.editing canvas{cursor:grab}.canvas-shell.dragging canvas{cursor:grabbing}.stage-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 26px 18px;min-height:68px}.foot-note{font-size:10px;color:var(--muted)}.craft-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.progress-track{height:3px;width:100%;background:var(--line);overflow:hidden}.progress-bar{height:100%;width:0%;background:var(--accent);transition:width .08s linear}.step-label{font-size:11px;color:var(--muted);letter-spacing:.07em}.right-top{padding:14px 17px;overflow-y:auto;min-height:0;flex:1}.right-group{margin-bottom:24px}.right-group h3{font-size:10px;color:var(--muted);letter-spacing:.14em;font-weight:700;margin:8px 0 11px}.thumb-row{display:flex;gap:8px}.thumb-tile{border:1px solid var(--line);border-radius:9px;background:transparent;padding:7px;flex:1;min-width:0;color:var(--ink)}.thumb-tile.active{border-color:var(--accent);background:var(--accent-light)}.thumb-tile canvas{width:58px;height:87px;display:block;margin:auto;border-radius:4px;background:#f3f0eb}.thumb-tile span{font-size:10px;display:block;margin-top:6px}.layerlist{border:1px solid var(--line);border-radius:9px;max-height:220px;overflow:auto}.layeritem{border:0;background:transparent;display:flex;align-items:center;text-align:left;gap:8px;width:100%;padding:9px 8px;border-bottom:1px solid var(--line);color:var(--ink);font-size:11px}.layeritem:last-child{border:0}.layeritem.active{background:var(--accent-light);color:var(--accent)}.layeritem .layericon{width:22px;height:22px;border-radius:5px;display:grid;place-items:center;background:var(--bg);flex-shrink:0}.layeritem span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.layeritem small{font-size:9px;margin-left:auto;color:var(--muted)}.project-box{display:grid;grid-template-columns:1fr 1fr;gap:7px}.project-box button{min-width:0}.right-bottom{border-top:1px solid var(--line);padding:14px 17px;background:var(--panel);display:flex;flex-direction:column;gap:7px}.right-bottom .btn{padding:12px}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,15px);background:#48413f;color:white;padding:12px 19px;border-radius:9px;font-size:11px;pointer-events:none;opacity:0;transition:.22s;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.15)}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-backdrop{position:fixed;inset:0;background:#302b2b80;z-index:30;display:grid;place-items:center;padding:20px}.modal{width:min(430px,100%);padding:25px;background:var(--panel);border-radius:15px;box-shadow:0 20px 80px #0003}.modal h2{font-size:16px;font-weight:600;margin:0 0 13px}.modal p{line-height:1.7;color:var(--muted);font-size:12px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:24px}.hide{display:none!important}.micro{font-size:9px;color:var(--muted);letter-spacing:.09em}#gifProgress{font-size:10px;color:var(--accent);font-variant-numeric:tabular-nums}.floating-tip{position:absolute;right:15px;bottom:13px;padding:6px 9px;background:rgba(255,252,247,.82);border:1px solid rgba(170,140,125,.2);border-radius:6px;pointer-events:none;font-size:9px;color:#9e8f88;letter-spacing:.04em}.loading{position:fixed;inset:0;display:grid;place-items:center;background:rgba(245,240,233,.87);z-index:25}.loading-card{background:var(--panel);box-shadow:0 15px 50px var(--shadow);border:1px solid var(--line);border-radius:16px;text-align:center;padding:30px 40px;min-width:280px}.loading-card .loader{height:3px;background:var(--line);margin:18px auto 9px;overflow:hidden;border-radius:2px}.loading-card .loader>div{width:0%;height:100%;background:var(--accent)}
+body[data-theme=silver]{--bg:#eef0f5;--panel:#fcfdff;--accent:#8e9bc6;--accent-light:#eff0fa;--paper:#fafdff;--ink:#494d60;--muted:#9299ab;--line:#dfe3ec;--wood:#e1e7f0;--shadow:rgba(66,80,120,.09)}body[data-theme=black]{--bg:#292729;--panel:#353135;--accent:#c9a2a7;--accent-light:#514249;--paper:#f3e9e5;--ink:#f2e8e8;--muted:#b9aaac;--line:#50484d;--wood:#474044;--shadow:rgba(0,0,0,.24)}body[data-theme=black] .line-input,body[data-theme=black] .select{background:#40383c}body[data-theme=black] .toast{background:#eee;color:#3e3236}.app[data-mode=craft] .panel.left .tabs,.app[data-mode=craft] .panel.left .panel-scroll,.app[data-mode=craft] .panel.right .right-top{pointer-events:none;opacity:.65}.app[data-mode=showcase] .panel.right .right-group:nth-child(2){pointer-events:none;opacity:.65}
+@media(max-width:1220px){.layout{grid-template-columns:245px minmax(0,1fr) 225px}.brand{min-width:230px}.brand-title{font-size:17px}.panel-scroll{padding:15px}.tabs{padding:0 6px 10px}.tab{font-size:9px}.stage-bar,.stage-footer{padding-left:15px;padding-right:15px}.stage-canvas-wrap{padding:4px 12px 8px}}
+@media(max-width:930px){.app{height:auto;min-height:100dvh;overflow:visible}header{height:65px;padding:0 13px;gap:8px;flex-wrap:wrap}.brand{min-width:unset;flex:1}.brandmark{width:32px;height:32px}.brand-title{font-size:15px}.brand-sub{font-size:9px}.header-main{order:3;justify-content:center;flex:0 0 100%;background:var(--panel);margin:0 -13px;border-bottom:1px solid var(--line);padding:3px 0}.modebtn{padding:8px 17px}.theme-select{max-width:118px;font-size:10px}.layout{display:flex;flex-direction:column}.stage-container{order:0;min-height:0}.stage-bar{height:43px}.stage-canvas-wrap{padding:6px 12px}.canvas-shell{width:100%;max-height:none}.stage-footer{min-height:55px;padding:9px 13px;gap:7px;flex-wrap:wrap}.panel.left{order:1;border-right:0;border-top:1px solid var(--line);overflow:visible}.panel.right{order:2;border-left:0;border-top:1px solid var(--line);overflow:visible}.panel-title{padding:14px 17px 8px}.panel-scroll{max-height:none;overflow:visible;padding:17px;display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0 23px}.tabs{padding:0 12px 3px}.tab{font-size:10px}.right-top{overflow:visible;padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.right-group{margin-bottom:7px}.right-bottom{display:grid;grid-template-columns:1fr 1fr}.right-bottom .btn.full{grid-column:span 2}.floating-tip{bottom:7px;right:7px}}
+@media(max-width:520px){.brandmark{display:none}.brand-title{font-size:13px}.brand-sub{font-size:8px}.theme-select{font-size:9px;max-width:105px}.stage-canvas-wrap{padding:0 5px}.canvas-shell{border-radius:6px}.stage-footer{align-items:flex-start}.foot-note{width:100%}.craft-tools{width:100%;justify-content:center}.craft-tools .smallbtn{padding:7px;font-size:10px}.right-top{grid-template-columns:1fr 1fr}.right-group:nth-child(2){grid-column:span 2}.right-group:nth-child(3){grid-column:span 2}}
+</style>
+</head>
+<body data-theme="cream"><div class="app">
+<header><div class="brand"><div class="brandmark"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4.5" y="5.5" width="13" height="16" rx="2"/><path d="M8 3h12v15M8 16l3-3 3 2 3-4"/></svg></div><div><div class="brand-title">PAIR PACKAGE ATELIER</div><div class="brand-sub">PHOTO CARD & PACKAGING</div></div></div><nav class="header-main" aria-label="작업 모드"><button class="modebtn active" data-mode="edit">01 EDIT</button><button class="modebtn" data-mode="craft">02 CRAFT</button><button class="modebtn" data-mode="showcase">03 SHOWCASE</button></nav><div class="head-right"><select id="theme" class="theme-select" aria-label="색상 테마"><option value="cream">Cream Atelier</option><option value="silver">Cool Silver</option><option value="black">Black Ribbon</option></select><button class="header-help" id="help" aria-label="사용 안내">?</button></div></header>
+<div class="layout"><aside class="panel left"><div class="panel-title">DESIGN MATERIALS <small id="editingTitle">01 / CARD</small></div><div class="tabs" id="tabs"><button class="tab active" data-tab="card">CARD</button><button class="tab" data-tab="frame">FRAME</button><button class="tab" data-tab="sleeve">SLEEVE</button><button class="tab" data-tab="package">PACKAGE</button><button class="tab" data-tab="decor">DECOR</button></div><div class="panel-scroll" id="controlPanel"></div></aside>
+<main class="stage-container"><div class="stage-bar"><div><span class="stage-label" id="stageLabel">WORKTABLE / EDIT</span></div><div class="stage-controls"><span class="micro" id="cardSideLabel">FRONT SIDE</span><button class="smallbtn" id="sideToggle">앞 / 뒤</button></div></div><div class="stage-canvas-wrap"><div class="canvas-shell editing" id="canvasShell"><canvas id="stage" width="960" height="620" aria-label="포토카드 제작 작업대"></canvas><span class="floating-tip" id="canvasTip">드래그 · 크기 · 회전</span></div></div><div class="progress-track hide" id="progressTrack"><div class="progress-bar" id="progressBar"></div></div><div class="stage-footer"><div class="foot-note" id="footNote">이미지를 올리고 카드 위에서 위치를 조정하세요.</div><div class="craft-tools" id="toolRow"><button class="btn primary" id="makeBtn">제작 시작 ↗</button><button class="btn" id="previewBtn">완성 미리보기</button></div></div></main>
+<aside class="panel right"><div class="panel-title">PROJECT STUDIO <small>LOCAL ONLY</small></div><div class="right-top"><div class="right-group"><h3>PHOTO CARD</h3><div class="thumb-row" id="cardThumbs"></div></div><div class="right-group"><h3>LAYERS <span class="micro" id="layerCount"></span></h3><div class="layerlist" id="layerList"></div><div class="buttonrow"><button class="smallbtn" id="layerDown">↓ 뒤로</button><button class="smallbtn" id="layerUp">↑ 앞으로</button><button class="smallbtn" id="deleteSelected">삭제</button></div></div><div class="right-group"><h3>PROJECT FILE</h3><div class="project-box"><button class="smallbtn" id="saveJson">JSON 저장</button><button class="smallbtn" id="loadJson">JSON 불러오기</button></div></div></div><div class="right-bottom"><div class="project-box"><button class="btn" id="saveCard">카드 PNG</button><button class="btn" id="savePackage">포장 PNG</button></div><button class="btn" id="saveShowcase">완성 장면 PNG</button><button class="btn primary full" id="saveGif">제작 과정 GIF 저장 ↗</button><span id="gifProgress" aria-live="polite"></span></div></aside></div></div>
+<input type="file" id="imgUpload1" accept="image/png,image/jpeg,image/webp" hidden><input type="file" id="imgUpload2" accept="image/png,image/jpeg,image/webp" hidden><input type="file" id="jsonUpload" accept="application/json,.json" hidden>
+<div class="toast" id="toast" role="status"></div><div class="modal-backdrop hide" id="modalWrap"><div class="modal"><h2 id="modalTitle"></h2><div id="modalBody"></div><div class="modal-actions"><button class="btn primary" id="modalOK">확인</button></div></div></div><div class="loading hide" id="loading"><div class="loading-card"><div class="brand-title" style="font-size:15px">EXPORTING GIF</div><p class="hint" id="loadingText">프레임을 준비하고 있습니다</p><div class="loader"><div id="loadingBar"></div></div><span class="micro" id="loadingPct">0%</span><div style="margin-top:18px"><button class="smallbtn" id="cancelGif">취소</button></div></div></div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const CW=550,CH=850,SW=960,SH=620,TAU=Math.PI*2;
+const deep=o=>JSON.parse(JSON.stringify(o));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
+const hexRGB=h=>{const m=/^#?([a-f\d]{6})$/i.exec(h||'');return m?[parseInt(m[1].slice(0,2),16),parseInt(m[1].slice(2,4),16),parseInt(m[1].slice(4,6),16)]:[220,170,175]};
+function rgba(hex,a){let c=hexRGB(hex);return `rgba(${c[0]},${c[1]},${c[2]},${a})`}
+const themes={cream:{desk:'#ecdfd2',desk2:'#f4ebe1',ink:'#706059',secondary:'#dccabc',white:'#fffcf8',pink:'#d7a6ad'},silver:{desk:'#e4e8ef',desk2:'#f2f5fa',ink:'#758097',secondary:'#cbd3dd',white:'#fcfdff',pink:'#a0aacd'},black:{desk:'#4c4549',desk2:'#5b5154',ink:'#cec0bc',secondary:'#39343a',white:'#ede1dd',pink:'#ccadb2'}};
+const backgrounds=['solid','transparent','gradient','dots','check','stripes','floral','lace','vintage'];
+const bgNames=['Solid','Translucent','Gradient','Dot Pattern','Gingham','Stripes','Tiny Floral','Lace','Vintage Paper'];
+const frames=['none','simple','double','corner','lace','film','label'],frameNames=['None','Simple Line','Double Border','Ribbon Corner','Lace Edge','Film Frame','Vintage Label'];
+const sleeves=['clear','matte','heart','star','aurora','glitter'],sleeveNames=['Clear','Matte','Holo Heart','Star Hologram','Aurora','Glitter Edge'];
+const packs=['paper','glassine','band','toploader'],packNames=['Paper Envelope','Glassine','Ribbon Band','Toploader'];
+const seals=['heart','star','moon','flower','paw','initial','ribbon'],sealNames=['Heart','Star','Moon','Flower','Paw','Initial','Ribbon'];
+const decos=['star','heart','bow','flower','butterfly','paw','lace','tape','circle','stamp','label','gem'];
+const decoNames=['Star','Heart','Ribbon','Flower','Butterfly','Paw','Lace','Tape','Circle','Stamp','Label','Gem'];
+const uid=()=>String(Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+const newCard=()=>({shape:'rounded',background:'gradient',color:'#efd5d1',color2:'#fff6ee',frame:'double',frameColor:'#be8f91',surface:'glossy',backColor:'#f3e3dc',backPattern:'dots',backText:'',backSymbol:'heart',objects:[]});
+let project={version:1,sealInitial:'',theme:'cream',layout:'solo',assets:[null,null],cards:[newCard(),newCard()],sleeve:'clear',package:'paper',packColor:'#efdad1',seal:'heart',sealColor:'#c48393',ribbonColor:'#c99a9f',desk:'cream',camera:'front'};
+let app={mode:'edit',tab:'card',side:'front',activeCard:0,selected:null,drag:null,playing:false,craftT:0,speed:1,lastFrame:0,show:{open:0,pull:0,flip:0,zoom:1},showTargets:{open:0,pull:0,flip:0},renderQueued:false,gifBusy:false,cancelGif:false};
+const stage=$('#stage'),ctx=stage.getContext('2d',{alpha:false});
+const imageCache=new Map(),svgCache=new Map();
+function canvas2(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
+function getAsset(slot){return project.assets[slot]||null}
+function loadedImage(asset){return asset&&imageCache.get(asset.id)}
+async function loadImage(asset){if(!asset)return;let im=new Image();im.decoding='async';im.src=asset.data;await im.decode();imageCache.set(asset.id,im)}
+function requestRender(){app.renderQueued=true}
+function toast(msg){const x=$('#toast');x.textContent=msg;x.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>x.classList.remove('show'),2700)}
+function modal(title,content){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=content;$('#modalWrap').classList.remove('hide')}
+$('#modalOK').onclick=()=>$('#modalWrap').classList.add('hide');
+function activeCard(){return project.cards[app.activeCard]}
+function defaultCharacter(slot,layout=project.layout){let pair=layout==='pair';return {id:uid(),type:'image',assetId:slot,x:pair?.5:slot===0?(layout==='solo'?.5:.35):.67,y:.52,scale:pair?.79:layout==='solo'?.86:.63,rotation:0,flipX:false,visible:true,opacity:1}}
+function recompose(layout){project.layout=layout;const a=project.cards[0],b=project.cards[1];const chars=[0,1].filter(i=>project.assets[i]);if(layout==='pair'){
+ const all=a.objects.filter(o=>o.type!=='image');a.objects=[...all,...(project.assets[0]?[defaultCharacter(0,'pair')]:[])];b.objects=[...b.objects.filter(o=>o.type!=='image'),...(project.assets[1]?[defaultCharacter(1,'pair')]:[])];
+}else{a.objects=a.objects.filter(o=>o.type!=='image');for(let i of chars){if(layout==='solo'&&i===1)continue;a.objects.push(defaultCharacter(i,layout))}}
+app.activeCard=0;app.selected=null;renderAll();}
+function ensureCharacters(){if(project.layout==='pair'){
+ for(let i=0;i<2;i++){const c=project.cards[i];c.objects=c.objects.filter(o=>o.type!=='image'||getAsset(o.assetId));if(getAsset(i)&&!c.objects.some(o=>o.type==='image'&&o.assetId===i))c.objects.push(defaultCharacter(i,'pair'))}
+}else{const c=project.cards[0];c.objects=c.objects.filter(o=>o.type!=='image'||getAsset(o.assetId));for(let i=0;i<(project.layout==='solo'?1:2);i++)if(getAsset(i)&&!c.objects.some(o=>o.type==='image'&&o.assetId===i))c.objects.push(defaultCharacter(i));}}
+function currentObject(){return activeCard().objects.find(o=>o.id===app.selected)||null}
+function setSelected(id){app.selected=id;syncControls();renderLayers();requestRender()}
+function makeAction(html){return html}
+function opts(key,vals,labels,columns=2){return `<div class="options ${columns===3?'three':''}">${vals.map((v,i)=>`<button class="opt ${project[key]===v?'active':''}" data-project="${key}" data-value="${v}">${labels[i]}</button>`).join('')}</div>`}
+function cardOpts(key,vals,labels,columns=2){return `<div class="options ${columns===3?'three':''}">${vals.map((v,i)=>`<button class="opt ${activeCard()[key]===v?'active':''}" data-card="${key}" data-value="${v}">${labels[i]}</button>`).join('')}</div>`}
+function section(label,html){return `<div class="control-section"><div class="section-label">${label}</div>${html}</div>`}
+function colorRow(label,key,scope='card'){let val=scope==='card'?activeCard()[key]:project[key];return `<div class="labelrow"><label>${label}</label><input type="color" aria-label="${label}" data-color="${key}" data-scope="${scope}" value="${val}"></div>`}
+function rangeRow(label,key,object,min,max,step,unit=''){return `<div class="labelrow"><label>${label}</label><input type="range" data-object="${key}" min="${min}" max="${max}" step="${step}" value="${object?.[key]??0}" ${!object?'disabled':''}><output id="out-${key}">${object?Number(object[key]).toFixed(key==='scale'?2:0)+unit:'—'}</output></div>`}
+function drawDecoSymbol(type,stroke='#c3919c'){let path={star:'<path d="M12 2.5 14.7 9l6.9.5-5.3 4.6 1.7 6.8-6-3.6-6 3.6 1.7-6.8-5.3-4.6 6.9-.5Z"/>',heart:'<path d="M12 21 4.5 13.8C-1.5 7.7 6 1 12 7.7 18 1 23.5 7.7 24 12 12 21Z"/>',bow:'<path d="M12 11C8 3 1 5 2 11c1 5 8 3 10 1m0-1c4-8 11-6 10 0-1 5-8 3-10 1M11 13l-4 8m6-8 4 8"/><circle cx="12" cy="12" r="2"/>',flower:'<path d="M12 8C7 1 4 7 8 12c-7-5-11 2-3 4-2 8 5 8 7 1 3 7 10 5 7-2 8-3 3-10-4-6 2-8-5-10-3-1Z"/><circle cx="12" cy="12" r="2"/>',butterfly:'<path d="M12 13C4 1 0 7 3 12c-4 6 5 11 9 2m0-1c8-12 12-6 9-1 4 6-5 11-9 2M12 8v13"/>',paw:'<ellipse cx="12" cy="16" rx="6" ry="4"/><ellipse cx="4" cy="10" rx="2" ry="3"/><ellipse cx="9" cy="6" rx="2" ry="3"/><ellipse cx="15" cy="6" rx="2" ry="3"/><ellipse cx="20" cy="10" rx="2" ry="3"/>',lace:'<path d="M2 12Q5 4 8 12T14 12T20 12T26 12M2 17Q5 9 8 17T14 17T20 17"/>',tape:'<path d="M4 5h16v14H4zM4 9h16M4 15h16"/>',circle:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="6" stroke-dasharray="2 2"/>',stamp:'<path d="M3 3h18v18H3z" stroke-dasharray="2 2"/><path d="m6 17 5-6 3 3 4-6"/>',label:'<path d="M2 6 6 3h15v18H6l-4-3z"/><path d="M6 9h11M6 15h8"/>',gem:'<path d="M7 3h10l5 7-10 12L2 10zM2 10h20M7 3l-2 7 7 12 7-12-2-7"/>'}[type]||'';return `<svg viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`}
+function controlsHTML(){const card=activeCard(),obj=currentObject();if(app.tab==='card')return section('CARD LAYOUT',opts('layout',['solo','side','overlap','pair'],['01 SOLO','02 SIDE BY SIDE','03 OVERLAP','04 PAIR SET']))+section('CHARACTER IMAGES',`<div class="upload"><button class="pick" data-upload="0">+ IMAGE 01</button><span class="filename" title="${getAsset(0)?.name||''}">${getAsset(0)?.name||'PNG · JPG · WEBP'}</span></div><div class="upload"><button class="pick" data-upload="1">+ IMAGE 02</button><span class="filename" title="${getAsset(1)?.name||''}">${getAsset(1)?.name||'PNG · JPG · WEBP'}</span></div><div class="buttonrow"><button class="smallbtn" data-clear="0">01 제거</button><button class="smallbtn" data-clear="1">02 제거</button></div>`)+section('CARD SHAPE',cardOpts('shape',['standard','rounded','polaroid','ticket','square'],['Standard','Rounded','Polaroid','Ticket','Square']))+section('SELECTED OBJECT',`${rangeRow('크기', 'scale',obj,.12,1.7,.01)}${rangeRow('회전','rotation',obj,-180,180,1,'°')}<div class="buttonrow"><button class="smallbtn" data-obj-action="flip" ${!obj?'disabled':''}>좌우 반전</button><button class="smallbtn" data-obj-action="reset" ${!obj?'disabled':''}>위치 초기화</button></div>`);
+if(app.tab==='frame')return section('CARD BACKGROUND',`<select class="select" data-card="background">${backgrounds.map((v,i)=>`<option value="${v}" ${v===card.background?'selected':''}>${bgNames[i]}</option>`).join('')}</select>${colorRow('주 배경색','color')}${colorRow('보조 배경색','color2')}`)+section('CARD FRAME',`<select class="select" data-card="frame">${frames.map((v,i)=>`<option value="${v}" ${v===card.frame?'selected':''}>${frameNames[i]}</option>`).join('')}</select>${colorRow('프레임 색상','frameColor')}`)+section('CARD FINISH',cardOpts('surface',['matte','glossy','pearl','holo'],['Matte','Glossy','Pearl','Holographic']))+section('BACK SIDE',`${colorRow('뒷면 배경색','backColor')}<select class="select" data-card="backPattern"><option value="solid">Solid</option><option value="dots" ${card.backPattern==='dots'?'selected':''}>Dots</option><option value="check" ${card.backPattern==='check'?'selected':''}>Check</option><option value="lines" ${card.backPattern==='lines'?'selected':''}>Fine Lines</option></select><div class="labelrow"><label>뒷면 문구</label></div><input class="line-input" data-card="backText" maxlength="48" placeholder="텍스트 없이 사용 가능" value="${escapeHtml(card.backText)}"><div class="labelrow"><label>심볼</label></div><select class="select" data-card="backSymbol">${['none','heart','star','flower','paw','moon'].map(v=>`<option value="${v}" ${card.backSymbol===v?'selected':''}>${v}</option>`).join('')}</select>`);
+if(app.tab==='sleeve')return section('SLEEVE MATERIAL',opts('sleeve',sleeves,sleeveNames))+section('PREVIEW',`<p class="hint">투명도와 표면 반사광이 제작 과정과 저장 결과에 함께 적용됩니다.</p><button class="btn soft full" data-mode="craft">슬리브 삽입 보기</button>`);
+if(app.tab==='package')return section('PACKAGING TYPE',opts('package',packs,packNames))+section('PAPER & RIBBON',`${colorRow('포장지 색상','packColor','project')}${colorRow('리본 색상','ribbonColor','project')}`)+section('SEAL FINISH',`<select class="select" data-project="seal">${seals.map((v,i)=>`<option value="${v}" ${project.seal===v?'selected':''}>${sealNames[i]}</option>`).join('')}</select>${colorRow('씰 색상','sealColor','project')}${project.seal==='initial'?`<div class="labelrow"><label>이니셜</label></div><input class="line-input" data-project-text="sealInitial" maxlength="4" placeholder="이니셜 입력" value="${escapeHtml(project.sealInitial||'')}">`:''}`)+section('QUICK VIEW',`<button class="btn soft full" data-mode="showcase">포장 완성 보기</button>`);
+if(app.tab==='decor')return section('ADD STICKER',`<div class="deco-grid">${decos.map((v,i)=>`<button class="deco" data-deco="${v}" title="${decoNames[i]}" aria-label="${decoNames[i]}">${drawDecoSymbol(v,'currentColor')}</button>`).join('')}</div><div class="buttonrow"><button class="btn full" id="randomDecor">✧ 랜덤 장식 배치</button></div>`)+section('SELECTED DETAIL',`${obj?`<div class="section-label" style="letter-spacing:0">${obj.type==='image'?'Character Image':decoNames[decos.indexOf(obj.kind)]||'Sticker'}</div>`:'<p class="hint">카드 위의 장식을 선택하면 편집할 수 있어요.</p>'}${obj?.type==='deco'?`<div class="labelrow"><label>장식 색상</label><input type="color" data-deco-color="1" value="${obj.color||'#c78391'}"></div>`:''}${rangeRow('크기','scale',obj,.08,1.8,.01)}${rangeRow('회전','rotation',obj,-180,180,1,'°')}<div class="buttonrow"><button class="smallbtn" data-obj-action="flip" ${!obj?'disabled':''}>좌우 반전</button><button class="smallbtn" data-obj-action="clone" ${!obj?'disabled':''}>복제</button></div><div class="buttonrow"><button class="smallbtn" data-obj-action="down" ${!obj?'disabled':''}>뒤로</button><button class="smallbtn" data-obj-action="up" ${!obj?'disabled':''}>앞으로</button><button class="smallbtn" data-obj-action="delete" ${!obj?'disabled':''}>삭제</button></div>`);
+return ''}
+function escapeHtml(s){return String(s||'').replace(/[&"<>]/g,c=>({'&':'&amp;','"':'&quot;','<':'&lt;','>':'&gt;'}[c]))}
+function renderControls(){if(app.mode==='showcase'){$('#controlPanel').innerHTML=section('DESK BACKGROUND',`<div class="options">${['cream','white','silver','dark'].map((v,i)=>`<button class="opt ${project.desk===v?'active':''}" data-project="desk" data-value="${v}">${['Cream Desk','White Studio','Silver Table','Dark Velvet'][i]}</button>`).join('')}</div>`)+section('CAMERA ANGLE',`<div class="options three">${['front','top','angle'].map((v,i)=>`<button class="opt ${project.camera===v?'active':''}" data-project="camera" data-value="${v}">${['Front','Top View','Slight Angle'][i]}</button>`).join('')}</div>`)+section('PACKAGE ACTIONS',`<button class="btn full" id="openPack">봉투 열기 / 닫기</button><div class="buttonrow"><button class="btn" id="pullCard">카드 꺼내기</button><button class="btn" id="flipCard">카드 뒤집기</button></div><div class="labelrow"><label>확대</label><input id="showZoom" type="range" min=".7" max="1.35" step=".05" value="${app.show.zoom}"></div><button class="btn full" id="showReset">기본 배치로 복원</button>`);return}
+$('#controlPanel').innerHTML=controlsHTML()}
+function renderThumbs(){const set=project.layout==='pair';$('#cardThumbs').innerHTML=Array.from({length:set?2:1},(_,i)=>`<button class="thumb-tile ${app.activeCard===i?'active':''}" data-active-card="${i}"><canvas width="110" height="170" id="thumb${i}"></canvas><span>CARD ${String(i+1).padStart(2,'0')}</span></button>`).join('');for(let i=0;i<(set?2:1);i++){let c=$(`#thumb${i}`),cctx=c.getContext('2d');cctx.clearRect(0,0,110,170);drawCard(cctx,project.cards[i],3,3,104,164,{back:app.side==='back',mini:true})}}
+function renderLayers(){const objs=activeCard().objects,items=[...objs].reverse();$('#layerCount').textContent=`${objs.length} ITEMS`;$('#layerList').innerHTML=items.length?items.map(o=>`<button class="layeritem ${o.id===app.selected?'active':''}" data-layer="${o.id}"><span class="layericon">${o.type==='image'?'▧':'✧'}</span><span>${o.type==='image'?`Image ${o.assetId+1}`:decoNames[decos.indexOf(o.kind)]||'Sticker'}</span><small>≡</small></button>`).join(''):`<div class="hint" style="padding:13px">아직 레이어가 없습니다.</div>`}
+function updateTabs(){ $('.app').dataset.mode=app.mode; $$('#tabs .tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===app.tab));$$('header .modebtn').forEach(x=>x.classList.toggle('active',x.dataset.mode===app.mode));$('#stageLabel').textContent=app.mode==='edit'?'WORKTABLE / EDIT':app.mode==='craft'?'MAKING / ATELIER':'FINISHED / SHOWCASE';$('#canvasShell').classList.toggle('editing',app.mode==='edit');$('#canvasTip').textContent=app.mode==='edit'?'드래그 · 크기 · 회전':app.mode==='craft'?'PRINT · CUT · SLEEVE · PACKAGE · SEAL':'OPEN · PULL · FLIP';$('#cardSideLabel').textContent=app.side==='front'?'FRONT SIDE':'BACK SIDE';$('#editingTitle').textContent=app.mode==='showcase'?'SHOWCASE':`0${['card','frame','sleeve','package','decor'].indexOf(app.tab)+1} / ${app.tab.toUpperCase()}`;$('#tabs').classList.toggle('hide',app.mode==='showcase');$('#sideToggle').classList.toggle('hide',app.mode==='craft');$('#progressTrack').classList.toggle('hide',app.mode!=='craft');
+ if(app.mode==='edit'){$('#footNote').textContent='이미지를 올리고 카드 위에서 위치를 조정하세요.';$('#toolRow').innerHTML='<button class="btn primary" id="makeBtn">제작 시작 ↗</button><button class="btn" id="previewBtn">완성 미리보기</button>'}
+ else if(app.mode==='craft'){$('#footNote').innerHTML='<span class="step-label" id="stepLabel">PRINT / 01</span>';$('#toolRow').innerHTML='<button class="smallbtn" id="playPause">▶ 재생</button><button class="smallbtn" id="replay">↺ 처음부터</button><button class="smallbtn" id="skipStep">다음 단계</button><select class="select" id="speed" style="width:74px;min-height:32px;padding:5px"><option value=".5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>';$ ('#speed').value=app.speed}
+ else{$('#footNote').textContent='완성된 패키지를 열고 카드를 꺼내보세요.';$('#toolRow').innerHTML='<button class="btn" id="returnEdit">다시 편집하기</button><button class="btn primary" id="saveShowcase2">장면 PNG 저장</button>'}
+ renderControls();renderLayers();renderThumbs();requestRender()}
+function renderAll(){renderControls();renderThumbs();renderLayers();requestRender()}
+function syncControls(){const obj=currentObject();$$('[data-object]').forEach(el=>{el.disabled=!obj;if(obj){el.value=obj[el.dataset.object];const o=$(`#out-${el.dataset.object}`);if(o)o.textContent=Number(obj[el.dataset.object]).toFixed(el.dataset.object==='scale'?2:0)+(el.dataset.object==='rotation'?'°':'')}});if(!obj&&app.tab==='decor')renderControls()}
+// ---------- Shared Canvas drawing: editor, stage, PNG and GIF all use these functions ----------
+function rect(ctx,x,y,w,h,r=0){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function fillRound(ctx,x,y,w,h,r,color){ctx.fillStyle=color;rect(ctx,x,y,w,h,r);ctx.fill()}
+function strokeRound(ctx,x,y,w,h,r,color,lw=1){ctx.strokeStyle=color;ctx.lineWidth=lw;rect(ctx,x,y,w,h,r);ctx.stroke()}
+function line(ctx,pts,color,w=1){ctx.beginPath();ctx.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)ctx.lineTo(...pts[i]);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.stroke()}
+function grad(ctx,x1,y1,x2,y2,stops){let g=ctx.createLinearGradient(x1,y1,x2,y2);for(let [p,c] of stops)g.addColorStop(p,c);return g}
+function cardPath(ctx,w,h,shape){ctx.beginPath();if(shape==='ticket'){let n=15;ctx.moveTo(9,0);ctx.lineTo(w-9,0);ctx.quadraticCurveTo(w,0,w,9);ctx.lineTo(w,h*.45);ctx.arc(w,h*.5,n,-Math.PI/2,-3*Math.PI/2,true);ctx.lineTo(w,h-9);ctx.quadraticCurveTo(w,h,w-9,h);ctx.lineTo(9,h);ctx.quadraticCurveTo(0,h,0,h-9);ctx.lineTo(0,h*.55);ctx.arc(0,h*.5,n,Math.PI/2,-Math.PI/2,true);ctx.lineTo(0,9);ctx.quadraticCurveTo(0,0,9,0)}else{ctx.roundRect(0,0,w,h,shape==='standard'?5:shape==='rounded'?26:shape==='polaroid'?8:shape==='square'?15:14)}ctx.closePath()}
+function drawCardBackground(ctx,card,W,H,back=false){let kind=back?card.backPattern:card.background,c1=back?card.backColor:card.color,c2=card.color2;
+if(kind==='transparent'){// visible and exportable transparency; no background fill
+}else if(kind==='gradient'){ctx.fillStyle=grad(ctx,0,0,W,H,[[0,c1],[.55,c2],[1,c1]]);ctx.fillRect(0,0,W,H)}else{ctx.fillStyle=c1;ctx.fillRect(0,0,W,H)}
+if(kind==='dots'){ctx.fillStyle=rgba(c2,.6);for(let x=14;x<W;x+=31)for(let y=15;y<H;y+=31){ctx.beginPath();ctx.arc(x+(Math.floor(y/31)%2)*15,y,2.7,0,TAU);ctx.fill()}}
+if(kind==='check'){ctx.fillStyle=rgba(c2,.48);for(let x=0;x<W;x+=50)ctx.fillRect(x,0,23,H);for(let y=0;y<H;y+=50)ctx.fillRect(0,y,W,23)}
+if(kind==='stripes'||kind==='lines'){ctx.strokeStyle=rgba(c2,.64);ctx.lineWidth=kind==='lines'?2:12;for(let x=-H;x<W+H;x+=kind==='lines'?30:65){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+H,H);ctx.stroke()}}
+if(kind==='floral'){for(let x=20;x<W;x+=83)for(let y=18;y<H;y+=89){let r=4+((x*3+y)%4);drawFlower(ctx,x+(y%3)*6,y,r,rgba(c2,.85),rgba(card.frameColor,.36));ctx.strokeStyle=rgba(card.frameColor,.23);ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y+10);ctx.quadraticCurveTo(x+8,y+26,x+14,y+37);ctx.stroke()}}
+if(kind==='lace'){ctx.strokeStyle=rgba(c2,.65);ctx.lineWidth=3;for(let x=0;x<W;x+=28)for(let y=0;y<H;y+=28){ctx.beginPath();ctx.arc(x,y,9,0,TAU);ctx.stroke();ctx.beginPath();ctx.arc(x,y,3,0,TAU);ctx.stroke()}}
+if(kind==='vintage'){const gg=grad(ctx,0,0,W,H,[[0,'#fff6db'],[.5,'#e4cdac'],[1,'#f7e7cc']]);ctx.globalAlpha=.62;ctx.fillStyle=gg;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;ctx.fillStyle='rgba(115,85,57,.07)';for(let i=0;i<240;i++){let x=(i*167+19)%W,y=(i*443+31)%H;ctx.fillRect(x,y,1+(i%3),1+(i%4))}}
+if(kind==='transparent'){ctx.lineWidth=1;ctx.strokeStyle='rgba(120,100,105,.12)';ctx.strokeRect(0,0,W,H)}
+}
+function frameSVG(style,color){const p=`fill="none" stroke="${color}" stroke-width="4" stroke-linejoin="round"`;let s='';switch(style){
+case 'simple':s=`<rect x="23" y="23" width="504" height="804" rx="9" ${p}/>`;break;
+case 'double':s=`<rect x="18" y="18" width="514" height="814" rx="13" ${p}/><rect x="30" y="30" width="490" height="790" rx="8" fill="none" stroke="${color}" stroke-width="1.7"/>`;break;
+case 'corner':s=`<rect x="20" y="20" width="510" height="810" rx="11" stroke="${color}" stroke-width="2" fill="none"/><g fill="${color}"><path d="M21 25c40 30 62 25 90 4-12 53-50 70-88 75Z" opacity=".62"/><path d="M529 25c-40 30-62 25-90 4 12 53 50 70 88 75Z" opacity=".62"/><path d="M21 825c40-30 62-25 90-4-12-53-50-70-88-75Z" opacity=".62"/><path d="M529 825c-40-30-62-25-90-4 12-53 50-70 88-75Z" opacity=".62"/></g>`;break;
+case 'lace':s=`<rect x="25" y="25" width="500" height="800" rx="6" ${p}/><g fill="none" stroke="${color}" stroke-width="2">`+Array.from({length:22},(_,i)=>`<circle cx="${24+i*23.8}" cy="27" r="10"/><circle cx="${24+i*23.8}" cy="823" r="10"/>`).join('')+Array.from({length:34},(_,i)=>`<circle cx="26" cy="${25+i*24.2}" r="10"/><circle cx="524" cy="${25+i*24.2}" r="10"/>`).join('')+'</g>';break;
+case 'film':s=`<rect x="14" y="14" width="522" height="822" rx="8" fill="${color}" fill-opacity=".8"/><rect x="64" y="19" width="422" height="812" fill="#fff" fill-opacity=".94"/>`+Array.from({length:14},(_,i)=>`<rect x="27" y="${32+i*57}" width="24" height="34" rx="3" fill="#fff"/><rect x="499" y="${32+i*57}" width="24" height="34" rx="3" fill="#fff"/>`).join('');break;
+case 'label':s=`<rect x="19" y="19" width="512" height="812" rx="20" ${p}/><path d="M19 110C105 110 92 19 174 19M376 19c82 0 69 91 155 91M19 740c86 0 73 91 155 91M376 831c82 0 69-91 155-91" ${p}/><circle cx="39" cy="45" r="7" fill="${color}"/><circle cx="511" cy="805" r="7" fill="${color}"/>`;break;
+}return `<svg xmlns="http://www.w3.org/2000/svg" width="550" height="850" viewBox="0 0 550 850">${s}</svg>`}
+function getSVGImage(key,svg){let item=svgCache.get(key);if(item)return item;let im=new Image();let rec={im,ready:false};svgCache.set(key,rec);im.onload=()=>{rec.ready=true;requestRender();if(!app.gifBusy)renderThumbs()};im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);return rec}
+function drawFrameSVG(ctx,card){if(card.frame==='none')return;const key=`frame-${card.frame}-${card.frameColor}`,im=getSVGImage(key,frameSVG(card.frame,card.frameColor));if(im.ready)ctx.drawImage(im.im,0,0,CW,CH);else{ctx.lineWidth=4;ctx.strokeStyle=card.frameColor;ctx.strokeRect(22,22,CW-44,CH-44)}}
+function drawFlower(ctx,x,y,r,color,inside){ctx.save();ctx.translate(x,y);ctx.fillStyle=color;for(let i=0;i<5;i++){ctx.save();ctx.rotate(i*TAU/5);ctx.beginPath();ctx.ellipse(0,-r*.8,r*.63,r,0,0,TAU);ctx.fill();ctx.restore()}ctx.fillStyle=inside;ctx.beginPath();ctx.arc(0,0,r*.55,0,TAU);ctx.fill();ctx.restore()}
+function drawSymbol(ctx,kind,size,color){let s=size/2;ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=Math.max(1,size*.035);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
+if(kind==='heart'){ctx.moveTo(0,s*.75);ctx.bezierCurveTo(-s*.7,s*.25,-s*1.2,-s*.3,-s*.65,-s*.65);ctx.bezierCurveTo(-s*.33,-s*.85,-s*.1,-s*.5,0,-s*.32);ctx.bezierCurveTo(s*.1,-s*.5,s*.33,-s*.85,s*.65,-s*.65);ctx.bezierCurveTo(s*1.2,-s*.3,s*.7,s*.25,0,s*.75);ctx.fill()}
+else if(kind==='star'){for(let i=0;i<10;i++){let a=-Math.PI/2+i*Math.PI/5,r=i%2?s*.45:s*.97;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill()}
+else if(kind==='moon'){ctx.arc(0,0,s*.8,-1.1,2.1);ctx.bezierCurveTo(s*.05,s*.7,s*.2,-s*.5,s*.8,-s*.72);ctx.fill()}
+else if(kind==='flower'){drawFlower(ctx,0,0,s*.53,color,'rgba(255,252,249,.8)')}
+else if(kind==='paw'){ctx.ellipse(0,s*.28,s*.62,s*.38,0,0,TAU);ctx.fill();[[-.67,-.23],[-.26,-.62],[.27,-.62],[.7,-.2]].forEach(([x,y])=>{ctx.beginPath();ctx.ellipse(x*s,y*s,s*.18,s*.24,-x*.2,0,TAU);ctx.fill()})}
+else if(kind==='bow'||kind==='ribbon'){ctx.moveTo(0,0);ctx.bezierCurveTo(-s*.5,-s*1.05,-s*1.5,-s*.7,-s*.84,s*.22);ctx.bezierCurveTo(-s*.42,s*.55,-s*.1,s*.18,0,0);ctx.bezierCurveTo(s*.5,-s*1.05,s*1.5,-s*.7,s*.84,s*.22);ctx.bezierCurveTo(s*.42,s*.55,s*.1,s*.18,0,0);ctx.fill();ctx.beginPath();ctx.moveTo(-s*.12,s*.14);ctx.lineTo(-s*.56,s*.96);ctx.lineTo(0,s*.65);ctx.lineTo(s*.56,s*.96);ctx.lineTo(s*.12,s*.14);ctx.fill();ctx.beginPath();ctx.arc(0,0,s*.16,0,TAU);ctx.fillStyle='#fff8f0';ctx.fill()}
+else if(kind==='butterfly'){for(let flip of [-1,1]){ctx.save();ctx.scale(flip,1);ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(s*.15,-s*1.5,s*1.4,-s*1.2,s*.77,0);ctx.bezierCurveTo(s*1.3,s*.72,s*.33,s*1.25,0,0);ctx.fill();ctx.restore()}ctx.fillRect(-s*.08,-s*.35,s*.16,s*.9)}
+else if(kind==='gem'){ctx.moveTo(-s*.95,-s*.2);ctx.lineTo(-s*.6,-s*.85);ctx.lineTo(s*.6,-s*.85);ctx.lineTo(s*.95,-s*.2);ctx.lineTo(0,s*.94);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(255,255,255,.7)';ctx.lineWidth=1.5;line(ctx,[[-s*.95,-s*.2],[s*.95,-s*.2]],ctx.strokeStyle,1.5);line(ctx,[[-s*.4,-s*.2],[0,s*.94],[s*.4,-s*.2]],ctx.strokeStyle,1.5)}
+else if(kind==='circle'||kind==='stamp'){ctx.strokeStyle=color;ctx.lineWidth=s*.12;ctx.arc(0,0,s*.85,0,TAU);ctx.stroke();ctx.beginPath();ctx.arc(0,0,s*.55,0,TAU);ctx.stroke()}
+else if(kind==='tape'||kind==='label'){fillRound(ctx,-s*.9,-s*.53,s*1.8,s*1.06,s*.1,rgba(color,.45));strokeRound(ctx,-s*.9,-s*.53,s*1.8,s*1.06,s*.1,color,s*.08)}
+else if(kind==='lace'){ctx.strokeStyle=color;ctx.lineWidth=s*.09;for(let i=-2;i<=2;i++){ctx.beginPath();ctx.arc(i*s*.43,0,s*.35,0,TAU);ctx.stroke()}}
+ctx.restore()}
+function drawImageObject(ctx,obj,img,aspectFix=1){if(!img)return;let h=CH*obj.scale,w=h*(img.naturalWidth/img.naturalHeight)*aspectFix;ctx.save();ctx.translate(obj.x*CW,obj.y*CH);ctx.rotate(obj.rotation*Math.PI/180);ctx.scale(obj.flipX?-1:1,1);ctx.globalAlpha=clamp(obj.opacity??1,0,1);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore()}
+function drawDecoObject(ctx,obj){ctx.save();ctx.translate(obj.x*CW,obj.y*CH);ctx.rotate(obj.rotation*Math.PI/180);ctx.scale(obj.flipX?-1:1,1);ctx.globalAlpha=clamp(obj.opacity??1,0,1);drawSymbol(ctx,obj.kind,CW*obj.scale,obj.color||'#c78391');ctx.restore()}
+function drawBackDesign(ctx,card){let c=card.frameColor;ctx.strokeStyle=rgba(c,.78);ctx.lineWidth=3;ctx.strokeRect(37,37,CW-74,CH-74);ctx.lineWidth=1;ctx.strokeRect(48,48,CW-96,CH-96);if(card.backSymbol!=='none'){ctx.save();ctx.translate(CW/2,CH*.43);drawSymbol(ctx,card.backSymbol,118,rgba(c,.82));ctx.restore()}
+if(card.backText){ctx.fillStyle=c;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='31px Georgia, serif';const text=card.backText;const parts=text.match(/.{1,22}/g)||[];parts.slice(0,3).forEach((l,i)=>ctx.fillText(l,CW/2,CH*.62+i*39,CW-100))}}
+function drawSurface(ctx,card,t=0){if(card.surface==='matte')return;ctx.save();ctx.globalCompositeOperation='screen';if(card.surface==='glossy'){ctx.fillStyle=grad(ctx,-100,0,CW+40,CH,[[0,'rgba(255,255,255,.34)'],[.42,'rgba(255,255,255,.03)'],[.56,'rgba(255,255,255,.0)'],[1,'rgba(255,255,255,.16)']]);ctx.fillRect(0,0,CW,CH)}
+else if(card.surface==='pearl'){ctx.fillStyle=grad(ctx,0,0,CW,CH,[[0,'rgba(227,204,255,.2)'],[.33,'rgba(255,250,210,.16)'],[.7,'rgba(188,229,255,.18)'],[1,'rgba(255,223,243,.16)']]);ctx.fillRect(0,0,CW,CH)}
+else if(card.surface==='holo'){ctx.fillStyle=grad(ctx,-CW+t*46,0,CW+t*46,CH,[[0,'rgba(254,181,234,.21)'],[.25,'rgba(192,211,255,.23)'],[.5,'rgba(192,255,237,.18)'],[.75,'rgba(255,244,174,.18)'],[1,'rgba(239,196,255,.23)']]);ctx.fillRect(0,0,CW,CH)}ctx.restore()}
+function drawCard(ctx,card,x,y,w,h,opt={}){const mini=opt.mini||false;const aspectFix=(CW*h)/(CH*w);ctx.save();ctx.translate(x,y);ctx.scale(w/CW,h/CH);ctx.save();cardPath(ctx,CW,CH,card.shape);ctx.clip();if(card.shape==='polaroid'){ctx.fillStyle='#fffdf9';ctx.fillRect(0,0,CW,CH);ctx.save();ctx.beginPath();ctx.rect(25,25,CW-50,CH-146);ctx.clip();ctx.translate(25,25);ctx.scale((CW-50)/CW,(CH-171)/CH);drawCardBackground(ctx,card,CW,CH,opt.back);if(!opt.back)for(let o of card.objects){if(o.visible===false)continue;if(o.type==='image'){let img=loadedImage(getAsset(o.assetId));if(img)drawImageObject(ctx,o,img,aspectFix*((CH-171)/CH)/((CW-50)/CW))}else drawDecoObject(ctx,o)}ctx.restore();if(opt.back)drawBackDesign(ctx,card)}else{drawCardBackground(ctx,card,CW,CH,opt.back);if(opt.back)drawBackDesign(ctx,card);else for(let o of card.objects){if(o.visible===false)continue;if(o.type==='image'){let img=loadedImage(getAsset(o.assetId));if(img)drawImageObject(ctx,o,img,aspectFix)}else drawDecoObject(ctx,o)}}
+if(!opt.back){drawFrameSVG(ctx,card);if(!mini)drawSurface(ctx,card,opt.time||0)}ctx.restore();cardPath(ctx,CW,CH,card.shape);ctx.strokeStyle='rgba(93,66,71,.18)';ctx.lineWidth=2;ctx.stroke();ctx.restore()}
+function objectDim(obj,aspectFix=1){if(obj.type==='deco')return [CW*obj.scale,CW*obj.scale];let a=getAsset(obj.assetId),im=loadedImage(a);let ratio=im?im.naturalWidth/im.naturalHeight:1;return [CH*obj.scale*ratio*aspectFix,CH*obj.scale]}
+function cardRects(){if(project.layout==='pair')return [{x:242,y:137,w:201,h:311,index:0},{x:515,y:137,w:201,h:311,index:1}];let c=project.cards[0];let square=c.shape==='square';return [{x:square?342:358,y:square?163:102,w:square?277:244,h:square?277:376,index:0}]}
+function drawCardShadow(ctx,x,y,w,h,rot=0,alpha=.13){ctx.save();ctx.translate(x+w/2,y+h/2);ctx.rotate(rot);ctx.shadowColor=`rgba(70,45,40,${alpha})`;ctx.shadowBlur=20;ctx.shadowOffsetY=14;fillRound(ctx,-w/2,-h/2,w,h,11,'rgba(92,72,66,.10)');ctx.restore()}
+function getEditorSelectedGeometry(){if(app.side==='back')return null;const obj=currentObject(),r=cardRects().find(c=>c.index===app.activeCard);if(!obj||!r)return null;const [ow,oh]=objectDim(obj,(CW*r.h)/(CH*r.w)),f=r.w/CW;return {cx:r.x+obj.x*r.w,cy:r.y+obj.y*r.h,w:ow*f,h:oh*r.h/CH,rot:obj.rotation*Math.PI/180}}
+function selectedHandles(g){const ang=g.rot,c=Math.cos(ang),s=Math.sin(ang);let transform=(x,y)=>({x:g.cx+x*c-y*s,y:g.cy+x*s+y*c});return {size:transform(g.w/2,g.h/2),rotate:transform(0,-g.h/2-31)}}
+function drawSelection(ctx){let g=getEditorSelectedGeometry();if(!g)return;ctx.save();ctx.translate(g.cx,g.cy);ctx.rotate(g.rot);ctx.setLineDash([7,5]);ctx.strokeStyle='#b67989';ctx.lineWidth=1.5;ctx.strokeRect(-g.w/2,-g.h/2,g.w,g.h);ctx.setLineDash([]);ctx.strokeStyle='#c08a95';ctx.beginPath();ctx.moveTo(0,-g.h/2);ctx.lineTo(0,-g.h/2-31);ctx.stroke();ctx.fillStyle='#fff';ctx.strokeStyle='#bf8491';for(let [x,y] of [[-g.w/2,-g.h/2],[g.w/2,g.h/2]]){ctx.beginPath();ctx.arc(x,y,6.7,0,TAU);ctx.fill();ctx.stroke()}ctx.beginPath();ctx.arc(0,-g.h/2-31,7,0,TAU);ctx.fill();ctx.stroke();ctx.restore()}
+function deskPalette(){return app.mode==='showcase'?({cream:themes.cream,white:{desk:'#f6f5f2',desk2:'#fff',secondary:'#dce0dd',pink:'#c4b0a7',ink:'#8c837e',white:'#fff'},silver:themes.silver,dark:themes.black}[project.desk]||themes.cream):(themes[project.theme]||themes.cream)}
+function drawDesk(ctx,palette,pattern=true){const g=grad(ctx,0,0,SW,SH,[[0,palette.desk2],[.52,palette.desk],[1,palette.secondary]]);ctx.fillStyle=g;ctx.fillRect(0,0,SW,SH);if(pattern){ctx.save();ctx.globalAlpha=.12;ctx.strokeStyle=palette.ink;ctx.lineWidth=1;for(let i=0;i<16;i++){let y=10+i*43+(i%3)*9;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(250,y-12,680,y+8,960,y-3);ctx.stroke()}ctx.globalAlpha=.08;for(let i=0;i<240;i++){let x=(i*487+137)%SW,y=(i*173+37)%SH;ctx.fillStyle=palette.ink;ctx.fillRect(x,y,i%3+1,.6)}ctx.restore()}let edge=grad(ctx,0,0,0,SH,[[0,'rgba(255,255,255,.2)'],[.5,'rgba(255,255,255,0)'],[1,'rgba(90,60,53,.11)']]);ctx.fillStyle=edge;ctx.fillRect(0,0,SW,SH)}
+function paperScrap(ctx,x,y,w,h,a,color){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.shadowColor='#614b4b22';ctx.shadowBlur=8;ctx.shadowOffsetY=3;fillRound(ctx,-w/2,-h/2,w,h,2,color);ctx.shadowColor='transparent';ctx.strokeStyle='#876c6544';ctx.strokeRect(-w/2,-h/2,w,h);ctx.restore()}
+function drawStickersSheet(ctx,x,y,rot=0){ctx.save();ctx.translate(x,y);ctx.rotate(rot);fillRound(ctx,-60,-52,120,104,6,'#fffdfa');strokeRound(ctx,-60,-52,120,104,6,'#d7c6b9',1);[['heart',-31,-26],['star',23,-27],['flower',-32,24],['paw',24,23]].forEach(([s,x,y],i)=>{ctx.fillStyle='#f8e9e9';ctx.beginPath();ctx.arc(x,y,18,0,TAU);ctx.fill();ctx.save();ctx.translate(x,y);drawSymbol(ctx,s,22,i%2?'#c7b5a8':'#c78d99');ctx.restore()});ctx.restore()}
+function drawTapeRoll(ctx,x,y,rot=0){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.shadowColor='#4b424034';ctx.shadowBlur=10;ctx.shadowOffsetY=6;ctx.fillStyle='#d3a4ae';ctx.beginPath();ctx.ellipse(0,0,49,41,0,0,TAU);ctx.fill();ctx.fillStyle='#ebc5ce';ctx.beginPath();ctx.ellipse(0,-6,48,29,0,0,TAU);ctx.fill();ctx.fillStyle='#e9dfd4';ctx.beginPath();ctx.ellipse(0,-6,21,13,0,0,TAU);ctx.fill();ctx.strokeStyle='rgba(255,255,255,.54)';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,-6,40,23,0,.3,2.1);ctx.stroke();ctx.restore()}
+function drawStampTool(ctx,x,y,rot=0){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.shadowColor='#0002';ctx.shadowBlur=14;ctx.shadowOffsetY=7;fillRound(ctx,-55,30,110,29,8,'#b79d91');fillRound(ctx,-40,22,80,22,5,'#e9d4c4');ctx.fillStyle='#c7ac99';ctx.beginPath();ctx.moveTo(-20,25);ctx.bezierCurveTo(-22,-8,-24,-28,0,-31);ctx.bezierCurveTo(24,-28,22,-8,20,25);ctx.fill();fillRound(ctx,-33,-48,66,27,11,'#e6cfc0');ctx.shadowColor='transparent';strokeRound(ctx,-33,-48,66,27,11,'rgba(87,54,46,.22)',2);ctx.restore()}
+function drawPrinter(ctx,x,y,w=380,h=185,p=0){ctx.save();ctx.translate(x,y);ctx.shadowColor='#523c3930';ctx.shadowBlur=24;ctx.shadowOffsetY=15;
+fillRound(ctx,-w/2,-h*.28,w,h*.91,24,'#d8d0cb');fillRound(ctx,-w/2+7,-h*.3,w-14,h*.7,20,'#f8f5f0');ctx.shadowColor='transparent';fillRound(ctx,-w/2+18,-h*.1,w-36,h*.48,12,grad(ctx,-100,-90,100,80,[[0,'#fcfaf6'],[1,'#ded6d1']]));
+fillRound(ctx,-w*.36,h*.12,w*.72,19,5,'#5e5859');fillRound(ctx,-w*.33,h*.16,w*.66,5,2,'#242224');fillRound(ctx,-w*.34,-h*.21,w*.25,7,4,'#d4c8bf');fillRound(ctx,w*.25,-h*.21,21,7,4,'#c9b5b2');ctx.fillStyle='#b9cabe';ctx.beginPath();ctx.arc(w*.32,-h*.17,4,0,TAU);ctx.fill();fillRound(ctx,-w*.42,h*.4,w*.84,15,7,'#c3b5af');ctx.restore()}
+function drawCutter(ctx,x,y,p=0){ctx.save();ctx.translate(x,y);ctx.shadowColor='rgba(55,48,50,.19)';ctx.shadowBlur=15;ctx.shadowOffsetY=12;fillRound(ctx,-178,-235,355,472,13,'#a8b5a8');ctx.shadowColor='transparent';fillRound(ctx,-161,-216,312,432,7,'#f4eee3');for(let k=0;k<13;k++){ctx.strokeStyle='#d9d1c8';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-160,-196+k*33);ctx.lineTo(147,-196+k*33);ctx.stroke()}for(let k=0;k<11;k++){ctx.strokeStyle='#ddd7ce';ctx.beginPath();ctx.moveTo(-143+k*29,-216);ctx.lineTo(-143+k*29,216);ctx.stroke()}fillRound(ctx,-182,-242,360,12,5,'#c0b4a7');ctx.fillStyle='#c4b3a7';ctx.fillRect(164,-232,11,449);ctx.strokeStyle='#827f7d';ctx.lineWidth=12;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(169,-196);ctx.lineTo(169,lerp(-196,174,ease(p)));ctx.stroke();ctx.fillStyle='#d2b4ae';ctx.beginPath();ctx.arc(169,lerp(-196,174,ease(p)),16,0,TAU);ctx.fill();ctx.restore()}
+function drawSleeve(ctx,x,y,w,h,type,t=0,layer='front',open=0){ctx.save();ctx.translate(x,y);let outer=type==='matte'?'rgba(252,253,255,.28)':'rgba(242,251,255,.09)';if(layer==='back'){
+fillRound(ctx,-w/2-6,-h/2-9,w+12,h+18,9,'rgba(245,253,255,.33)');strokeRound(ctx,-w/2-6,-h/2-9,w+12,h+18,9,'rgba(255,255,255,.8)',2.2);ctx.restore();return}
+ctx.fillStyle=outer;ctx.fillRect(-w/2,-h/2,w,h);strokeRound(ctx,-w/2,-h/2,w,h,4,'rgba(249,252,255,.78)',2.6);ctx.strokeStyle='rgba(101,138,144,.23)';ctx.lineWidth=1.3;ctx.strokeRect(-w/2+3,-h/2+7,w-6,h-11);
+let g=grad(ctx,-w/2,0,w/2,0,[[0,'rgba(255,255,255,.02)'],[.38,'rgba(255,255,255,.08)'],[.48,'rgba(255,255,255,.39)'],[.56,'rgba(255,255,255,.06)'],[1,'rgba(255,255,255,.06)']]);ctx.save();rect(ctx,-w/2,-h/2,w,h,3);ctx.clip();ctx.translate((t*75)%w-w/2,0);ctx.fillStyle=g;ctx.fillRect(-w/2,-h/2,w*2,h);ctx.restore();
+if(type==='heart'||type==='star'||type==='glitter'){for(let i=0;i<25;i++){let dx=((i*59+16)%(w-25))-w/2+12,dy=((i*131+3)%(h-20))-h/2+10;ctx.save();ctx.translate(dx,dy);ctx.globalAlpha=.16+(i%3)*.075;drawSymbol(ctx,type==='heart'?'heart':'star',type==='glitter'?6:10,['#b9a1d8','#a2d8d9','#f7b5d8'][i%3]);ctx.restore()}}
+if(type==='aurora'){ctx.globalAlpha=.11;ctx.fillStyle=grad(ctx,-w/2,-h/2,w/2,h/2,[[0,'#c7b2ff'],[.36,'#a8ffe3'],[.68,'#ffb6de'],[1,'#fff7be']]);ctx.fillRect(-w/2,-h/2,w,h);ctx.globalAlpha=1}
+if(type==='matte'){ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(-w/2,-h/2,w,h)}
+if(open>0){ctx.strokeStyle='rgba(240,251,255,.9)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-w/2,-h/2);ctx.quadraticCurveTo(0,-h/2-24*open,w/2,-h/2);ctx.stroke()}
+ctx.restore()}
+function drawRibbon(ctx,cx,cy,w,h,color,progress=1){ctx.save();ctx.translate(cx,cy);ctx.globalAlpha=progress;const g=grad(ctx,-w/2,0,w/2,0,[[0,rgba(color,.84)],[.22,color],[.55,rgba(color,.8)],[1,color]]);fillRound(ctx,-w/2,-h/2,w,h,3,g);ctx.strokeStyle='rgba(255,255,255,.44)';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-w/2+4,-h/2+5);ctx.lineTo(w/2-4,-h/2+5);ctx.moveTo(-w/2+4,h/2-5);ctx.lineTo(w/2-4,h/2-5);ctx.stroke();ctx.restore()}
+// A portrait envelope sized to hold one standard 55x85 photocard, never a landscape mailer.
+// Separate back/front layers allow the card to pass physically behind the pocket.
+const PACK_W=248, PACK_H=350;
+function drawEnvelope(ctx,x,y,w=PACK_W,h=PACK_H,progress=1,opts={}){
+ const type=opts.type||project.package, color=opts.color||project.packColor;
+ const layer=opts.layer||'all', translucent=type==='glassine';
+ if(type==='band')return;
+ ctx.save();ctx.translate(x,y);
+ if(type==='toploader'){
+  if(layer!=='front'){
+   ctx.shadowColor='rgba(64,60,70,.13)';ctx.shadowBlur=15;ctx.shadowOffsetY=6;
+   fillRound(ctx,-w/2,-h/2,w,h,7,'rgba(238,250,255,.18)');ctx.shadowColor='transparent';
+  }
+  if(layer!=='back'){
+   strokeRound(ctx,-w/2,-h/2,w,h,7,'rgba(243,251,255,.9)',5);
+   strokeRound(ctx,-w/2+7,-h/2+11,w-14,h-20,5,'rgba(126,162,174,.28)',1.8);
+  }
+  ctx.restore();return;
+ }
+ const base=translucent?rgba('#fff9f0',.67):color;
+ if(layer==='back'||layer==='all'){
+  ctx.shadowColor='rgba(70,46,44,.19)';ctx.shadowBlur=18;ctx.shadowOffsetY=10;
+  fillRound(ctx,-w/2,-h/2,w,h,5,base);ctx.shadowColor='transparent';
+  strokeRound(ctx,-w/2,-h/2,w,h,5,rgba('#86695d',.25),1.25);
+  // Uncoated paper catches a subtle highlight at the edges.
+  ctx.strokeStyle=rgba('#ffffff',translucent?.4:.26);ctx.lineWidth=1;
+  ctx.strokeRect(-w/2+5,-h/2+5,w-10,h-10);
+ }
+ if(layer==='front'||layer==='all'){
+  // Pocket lies on TOP of inserted cards. The top 23% is the envelope mouth.
+  const mouth=-h*.27, bottom=h/2;
+  ctx.fillStyle=translucent?rgba('#fffcf5',.73):color;
+  ctx.beginPath();ctx.moveTo(-w/2,mouth);ctx.lineTo(w/2,mouth);
+  ctx.lineTo(w/2,bottom-4);ctx.quadraticCurveTo(w/2,bottom,-w/2+5,bottom);
+  ctx.lineTo(-w/2,mouth);ctx.closePath();ctx.fill();
+  // Folded left and right paper wings are scaled to the narrow, tall envelope.
+  ctx.fillStyle=rgba('#fff9f4',translucent?.16:.24);
+  ctx.beginPath();ctx.moveTo(-w/2,mouth);ctx.lineTo(0,h*.12);
+  ctx.lineTo(-w/2,h/2);ctx.closePath();ctx.fill();
+  ctx.fillStyle=rgba('#bd9d95',translucent?.05:.09);
+  ctx.beginPath();ctx.moveTo(w/2,mouth);ctx.lineTo(0,h*.12);
+  ctx.lineTo(w/2,h/2);ctx.closePath();ctx.fill();
+  ctx.fillStyle=rgba('#fff9f5',translucent?.16:.28);
+  ctx.beginPath();ctx.moveTo(-w/2,h/2);ctx.lineTo(0,h*.12);
+  ctx.lineTo(w/2,h/2);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=rgba('#886b62',translucent?.12:.19);ctx.lineWidth=1.25;
+  line(ctx,[[-w/2,mouth],[0,h*.12],[w/2,mouth]],ctx.strokeStyle,1.25);
+  line(ctx,[[-w/2,h/2],[0,h*.12],[w/2,h/2]],rgba('#886b62',.12),1.1);
+  // The folded upper flap visibly moves from behind the opening to over the face.
+  if(opts.flap!==false){
+   let closing=ease(clamp(progress,0,1));
+   let tip=lerp(-h*.84,-h*.115,closing);
+   ctx.beginPath();ctx.moveTo(-w/2,-h/2);ctx.lineTo(w/2,-h/2);
+   ctx.lineTo(0,tip);ctx.closePath();
+   ctx.fillStyle=grad(ctx,0,-h/2,0,Math.max(tip,-h*.15),[
+    [0,rgba('#fff',translucent?.4:.30)],
+    [1,rgba(color,translucent?.64:.98)]]);
+   ctx.fill();ctx.strokeStyle=rgba('#886b62',translucent?.16:.22);
+   ctx.lineWidth=1.3;ctx.stroke();
+  }
+ }
+ ctx.restore();
+}
+function drawSeal(ctx,x,y,r,style,color,t=1){if(t<=0)return;ctx.save();ctx.translate(x,y);ctx.scale(ease(Math.min(1,t))* (t>1?1+Math.sin((t-1)*Math.PI)*.08:1),ease(Math.min(1,t))*(t>1?1+Math.sin((t-1)*Math.PI)*.08:1));ctx.shadowBlur=10;ctx.shadowColor='rgba(98,61,74,.25)';ctx.fillStyle=grad(ctx,-r,-r,r,r,[[0,rgba(color,.8)],[.44,color],[1,rgba(color,.92)]]);ctx.beginPath();for(let i=0;i<=48;i++){let a=i*TAU/48,radius=r*(1+.042*Math.sin(i*.92));if(i===0)ctx.moveTo(Math.cos(a)*radius,Math.sin(a)*radius);else ctx.lineTo(Math.cos(a)*radius,Math.sin(a)*radius)}ctx.fill();ctx.shadowColor='transparent';ctx.lineWidth=1.4;ctx.strokeStyle='rgba(255,249,243,.55)';ctx.beginPath();ctx.arc(0,0,r*.78,0,TAU);ctx.stroke();if(style==='initial'){ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`${r*.75}px Georgia`;ctx.fillStyle='#fff5ef';if(project.sealInitial)ctx.fillText(project.sealInitial.slice(0,4),0,0)}else drawSymbol(ctx,style==='ribbon'?'bow':style,r*.95,'#fff4ef');ctx.restore()}
+function drawPhotoSet(ctx,x,y,w,h,opts={}){let pair=project.layout==='pair';if(pair){let split=w*.67;drawCard(ctx,project.cards[0],x-split*.48,y,w*.63,h*.91,{back:opts.back,time:opts.time||0});drawCard(ctx,project.cards[1],x+split*.52,y+10,w*.63,h*.91,{back:opts.back,time:opts.time||0})}else drawCard(ctx,project.cards[0],x,y,w,h,{back:opts.back,time:opts.time||0})}
+// Pair sets are physically stacked *inside* one envelope or sleeve; they are
+// only fanned out in the editor. Both original card aspects remain unchanged.
+function drawPackCardStack(ctx,x,y,w,h,opts={}){
+ if(project.layout==='pair'){
+  drawCard(ctx,project.cards[0],x-8,y+10,w-8,h-7,{back:opts.back,time:opts.time||0});
+  drawCard(ctx,project.cards[1],x+6,y-5,w-8,h-7,{back:opts.back,time:opts.time||0});
+ }else drawCard(ctx,project.cards[0],x,y,w,h,{back:opts.back,time:opts.time||0});
+}
+function drawEdit(ctx){let pal=deskPalette();drawDesk(ctx,pal);ctx.save();ctx.globalAlpha=.8;drawTapeRoll(ctx,150,139,-.17);drawStickersSheet(ctx,792,451,.24);drawStampTool(ctx,791,174,-.14);ctx.restore();paperScrap(ctx,155,439,95,16,.31,'#f1e4e2');paperScrap(ctx,171,454,67,9,.31,'#d9bbb8');ctx.save();ctx.translate(150,312);ctx.rotate(-.17);fillRound(ctx,-76,-73,152,151,12,'rgba(255,252,250,.8)');strokeRound(ctx,-76,-73,152,151,12,rgba(pal.ink,.17),1);for(let i=0;i<6;i++)line(ctx,[[-43,-48+i*18],[45,-48+i*18]],rgba(pal.ink,.15),1);ctx.restore();
+const rs=cardRects();for(let r of rs){drawCardShadow(ctx,r.x,r.y,r.w,r.h);drawCard(ctx,project.cards[r.index],r.x,r.y,r.w,r.h,{back:app.side==='back',time:0});if(project.layout==='pair'&&r.index===app.activeCard){ctx.strokeStyle='#d1a0aa';ctx.lineWidth=1.7;ctx.setLineDash([4,6]);ctx.strokeRect(r.x-11,r.y-11,r.w+22,r.h+22);ctx.setLineDash([])}}
+if(app.side==='front')drawSelection(ctx);ctx.save();ctx.fillStyle=rgba(pal.ink,.6);ctx.textAlign='center';ctx.font='12px Segoe UI, sans-serif';ctx.fillText(project.layout==='pair'?'PAIR SET / TWO CARDS':app.side==='back'?'BACK SIDE':'PHOTO CARD / 55 × 85',480,572);ctx.restore()}
+// ---------- Six-step physical crafting animation ----------
+const steps=[{id:'PRINT',start:0,end:2},{id:'CUT',start:2,end:3.5},{id:'SLEEVE',start:3.5,end:5},{id:'PACKAGE',start:5,end:7},{id:'SEAL',start:7,end:8.5},{id:'FINISH',start:8.5,end:10.5}],DURATION=10.5;
+function stepAt(t){return steps.find(s=>t<s.end)||steps[5]}
+function normalized(t,start,end){return ease((t-start)/(end-start))}
+function drawCardAt(ctx,x,y,w,h,opt={}){ctx.save();drawCardShadow(ctx,x,y,w,h,opt.rotation||0,opt.shadow||.1);drawPhotoSet(ctx,x,y,w,h,opt);ctx.restore()}
+function drawPrint(ctx,p){ctx.save();let vibr=Math.sin(p*105)*Math.sin(p*Math.PI)*1.6;ctx.translate(0,vibr);drawPrinter(ctx,482,211,390,195,p);ctx.restore();let reveal=normalized(p,.06,.93),cardY=lerp(158,325,reveal);ctx.save();ctx.beginPath();ctx.rect(285,314,396,SH-314);ctx.clip();drawCardAt(ctx,383,cardY,198,306,{time:p*2});ctx.restore(); // cutout overhang is physically hidden by printer face
+ctx.save();ctx.fillStyle='rgba(58,51,51,.38)';fillRound(ctx,326,309,309,7,3,'#656164');ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(335,312);ctx.lineTo(625,312);ctx.stroke();ctx.restore();
+ctx.save();ctx.fillStyle='rgba(86,75,74,.58)';ctx.textAlign='center';ctx.font='11px Segoe UI';ctx.fillText('PRINTING',480,579);ctx.restore()}
+function drawCut(ctx,p){ctx.save();ctx.translate(470,320);drawCutter(ctx,0,0,p);ctx.restore();const phase=ease(p);const pair=project.layout==='pair',px=pair?341:365,py=145,pw=pair?160:211,ph=pair?247:326;
+ctx.save();ctx.fillStyle='#fffdf6';fillRound(ctx,px-12,py-11,pw+24,ph+22,6,'#faf5ed');if(pair)fillRound(ctx,px+169,py-11,pw+24,ph+22,6,'#faf5ed');ctx.restore();drawCard(ctx,project.cards[0],px,py,pw,ph,{time:2+p});if(pair)drawCard(ctx,project.cards[1],px+181,py,pw,ph,{time:2+p});
+// Moving guillotine arm passes over the printed cards.
+ctx.save();ctx.strokeStyle='#888b89';ctx.lineWidth=11;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(639,110);ctx.lineTo(639,lerp(110,460,phase));ctx.stroke();ctx.fillStyle='#d9aaa2';ctx.beginPath();ctx.arc(639,lerp(110,460,phase),13,0,TAU);ctx.fill();ctx.restore();
+if(phase>.5){let k=(phase-.5)*2;paperScrap(ctx,px-14-80*k,330+30*k,12,320,-k*.4,'#f8f4e9');paperScrap(ctx,px+pw+13+88*k,330+22*k,14,320,k*.45,'#f8f4e9');paperScrap(ctx,470,py-14-70*k,225,12,k*.25,'#f8f4e9');paperScrap(ctx,470,py+ph+15+63*k,225,12,-k*.2,'#f8f4e9')}ctx.save();ctx.fillStyle='rgba(86,75,74,.58)';ctx.textAlign='center';ctx.font='11px Segoe UI';ctx.fillText('TRIMMING',480,595);ctx.restore()}
+function drawSleeving(ctx,p){const f=normalized(p,.09,.85);drawSleeve(ctx,490,310,251,382,project.sleeve,p*3,'back',Math.sin(p*Math.PI));const cx=lerp(188,396,f),cy=lerp(181,142,f);ctx.save();if(f<.98)drawCardShadow(ctx,cx,cy,198,306);drawPhotoSet(ctx,cx,cy,198,306,{time:3.5+p});ctx.restore();drawSleeve(ctx,490,310,251,382,project.sleeve,p*3,'front',Math.sin(p*Math.PI));ctx.save();ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(361,120);ctx.quadraticCurveTo(486,120-16*Math.sin(p*Math.PI),616,120);ctx.stroke();ctx.restore()}
+function drawBandSet(ctx,p){let cardW=196,cardH=304,cx=480,cy=317;drawSleeve(ctx,cx,cy,cardW+16,cardH+20,project.sleeve,p*3,'back');drawPackCardStack(ctx,cx-cardW/2,cy-cardH/2,cardW,cardH,{time:5+p});drawSleeve(ctx,cx,cy,cardW+16,cardH+20,project.sleeve,p*3,'front');const k=ease(p);drawRibbon(ctx,cx,cy+28,lerp(5,cardW+19,k),60,project.ribbonColor,k);if(p>.6){ctx.save();ctx.translate(cx,cy+28);drawSymbol(ctx,'bow',lerp(3,68,normalized(p,.6,1)),project.ribbonColor);ctx.restore()}}
+function drawToploaderSet(ctx,p){let f=ease(p);drawSleeve(ctx,475,317,255,385,'clear',p*2,'back');drawPackCardStack(ctx,375,lerp(60,157,f),202,310,{time:5+p});drawSleeve(ctx,475,317,255,385,'clear',p*2,'front');ctx.fillStyle='rgba(200,235,241,.15)';ctx.fillRect(353,132,242,354);strokeRound(ctx,352,133,244,356,7,'rgba(250,255,255,.92)',5)}
+function drawPackStage(ctx,p){
+ if(project.package==='band'){drawBandSet(ctx,p);return}
+ if(project.package==='toploader'){drawToploaderSet(ctx,p);return}
+ const insert=normalized(p,.06,.78),fold=normalized(p,.71,1);
+ const ex=480,ey=326,w=PACK_W,h=PACK_H;
+ // The envelope back, the moving card, then the front pocket form one physical stack.
+ drawEnvelope(ctx,ex,ey,w,h,0,{type:project.package,color:project.packColor,layer:'back'});
+ const cardX=ex-100, cardY=lerp(-232,ey-h/2+19,insert);
+ ctx.save();ctx.globalAlpha=1-normalized(p,.78,.96);
+ drawPackCardStack(ctx,cardX,cardY,200,308,{time:5+p});ctx.restore();
+ drawEnvelope(ctx,ex,ey,w,h,fold,{type:project.package,color:project.packColor,layer:'front'});
+}
+function drawPackedProduct(ctx,p,sealAmount=1,x=480,y=330,scale=1){
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+ const type=project.package;
+ if(type==='band'){
+  drawPackCardStack(ctx,-101,-155,202,310,{time:8});
+  drawRibbon(ctx,0,28,230,63,project.ribbonColor);
+  ctx.save();ctx.translate(0,28);drawSymbol(ctx,'bow',66,project.ribbonColor);ctx.restore();
+ }else if(type==='toploader'){
+  drawPackCardStack(ctx,-100,-154,200,308,{time:8});
+  drawSleeve(ctx,0,0,244,375,project.sleeve,2,'front');
+  strokeRound(ctx,-127,-189,254,378,8,'rgba(251,255,255,.87)',4);
+ }else{
+  drawEnvelope(ctx,0,0,PACK_W,PACK_H,1,{type,color:project.packColor});
+ }
+ if(sealAmount>0){
+  const stickerY=(type==='band'||type==='toploader')?28:-55;
+  const stickerR=(type==='band'||type==='toploader')?27:28;
+  drawSeal(ctx,0,stickerY,stickerR,project.seal,project.sealColor,sealAmount);
+ }
+ ctx.restore();
+}
+function drawSealing(ctx,p){drawPackedProduct(ctx,p,Math.min(1,normalized(p,.21,.63))* (p>.63?1+.16*Math.sin((p-.63)*Math.PI/.37):1));if(p<.8){ctx.save();let y=lerp(35,256,normalized(p,.04,.43));drawStampTool(ctx,480,y,0);ctx.globalAlpha=1-normalized(p,.57,.8);ctx.restore()}}
+function drawFinishScene(ctx,p=1,showcase=false){
+ const pal=deskPalette(),finish=ease(p);
+ ctx.save();ctx.translate(480,318);
+ ctx.rotate(project.camera==='angle'?.045:project.camera==='top'?0:-.025);
+ ctx.scale(showcase?app.show.zoom:1,showcase?app.show.zoom:1);
+ if(showcase){drawShowcaseProduct(ctx)}else{
+  ctx.save();ctx.globalAlpha=finish;
+  if(project.package==='paper'||project.package==='glassine'){
+   // The finished card is BESIDE the correctly sized envelope, not sticking out
+   // through its bottom or through an already sealed pocket.
+   ctx.translate(-151,-65);ctx.rotate(-.13);
+   drawCardShadow(ctx,-89,-122,147,226,-.12,.1);
+   drawPackCardStack(ctx,-89,-122,147,226,{time:9});
+   ctx.rotate(.13);ctx.translate(151,65);
+   drawPackedProduct(ctx,1,1,49,27,.90);
+  }else{drawPackedProduct(ctx,1,1,0,12,.98)}
+  ctx.restore();
+ }
+ ctx.restore();
+ ctx.save();ctx.globalAlpha=showcase?1:finish;
+ drawTapeRoll(ctx,189,133,-.27);drawStickersSheet(ctx,765,413,.2);
+ paperScrap(ctx,182,468,106,13,-.21,pal.white);
+ paperScrap(ctx,772,530,87,16,.17,pal.white);
+ ctx.translate(743,480);drawSymbol(ctx,'star',17,pal.pink);ctx.restore();
+}
+function drawShowcaseProduct(ctx){
+ const open=app.show.open,pull=app.show.pull,flip=app.show.flip;
+ const type=project.package;
+ if(type==='paper'||type==='glassine'){
+  const envY=18;
+  drawEnvelope(ctx,0,envY,PACK_W,PACK_H,0,{type,color:project.packColor,layer:'back'});
+  if(open>.025){
+   // The card only rises out of the portrait-sized pocket once opened.
+   const cardY=lerp(-153,-264,pull);
+   drawFlippableCard(ctx,-100,cardY,200,308,flip);
+  }
+  drawEnvelope(ctx,0,envY,PACK_W,PACK_H,1-open,{type,color:project.packColor,layer:'front'});
+  if(open<.52)drawSeal(ctx,0,envY-55,28,project.seal,project.sealColor,1-open*1.9);
+ }else if(type==='band'){
+  drawFlippableCard(ctx,-101,-173,202,310,flip);
+  if(pull<.7)drawRibbon(ctx,0,32,230,63,project.ribbonColor,1-open);
+  if(open<.6){ctx.save();ctx.translate(0,32);drawSymbol(ctx,'bow',64,project.ribbonColor);ctx.restore()}
+ }else{
+  drawFlippableCard(ctx,-101,-174-70*pull,202,310,flip);
+  drawSleeve(ctx,0,0,244,375,project.sleeve,2,'front',open);
+  strokeRound(ctx,-127,-189,254,378,8,'rgba(250,254,255,.8)',5);
+ }
+}
+function drawFlippableCard(ctx,x,y,w,h,flip){ctx.save();let cos=Math.cos(flip*Math.PI);ctx.translate(x+w/2,y+h/2);ctx.scale(Math.max(.025,Math.abs(cos)),1);drawPackCardStack(ctx,-w/2,-h/2,w,h,{back:flip>.5,time:9});ctx.restore()}
+function renderCraft(ctx,t){
+ const pal=deskPalette(),step=stepAt(t),p=clamp((t-step.start)/(step.end-step.start),0,1);
+ drawDesk(ctx,pal);
+ if(step.id!=='FINISH'){
+  ctx.save();drawTapeRoll(ctx,124,113,-.1);paperScrap(ctx,798,497,110,12,.3,'#f9f3ec');drawStickersSheet(ctx,845,156,.23);ctx.restore();
+ }
+ switch(step.id){
+  case 'PRINT':drawPrint(ctx,p);break;
+  case 'CUT':drawCut(ctx,p);break;
+  case 'SLEEVE':drawSleeving(ctx,p);break;
+  case 'PACKAGE':drawPackStage(ctx,p);break;
+  case 'SEAL':drawSealing(ctx,p);break;
+  case 'FINISH':drawFinishScene(ctx,p);break;
+ }
+}
+function renderScene(ctx,mode='edit',time=0){ctx.save();ctx.clearRect(0,0,SW,SH);if(mode==='craft')renderCraft(ctx,clamp(time,0,DURATION));else if(mode==='showcase'){drawDesk(ctx,deskPalette());drawFinishScene(ctx,1,true)}else drawEdit(ctx);ctx.restore()}
+function sceneCanvas(mode,time=0,w=SW,h=SH){let c=canvas2(w,h),g=c.getContext('2d',{willReadFrequently:mode==='craft'});g.scale(w/SW,h/SH);renderScene(g,mode,time);return c}
+function frameLoop(ts){let dt=app.lastFrame?Math.min(.06,(ts-app.lastFrame)/1000):0;app.lastFrame=ts;if(app.mode==='craft'&&app.playing){app.craftT=Math.min(DURATION,app.craftT+dt*app.speed);app.renderQueued=true;updateCraftProgress();if(app.craftT>=DURATION){app.playing=false;setMode('showcase')}}
+if(app.mode==='showcase'){let changed=false;for(let k of ['open','pull','flip']){const diff=app.showTargets[k]-app.show[k];if(Math.abs(diff)>.003){app.show[k]+=diff*Math.min(1,dt*8);changed=true}else if(app.show[k]!==app.showTargets[k]){app.show[k]=app.showTargets[k];changed=true}}if(changed)app.renderQueued=true}
+if(app.renderQueued){app.renderQueued=false;renderScene(ctx,app.mode,app.craftT)}requestAnimationFrame(frameLoop)}
+function updateCraftProgress(){const t=app.craftT;$('#progressBar').style.width=`${(t/DURATION*100).toFixed(2)}%`;const s=stepAt(t);let ix=steps.indexOf(s)+1;if($('#stepLabel'))$('#stepLabel').textContent=`${s.id} / ${String(ix).padStart(2,'0')} · ${Math.round(t/DURATION*100)}%`;if($('#playPause'))$('#playPause').textContent=app.playing?'Ⅱ 일시정지':'▶ 재생'}
+function setMode(mode){if(!['edit','craft','showcase'].includes(mode))return;if(mode==='craft'){app.craftT=0;app.playing=true}if(mode!=='craft')app.playing=false;app.mode=mode;updateTabs();if(mode==='craft')updateCraftProgress();if(mode==='showcase'){$('#sideToggle').classList.add('hide');app.showTargets.open=0;app.showTargets.pull=0;app.showTargets.flip=0;app.show.open=app.show.pull=app.show.flip=0}requestRender()}
+// ---------- Drag, selection and transform handles ----------
+function canvasPoint(e){let rect=stage.getBoundingClientRect();return {x:(e.clientX-rect.left)/rect.width*SW,y:(e.clientY-rect.top)/rect.height*SH}}
+function localPoint(pt,r){return {x:(pt.x-r.x)/r.w*CW,y:(pt.y-r.y)/r.h*CH}}
+function isInsideObj(p,obj){let dx=p.x-obj.x*CW,dy=p.y-obj.y*CH,a=-obj.rotation*Math.PI/180,c=Math.cos(a),s=Math.sin(a);let x=dx*c-dy*s,y=dx*s+dy*c;let card=activeCard(),r=cardRects().find(z=>z.index===app.activeCard),[w,h]=objectDim(obj,r?(CW*r.h)/(CH*r.w):1);return Math.abs(x)<w/2+7&&Math.abs(y)<h/2+7}
+function onDown(e){if(app.mode!=='edit'||app.side==='back')return;const pt=canvasPoint(e);let geom=getEditorSelectedGeometry();let action='move';if(geom){let handles=selectedHandles(geom);if(Math.hypot(pt.x-handles.rotate.x,pt.y-handles.rotate.y)<17)action='rotate';else if(Math.hypot(pt.x-handles.size.x,pt.y-handles.size.y)<18)action='resize'}let cr=cardRects().find(r=>pt.x>=r.x-4&&pt.x<=r.x+r.w+4&&pt.y>=r.y-4&&pt.y<=r.y+r.h+4);
+if(!cr&&action==='move'){setSelected(null);return}if(cr&&cr.index!==app.activeCard){app.activeCard=cr.index;app.selected=null;renderAll()}
+let ob=currentObject();if(action==='move'&&cr){let lp=localPoint(pt,cr);ob=[...activeCard().objects].reverse().find(o=>o.visible!==false&&isInsideObj(lp,o));setSelected(ob?.id||null)}if(!ob)return;
+e.preventDefault();stage.setPointerCapture(e.pointerId);app.drag={start:pt,action,id:ob.id,orig:deep(ob),card:cr||cardRects().find(r=>r.index===app.activeCard)};$('#canvasShell').classList.add('dragging')}
+function onMove(e){if(!app.drag)return;let d=app.drag,ob=currentObject();if(!ob||ob.id!==d.id)return;e.preventDefault();let p=canvasPoint(e),r=d.card;if(d.action==='move'){ob.x=clamp(d.orig.x+(p.x-d.start.x)/r.w,-.4,1.4);ob.y=clamp(d.orig.y+(p.y-d.start.y)/r.h,-.3,1.3)}else if(d.action==='resize'){let cx=r.x+d.orig.x*r.w,cy=r.y+d.orig.y*r.h,origD=Math.hypot(d.start.x-cx,d.start.y-cy),newD=Math.hypot(p.x-cx,p.y-cy);ob.scale=clamp(d.orig.scale*newD/Math.max(5,origD),.08,2.4)}else if(d.action==='rotate'){let cx=r.x+ob.x*r.w,cy=r.y+ob.y*r.h,angle=Math.atan2(p.y-cy,p.x-cx)-Math.atan2(d.start.y-cy,d.start.x-cx);ob.rotation=(((d.orig.rotation+angle*180/Math.PI+180)%360)+360)%360-180}syncControls();requestRender()}
+function onUp(){app.drag=null;$('#canvasShell').classList.remove('dragging');renderThumbs()}
+stage.addEventListener('pointerdown',onDown);stage.addEventListener('pointermove',onMove);stage.addEventListener('pointerup',onUp);stage.addEventListener('pointercancel',onUp);
+function addDeco(kind){const o={id:uid(),type:'deco',kind,x:.5+(Math.random()-.5)*.12,y:.45+(Math.random()-.5)*.15,scale:.16,rotation:0,color:project.sealColor,flipX:false,opacity:1,visible:true};activeCard().objects.push(o);app.side='front';app.selected=o.id;renderAll()}
+function randomDecor(){let card=activeCard();const choices=['star','heart','flower','gem','bow','circle','butterfly'];for(let i=0;i<6;i++){let ang=i/6*TAU+.4,r=.32+Math.random()*.07;card.objects.push({id:uid(),type:'deco',kind:choices[Math.floor(Math.random()*choices.length)],x:clamp(.5+Math.cos(ang)*r,.09,.91),y:clamp(.5+Math.sin(ang)*r*.9,.08,.91),scale:.08+Math.random()*.055,rotation:Math.floor(Math.random()*45)-22,flipX:false,color:['#d5a3ac','#bdb0d7','#d8b98b','#a4b9a8'][i%4],opacity:1,visible:true})}renderAll();toast('장식 6개를 추가했어요')}
+function objectAction(action){const c=activeCard(),obj=currentObject();if(!obj)return;let idx=c.objects.indexOf(obj);if(action==='flip')obj.flipX=!obj.flipX;
+else if(action==='reset'){let neu=obj.type==='image'?defaultCharacter(obj.assetId):{x:.5,y:.5,scale:.17,rotation:0};Object.assign(obj,{x:neu.x,y:neu.y,scale:neu.scale,rotation:0,flipX:false})}
+else if(action==='delete'){c.objects.splice(idx,1);app.selected=null}
+else if(action==='clone'){let copy={...deep(obj),id:uid(),x:clamp(obj.x+.08,-.4,1.4),y:clamp(obj.y+.07,-.4,1.4)};c.objects.push(copy);app.selected=copy.id}
+else if(action==='up'&&idx<c.objects.length-1){[c.objects[idx],c.objects[idx+1]]=[c.objects[idx+1],c.objects[idx]]}
+else if(action==='down'&&idx>0){[c.objects[idx-1],c.objects[idx]]=[c.objects[idx],c.objects[idx-1]]}
+renderAll()}
+// ---------- Saving images / projects ----------
+function downloadBlob(blob,filename){let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+function pngSave(canvas,name){canvas.toBlob(blob=>blob?downloadBlob(blob,name):toast('PNG 생성에 실패했어요'),'image/png')}
+function saveCardPNG(){let c=activeCard(),square=c.shape==='square',w=square?1024:770,h=square?1024:1190;let cv=canvas2(w,h),g=cv.getContext('2d');g.clearRect(0,0,w,h);drawCard(g,c,0,0,w,h,{back:app.side==='back'});pngSave(cv,'PAIR_CARD_'+(app.activeCard+1)+'.png');toast('카드 PNG 저장 완료')}
+function renderPackagePNG(){
+ const cv=canvas2(1080,1080),g=cv.getContext('2d');
+ // A genuinely transparent product image with a centered, portrait-sized pack.
+ g.clearRect(0,0,1080,1080);g.save();
+ g.translate(540,540);g.scale(2.35,2.35);
+ drawPackedProduct(g,1,1,0,0,1);
+ g.restore();return cv;
+}
+function savePackagePNG(){pngSave(renderPackagePNG(),'PAIR_PACKAGE.png');toast('포장 PNG 저장 완료')}
+function saveShowcasePNG(){let cv=sceneCanvas('showcase',0,1920,1240);pngSave(cv,'PAIR_SHOWCASE.png');toast('완성 장면 PNG 저장 완료')}
+function saveJSON(){let data={...deep(project),version:1,showcase:{...app.show,targets:{...app.showTargets}},activeCard:app.activeCard,side:app.side};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});downloadBlob(blob,'PAIR_PACKAGE_PROJECT.json');toast('프로젝트 JSON 저장 완료')}
+function validColor(s,fallback){return /^#[0-9a-f]{6}$/i.test(s||'')?s:fallback}
+function sanitizeCard(c){let out={...newCard()};if(!c||typeof c!=='object')return out;for(let k of ['shape','background','color','color2','frame','frameColor','surface','backColor','backPattern','backText','backSymbol'])if(typeof c[k]==='string')out[k]=c[k].slice(0,100);for(let k of ['color','color2','frameColor','backColor'])out[k]=validColor(out[k],newCard()[k]);if(Array.isArray(c.objects))out.objects=c.objects.slice(0,180).filter(o=>o&&['image','deco'].includes(o.type)).map(o=>({...o,id:String(o.id||uid()),type:o.type,kind:decos.includes(o.kind)?o.kind:'star',assetId:o.assetId===1?1:0,x:clamp(+o.x||0,-.4,1.4),y:clamp(+o.y||0,-.4,1.4),scale:clamp(+o.scale||.1,.05,2.5),rotation:clamp(+o.rotation||0,-180,180),visible:o.visible!==false,opacity:clamp(o.opacity??1,0,1),color:validColor(o.color,'#c78391'),flipX:!!o.flipX}));return out}
+async function importJSON(file){try{if(file.size>30*1024*1024)throw Error('파일 크기가 너무 큽니다 (30MB 초과).');let parsed=JSON.parse(await file.text());if(!parsed||!Array.isArray(parsed.cards)||!Array.isArray(parsed.assets))throw Error('프로젝트 형식이 올바르지 않습니다.');const p={...project,assets:[null,null],cards:[sanitizeCard(parsed.cards[0]),sanitizeCard(parsed.cards[1])],layout:['solo','side','overlap','pair'].includes(parsed.layout)?parsed.layout:'solo'};
+for(let i=0;i<2;i++){const a=parsed.assets[i];if(a&&typeof a.data==='string'&&/^data:image\/(png|jpeg|webp);base64,/i.test(a.data))p.assets[i]={id:String(a.id||uid()),name:String(a.name||'image').slice(0,100),data:a.data}}
+for(let k of ['theme','sleeve','package','packColor','seal','sealColor','sealInitial','ribbonColor','desk','camera'])if(typeof parsed[k]==='string')p[k]=parsed[k];for(let k of ['packColor','sealColor','ribbonColor'])p[k]=validColor(p[k],project[k]);
+imageCache.clear();await Promise.all(p.assets.map(a=>loadImage(a)));project=p;app.activeCard=clamp(+parsed.activeCard||0,0,project.layout==='pair'?1:0);app.side=parsed.side==='back'?'back':'front';app.selected=null;app.show={open:0,pull:0,flip:0,zoom:clamp(+parsed.showcase?.zoom||1,.7,1.35)};app.showTargets={open:0,pull:0,flip:0};$('#theme').value=['cream','silver','black'].includes(p.theme)?p.theme:'cream';document.body.dataset.theme=$('#theme').value;app.mode='edit';updateTabs();toast('이미지와 프로젝트 설정을 불러왔어요')
+}catch(e){toast('불러오기 실패: '+e.message)}}
+// ---------- Integrated browser-only GIF89a encoder ----------
+function createPaletteHistogram(times,w,h){let hist=new Uint32Array(32768);for(let t of times){if(app.cancelGif)throw Error('취소됨');let c=sceneCanvas('craft',t,w,h),d=c.getContext('2d').getImageData(0,0,w,h).data;for(let y=0;y<h;y+=3)for(let x=0;x<w;x+=3){let i=(y*w+x)*4,r=d[i],g=d[i+1],b=d[i+2],bin=(r>>3)<<10|(g>>3)<<5|(b>>3);hist[bin]++}}return hist}
+function medianCut(hist){const bins=[];for(let i=0;i<32768;i++)if(hist[i])bins.push({r:((i>>10)&31)*8+4,g:((i>>5)&31)*8+4,b:(i&31)*8+4,n:hist[i]});if(!bins.length)return new Uint8Array(768);
+function makeBox(arr){let min=[255,255,255],max=[0,0,0],n=0;for(let v of arr){n+=v.n;for(let k=0;k<3;k++){const x=k===0?v.r:k===1?v.g:v.b;min[k]=Math.min(min[k],x);max[k]=Math.max(max[k],x)}}return {arr,n,range:[max[0]-min[0],max[1]-min[1],max[2]-min[2]]}}
+let boxes=[makeBox(bins)];while(boxes.length<256){let best=-1,maxScore=0;for(let i=0;i<boxes.length;i++){let b=boxes[i],sc=Math.max(...b.range)*Math.sqrt(b.n);if(b.arr.length>1&&sc>maxScore){best=i;maxScore=sc}}if(best<0)break;let box=boxes.splice(best,1)[0],dim=box.range.indexOf(Math.max(...box.range)),field=['r','g','b'][dim];box.arr.sort((a,b)=>a[field]-b[field]);let half=box.n*.5,k=0,sum=0;while(k<box.arr.length-1&&sum<half)sum+=box.arr[k++].n;boxes.push(makeBox(box.arr.slice(0,k)),makeBox(box.arr.slice(k)))}
+let pal=new Uint8Array(256*3);for(let i=0;i<boxes.length;i++){let box=boxes[i],r=0,g=0,b=0;for(let v of box.arr){r+=v.r*v.n;g+=v.g*v.n;b+=v.b*v.n}let n=box.n||1;pal[i*3]=clamp(Math.round(r/n),0,255);pal[i*3+1]=clamp(Math.round(g/n),0,255);pal[i*3+2]=clamp(Math.round(b/n),0,255)}for(let i=boxes.length;i<256;i++){pal[i*3]=pal[(boxes.length-1)*3];pal[i*3+1]=pal[(boxes.length-1)*3+1];pal[i*3+2]=pal[(boxes.length-1)*3+2]}
+return pal}
+function paletteIndices(data,w,h,pal,cache){const len=w*h,out=new Uint8Array(len);const bayer=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];for(let y=0;y<h;y++)for(let x=0;x<w;x++){let p=y*w+x,j=p*4,dither=(bayer[(y&3)*4+(x&3)]-7.5)*1.25;
+let rr=clamp((data[j]+dither)|0,0,255),gg=clamp((data[j+1]+dither)|0,0,255),bb=clamp((data[j+2]+dither)|0,0,255);let key=(rr>>3)<<10|(gg>>3)<<5|(bb>>3),which=cache[key];if(which<0){let dist=Infinity,idx=0;for(let c=0;c<256;c++){let r=rr-pal[c*3],g=gg-pal[c*3+1],b=bb-pal[c*3+2];let score=r*r*.92+g*g*1.1+b*b*.8;if(score<dist){dist=score;idx=c;if(score<2)break}}cache[key]=idx;which=idx}out[p]=which}return out}
+class GIFWriter{constructor(w,h,palette){this.bytes=[];this.w=w;this.h=h;this.uStr('GIF89a');this.u16(w);this.u16(h);this.u8(0xf7);this.u8(0);this.u8(0);this.add(palette);this.add([0x21,0xff,0x0b]);this.uStr('NETSCAPE2.0');this.add([3,1,0,0,0])}u8(v){this.bytes.push(v&255)}u16(v){this.u8(v);this.u8(v>>8)}uStr(s){for(let c of s)this.u8(c.charCodeAt(0))}add(arr){for(let b of arr)this.bytes.push(b)}
+frame(indices,delay){this.add([0x21,0xf9,4,0x04]);this.u16(delay);this.add([0,0]);this.u8(0x2c);this.u16(0);this.u16(0);this.u16(this.w);this.u16(this.h);this.u8(0);this.u8(8);
+let lzw=encodeLZW(indices,8);for(let start=0;start<lzw.length;start+=255){const count=Math.min(255,lzw.length-start);this.u8(count);for(let j=start;j<start+count;j++)this.u8(lzw[j])}this.u8(0)}finish(){this.u8(0x3b);return new Blob([Uint8Array.from(this.bytes)],{type:'image/gif'})}}
+function encodeLZW(indices,minSize){const clear=1<<minSize,end=clear+1;let next=end+1,codeSize=minSize+1,dict=new Map();const out=[];let bits=0,buffer=0;
+function emit(code){buffer|=code<<bits;bits+=codeSize;while(bits>=8){out.push(buffer&255);buffer>>>=8;bits-=8}}
+emit(clear);let prefix=indices[0];for(let i=1;i<indices.length;i++){const k=indices[i],key=(prefix<<8)|k,existing=dict.get(key);if(existing!==undefined){prefix=existing;continue}emit(prefix);
+if(next<4096){dict.set(key,next++);if(next>(1<<codeSize)&&codeSize<12)codeSize++}else{emit(clear);dict.clear();next=end+1;codeSize=minSize+1}prefix=k}
+emit(prefix);emit(end);if(bits>0)out.push(buffer&255);return out}
+function nextTick(){return new Promise(resolve=>setTimeout(resolve,0))}
+async function saveGIF(){if(app.gifBusy)return;app.gifBusy=true;app.cancelGif=false;let load=$('#loading'),text=$('#loadingText'),bar=$('#loadingBar'),percent=$('#loadingPct');load.classList.remove('hide');$('#saveGif').disabled=true;$('#gifProgress').textContent='GIF 인코딩 중';let current=0;
+function progress(value,message){current=value;bar.style.width=(value*100).toFixed(0)+'%';percent.textContent=Math.round(value*100)+'%';text.textContent=message;$('#gifProgress').textContent=Math.round(value*100)+'%'}
+try{const w=480,h=310,fps=10,frameCount=Math.ceil(DURATION*fps);progress(.02,'색상 팔레트 최적화 중');await nextTick();let hist=createPaletteHistogram([.65,2.6,4.15,6.3,7.85,9.9],w,h);let palette=medianCut(hist);hist=null;let cached=new Int16Array(32768);cached.fill(-1);let enc=new GIFWriter(w,h,palette);progress(.1,'제작 장면을 GIF로 인코딩 중');await nextTick();
+for(let i=0;i<frameCount;i++){if(app.cancelGif)throw Error('취소됨');let t=(i+.5)/fps,cv=sceneCanvas('craft',Math.min(t,DURATION),w,h),d=cv.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h).data,indices=paletteIndices(d,w,h,palette,cached);enc.frame(indices,Math.round(100/fps));if(i%3===0){progress(.1+.86*i/frameCount,`${i+1} / ${frameCount} 프레임 렌더링`);await nextTick()}}
+progress(.98,'파일 조립 중');await nextTick();if(app.cancelGif)throw Error('취소됨');downloadBlob(enc.finish(),'PAIR_PACKAGE_CRAFT.gif');progress(1,'완료');toast('전체 제작 과정 GIF 저장 완료')
+}catch(e){if(e.message==='취소됨')toast('GIF 저장을 취소했어요');else{console.error(e);toast('GIF 저장 오류: '+e.message)}}finally{app.gifBusy=false;load.classList.add('hide');$('#saveGif').disabled=false;$('#gifProgress').textContent='';requestRender()}}
+// ---------- Controls / events ----------
+function updatePalette(){document.body.dataset.theme=project.theme;$('#theme').value=project.theme;renderAll()}
+$('#theme').onchange=e=>{project.theme=e.target.value;updatePalette()};
+$('#help').onclick=()=>modal('PAIR PACKAGE ATELIER','<p>① 카드 이미지를 업로드하고 디자인을 고릅니다.<br>② 카드 위의 이미지나 스티커를 드래그해 이동합니다. 선택 테두리의 오른쪽 아래는 크기, 위쪽 원형 핸들은 회전입니다.<br>③ CRAFT에서 인쇄부터 포장까지 제작 과정을 재생합니다.<br>④ SHOWCASE에서 패키지를 열고 카드를 감상합니다.<br>⑤ PNG·움직이는 GIF·JSON을 파일로 저장할 수 있습니다.</p><p>모든 처리는 브라우저 내부에서 실행되며 업로드한 이미지는 서버로 전송되지 않습니다.</p>');
+$('#sideToggle').onclick=()=>{app.side=app.side==='front'?'back':'front';app.selected=null;renderAll();$('#cardSideLabel').textContent=app.side==='front'?'FRONT SIDE':'BACK SIDE'};
+function moveLayer(val){objectAction(val)}
+document.addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.mode){setMode(b.dataset.mode);return}
+if(b.dataset.tab){app.tab=b.dataset.tab;updateTabs();return}
+if(b.dataset.activeCard!==undefined){app.activeCard=+b.dataset.activeCard;app.selected=null;renderAll();return}
+if(b.dataset.upload!==undefined){$(`#imgUpload${+b.dataset.upload+1}`).click();return}
+if(b.dataset.clear!==undefined){let i=+b.dataset.clear;if(project.assets[i]){project.assets[i]=null;for(let c of project.cards)c.objects=c.objects.filter(o=>o.type!=='image'||o.assetId!==i);app.selected=null;renderAll();toast(`이미지 ${i+1} 제거 완료`)}return}
+if(b.dataset.project){let key=b.dataset.project,value=b.dataset.value;if(!value)return;project[key]=value;if(key==='layout')recompose(value);else if(key==='theme')updatePalette();else renderAll();return}
+if(b.dataset.card){activeCard()[b.dataset.card]=b.dataset.value;renderAll();return}
+if(b.dataset.deco){addDeco(b.dataset.deco);return}
+if(b.dataset.layer){setSelected(b.dataset.layer);return}
+if(b.dataset.objAction){objectAction(b.dataset.objAction);return}
+switch(b.id){case 'makeBtn':setMode('craft');break;case 'previewBtn':setMode('showcase');break;case 'returnEdit':setMode('edit');break;case 'playPause':app.playing=!app.playing;updateCraftProgress();break;case 'replay':app.craftT=0;app.playing=true;updateCraftProgress();requestRender();break;case 'skipStep':{let s=stepAt(app.craftT);app.craftT=Math.min(DURATION,s.end+.005);if(app.craftT>=DURATION)setMode('showcase');else{updateCraftProgress();requestRender()}break}
+case 'openPack':app.showTargets.open=1-app.showTargets.open;requestRender();break;case 'pullCard':app.showTargets.pull=1-app.showTargets.pull;if(app.showTargets.pull)app.showTargets.open=1;requestRender();break;case 'flipCard':app.showTargets.flip=1-app.showTargets.flip;if(project.package==='paper'||project.package==='glassine')app.showTargets.open=1;requestRender();break;
+case 'showReset':app.showTargets={open:0,pull:0,flip:0};app.show.zoom=1;$('#showZoom').value=1;requestRender();break;
+case 'randomDecor':randomDecor();break;case 'layerUp':moveLayer('up');break;case 'layerDown':moveLayer('down');break;case 'deleteSelected':moveLayer('delete');break;
+case 'saveJson':saveJSON();break;case 'loadJson':$('#jsonUpload').click();break;case 'saveCard':saveCardPNG();break;case 'savePackage':savePackagePNG();break;case 'saveShowcase':case 'saveShowcase2':saveShowcasePNG();break;case 'saveGif':saveGIF();break;case 'cancelGif':app.cancelGif=true;break;
+}});
+document.addEventListener('change',e=>{let el=e.target;if(el.dataset.project){project[el.dataset.project]=el.value;renderAll()}
+else if(el.dataset.card){activeCard()[el.dataset.card]=el.value;renderAll()}
+else if(el.dataset.color){(el.dataset.scope==='project'?project:activeCard())[el.dataset.color]=el.value;renderAll()}
+else if(el.dataset.decoColor){let o=currentObject();if(o)o.color=el.value;renderThumbs();requestRender()}
+else if(el.id==='speed')app.speed=+el.value;
+else if(el.id==='showZoom'){app.show.zoom=+el.value;requestRender()}
+});
+document.addEventListener('input',e=>{let el=e.target;if(el.dataset.object){let o=currentObject();if(o){o[el.dataset.object]=+el.value;let out=$(`#out-${el.dataset.object}`);if(out)out.textContent=Number(o[el.dataset.object]).toFixed(el.dataset.object==='scale'?2:0)+(el.dataset.object==='rotation'?'°':'');requestRender()}}
+else if(el.dataset.card&&el.tagName==='INPUT'){activeCard()[el.dataset.card]=el.value;requestRender()}
+else if(el.dataset.projectText){project[el.dataset.projectText]=el.value.slice(0,4);requestRender()}
+else if(el.dataset.color){(el.dataset.scope==='project'?project:activeCard())[el.dataset.color]=el.value;requestRender()}
+else if(el.dataset.decoColor){let o=currentObject();if(o){o.color=el.value;requestRender()}}
+else if(el.id==='showZoom'){app.show.zoom=+el.value;requestRender()}});
+for(let i=0;i<2;i++)$(`#imgUpload${i+1}`).addEventListener('change',async e=>{let file=e.target.files?.[0];if(!file)return;try{if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw Error('PNG, JPG, WEBP만 사용할 수 있습니다.');if(file.size>18*1024*1024)throw Error('이미지 크기는 18MB 이하여야 합니다.');let data=await new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('이미지 읽기 오류'));r.readAsDataURL(file)});let a={id:uid(),name:file.name,data};await loadImage(a);project.assets[i]=a;for(let c of project.cards)c.objects=c.objects.filter(o=>o.type!=='image'||o.assetId!==i);if(project.layout==='solo'&&i===1)recompose('side');else{ensureCharacters();renderAll()}app.side='front';app.selected=null;toast(`이미지 ${i+1} 업로드 완료`)}catch(ex){toast(ex.message)}finally{e.target.value=''}});
+$('#jsonUpload').addEventListener('change',async e=>{let f=e.target.files?.[0];if(f)await importJSON(f);e.target.value=''});
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;if(e.key==='Escape'){setSelected(null);return}let o=currentObject();if(!o||app.mode!=='edit')return;if(e.key==='Delete'||e.key==='Backspace'){objectAction('delete');e.preventDefault()}else if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){let d=e.shiftKey?.025:.008;if(e.key==='ArrowUp')o.y-=d;if(e.key==='ArrowDown')o.y+=d;if(e.key==='ArrowLeft')o.x-=d;if(e.key==='ArrowRight')o.x+=d;o.x=clamp(o.x,-.4,1.4);o.y=clamp(o.y,-.4,1.4);renderThumbs();requestRender();e.preventDefault()}});
+// Allow operating the atelier immediately, even with no uploaded character images.
+updateTabs();requestAnimationFrame(frameLoop);
+</script></body></html>
